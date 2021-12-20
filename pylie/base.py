@@ -3,6 +3,12 @@ import numpy as np
 
 class MatrixLieGroup:
 
+    _small_angle_tol = 1e-14
+
+    @staticmethod
+    def random():
+        raise NotImplementedError()
+
     @staticmethod
     def wedge(x):
         raise NotImplementedError()
@@ -45,3 +51,11 @@ class MatrixLieGroup:
         Shortcut method.
         """
         return cls.vee(cls.log(x))
+
+    @staticmethod
+    def Adjoint(X):
+        raise NotImplementedError()
+
+    @staticmethod
+    def adjoint(Xi):
+        raise NotImplementedError()
