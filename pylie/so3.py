@@ -84,11 +84,3 @@ class SO3(MatrixLieGroup):
             - (phi / 2) * SO3.wedge(a)
         )
         return J_inv
-
-if __name__ == "__main__":
-    # Quick demo to show how to create an element
-    phi = np.array([[0.1], [0.2], [0.3]])
-
-    C = SO3.Exp(phi)
-
-    print(C)
