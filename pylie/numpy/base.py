@@ -37,6 +37,30 @@ class MatrixLieGroup:
         Default implementation, can be overridden.
         """
         return np.linalg.inv(X)
+    
+    @staticmethod
+    def Adjoint(X):
+        raise NotImplementedError()
+
+    @staticmethod
+    def adjoint(Xi):
+        raise NotImplementedError()
+    
+    @staticmethod
+    def left_jacobian(x):
+        raise NotImplementedError()
+    
+    @classmethod
+    def left_jacobian_inv(cls, x):
+        return np.linalg.inv(cls.left_jacobian(x))
+
+    @classmethod
+    def right_jacobian(cls, x):
+        return cls.left_jacobian(-x)
+
+    @classmethod
+    def right_jacobian(cls, x):
+        return np.linalg.inv(cls.right_jacobian(x))
 
     @classmethod
     def Exp(cls, x):
@@ -51,11 +75,5 @@ class MatrixLieGroup:
         Shortcut method.
         """
         return cls.vee(cls.log(x))
-
-    @staticmethod
-    def Adjoint(X):
-        raise NotImplementedError()
-
-    @staticmethod
-    def adjoint(Xi):
-        raise NotImplementedError()
+    
+    

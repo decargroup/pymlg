@@ -17,7 +17,7 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi.reshape(-1, 1)
+        xi = xi.reshape((-1, 1))
         X = np.array(
             [
                 [0, -xi[2, 0], xi[1, 0]],
@@ -36,6 +36,9 @@ class SO3(MatrixLieGroup):
     def exp(Xi):
         xi_vec = SO3.vee(Xi)
         phi = np.linalg.norm(xi_vec)
+        if np.abs(phi) < SO3._small_angle_tol:
+            return np.identity(3)
+            
         a = xi_vec / phi
         X = (
             cos(phi) * np.identity(3)
@@ -46,14 +49,18 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def log(X):
-        phi = np.arccos((np.trace(X) - 1) / 2)
-        if np.abs(phi) < SO3._small_angle_tol:
-            return np.identity(3)
-        else:
-            a = (1 / (2 * sin(phi))) * np.array(
-                [[X[2, 1] - X[1, 2]], [X[0, 2] - X[2, 0]], [X[1, 0] - X[0, 1]]]
-            )
-            return phi * SO3.wedge(a)
+        # The cosine of the rotation angle is related to the trace of C
+        cos_angle = 0.5 * np.trace(X) - 0.5
+        # Clip cos(angle) to its proper domain to avoid NaNs from rounding errors
+        cos_angle = np.clip(cos_angle, -1., 1.)
+        angle = np.arccos(cos_angle)
+
+        # If angle is close to zero, use first-order Taylor expansion
+        if np.isclose(angle, 0.):
+            return (X - np.identity(3))
+
+        # Otherwise take the matrix logarithm and return the rotation vector
+        return (0.5 * angle / np.sin(angle)) * (X - np.transpose(X))
 
     @staticmethod
     def left_jacobian(xi):
