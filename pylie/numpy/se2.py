@@ -53,3 +53,42 @@ class SE2(MatrixLieGroup):
         )
         Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
         return Xi
+
+    @staticmethod
+    def left_jacobian(xi):
+        rho = xi[1:]  # translation part
+        phi = xi[0]  # rotation part
+
+
+        # BELOW CODE IS FOR xi = [xi_r; phi]
+        cos_phi = np.cos(phi)
+        sin_phi = np.sin(phi)
+        phi_sq = phi * phi
+
+        if phi_sq < 1e-15:
+            A = 1 - 1./6. * phi_sq
+            B = 0.5 * phi - 1./24. * phi * phi_sq
+        else:
+            A = sin_phi / phi
+            B = (1 - cos_phi) / phi
+
+        jac = np.zeros((SE2.dof, SE2.dof))
+        jac[0][0] = A
+        jac[0][1] = -B
+        jac[1][0] = B
+        jac[1][1] = A
+
+        if phi_sq < 1e-15:
+            jac[0][2] = rho[1] / 2. + phi * rho[0] / 6.
+            jac[1][2] = -rho[0] / 2. + phi * rho[1] / 6.
+        else:
+            jac[0][2] = ( rho[1] + phi*rho[0] - rho[1]*cos_phi - rho[0]*sin_phi)/phi_sq
+            jac[1][2] = (-rho[0] + phi*rho[1] + rho[0]*cos_phi - rho[1]*sin_phi)/phi_sq
+
+        jac[2][2] = 1
+
+        # NEED TO SWITCH JACOBIAN ORDER
+        temp = np.array([jac[2,:], jac[0,:], jac[1,:]])
+        temp2 = np.hstack((temp[:,2].reshape((-1,1)), temp[:,0].reshape((-1,1)), temp[:,1].reshape((-1,1))))
+
+        return temp2
