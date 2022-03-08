@@ -32,7 +32,7 @@ class SE3(MatrixLieGroup):
         Xi_phi = Xi[0:3, 0:3]
         xi_r = Xi[0:3, 3]
         phi = SO3.vee(Xi_phi)
-        return np.vstack((phi, xi_r.reshape((-1,1))))
+        return np.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
     def exp(Xi):
@@ -48,8 +48,6 @@ class SE3(MatrixLieGroup):
     def log(T):
         Xi_phi = SO3.log(T[0:3, 0:3])
         r = T[0:3, 3]
-        xi_r = np.dot(
-            SO3.left_jacobian_inv(SO3.vee(Xi_phi)), r.reshape((-1, 1))
-        )
+        xi_r = np.dot(SO3.left_jacobian_inv(SO3.vee(Xi_phi)), r.reshape((-1, 1)))
         Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 4))]])
         return Xi

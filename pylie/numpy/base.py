@@ -1,6 +1,7 @@
 from scipy.linalg import expm, logm
 import numpy as np
 
+
 class MatrixLieGroup:
 
     _small_angle_tol = 1e-14
@@ -16,7 +17,7 @@ class MatrixLieGroup:
     @staticmethod
     def vee(x):
         raise NotImplementedError()
-    
+
     @staticmethod
     def exp(x):
         """
@@ -30,14 +31,14 @@ class MatrixLieGroup:
         Default implementation, can be overridden.
         """
         return logm(x)
-    
+
     @staticmethod
     def inverse(X):
         """
         Default implementation, can be overridden.
         """
         return np.linalg.inv(X)
-    
+
     @staticmethod
     def Adjoint(X):
         raise NotImplementedError()
@@ -45,11 +46,11 @@ class MatrixLieGroup:
     @staticmethod
     def adjoint(Xi):
         raise NotImplementedError()
-    
+
     @staticmethod
     def left_jacobian(x):
         raise NotImplementedError()
-    
+
     @classmethod
     def left_jacobian_inv(cls, x):
         return np.linalg.inv(cls.left_jacobian(x))
@@ -68,12 +69,14 @@ class MatrixLieGroup:
         Shortcut method.
         """
         return cls.exp(cls.wedge(x))
-    
+
     @classmethod
     def Log(cls, x):
         """
         Shortcut method.
         """
         return cls.vee(cls.log(x))
-    
-    
+
+    @staticmethod
+    def normalize(X):
+        raise NotImplementedError()

@@ -1,5 +1,6 @@
 import torch
 
+
 class MatrixLieGroup:
 
     _small_angle_tol = 1e-7
@@ -15,7 +16,7 @@ class MatrixLieGroup:
     @staticmethod
     def vee(x):
         raise NotImplementedError()
-    
+
     @staticmethod
     def exp(x):
         """
@@ -29,7 +30,7 @@ class MatrixLieGroup:
         No easy built-in method for logarithm. Must be implemented.
         """
         raise NotImplementedError()
-    
+
     @staticmethod
     def inverse(X):
         """
@@ -43,7 +44,7 @@ class MatrixLieGroup:
         Shortcut method.
         """
         return cls.exp(cls.wedge(x))
-    
+
     @classmethod
     def Log(cls, x):
         """

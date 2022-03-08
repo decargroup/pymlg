@@ -32,7 +32,7 @@ class SE2(MatrixLieGroup):
         Xi_phi = Xi[0:2, 0:2]
         xi_r = Xi[0:2, 2]
         phi = SO2.vee(Xi_phi)
-        return np.vstack((phi, xi_r.reshape((-1,1))))
+        return np.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
     def exp(Xi):
@@ -48,9 +48,7 @@ class SE2(MatrixLieGroup):
     def log(T):
         Xi_phi = SO2.log(T[0:2, 0:2])
         r = T[0:2, 2]
-        xi_r = np.dot(
-            SO2.left_jacobian_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1))
-        )
+        xi_r = np.dot(SO2.left_jacobian_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1)))
         Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
         return Xi
 
@@ -59,15 +57,15 @@ class SE2(MatrixLieGroup):
         rho = xi[1:]  # translation part
         phi = xi[0]  # rotation part
 
-
         # BELOW CODE IS FOR xi = [xi_r; phi]
+        # So we have to switch it for the different ordering
         cos_phi = np.cos(phi)
         sin_phi = np.sin(phi)
         phi_sq = phi * phi
 
         if phi_sq < 1e-15:
-            A = 1 - 1./6. * phi_sq
-            B = 0.5 * phi - 1./24. * phi * phi_sq
+            A = 1 - 1.0 / 6.0 * phi_sq
+            B = 0.5 * phi - 1.0 / 24.0 * phi * phi_sq
         else:
             A = sin_phi / phi
             B = (1 - cos_phi) / phi
@@ -79,16 +77,26 @@ class SE2(MatrixLieGroup):
         jac[1][1] = A
 
         if phi_sq < 1e-15:
-            jac[0][2] = rho[1] / 2. + phi * rho[0] / 6.
-            jac[1][2] = -rho[0] / 2. + phi * rho[1] / 6.
+            jac[0][2] = rho[1] / 2.0 + phi * rho[0] / 6.0
+            jac[1][2] = -rho[0] / 2.0 + phi * rho[1] / 6.0
         else:
-            jac[0][2] = ( rho[1] + phi*rho[0] - rho[1]*cos_phi - rho[0]*sin_phi)/phi_sq
-            jac[1][2] = (-rho[0] + phi*rho[1] + rho[0]*cos_phi - rho[1]*sin_phi)/phi_sq
+            jac[0][2] = (
+                rho[1] + phi * rho[0] - rho[1] * cos_phi - rho[0] * sin_phi
+            ) / phi_sq
+            jac[1][2] = (
+                -rho[0] + phi * rho[1] + rho[0] * cos_phi - rho[1] * sin_phi
+            ) / phi_sq
 
         jac[2][2] = 1
 
         # NEED TO SWITCH JACOBIAN ORDER
-        temp = np.array([jac[2,:], jac[0,:], jac[1,:]])
-        temp2 = np.hstack((temp[:,2].reshape((-1,1)), temp[:,0].reshape((-1,1)), temp[:,1].reshape((-1,1))))
+        temp = np.array([jac[2, :], jac[0, :], jac[1, :]])
+        temp2 = np.hstack(
+            (
+                temp[:, 2].reshape((-1, 1)),
+                temp[:, 0].reshape((-1, 1)),
+                temp[:, 1].reshape((-1, 1)),
+            )
+        )
 
         return temp2

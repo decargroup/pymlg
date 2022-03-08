@@ -38,7 +38,7 @@ class SO3(MatrixLieGroup):
         phi = np.linalg.norm(xi_vec)
         if np.abs(phi) < SO3._small_angle_tol:
             return np.identity(3)
-            
+
         a = xi_vec / phi
         X = (
             cos(phi) * np.identity(3)
@@ -52,12 +52,12 @@ class SO3(MatrixLieGroup):
         # The cosine of the rotation angle is related to the trace of C
         cos_angle = 0.5 * np.trace(X) - 0.5
         # Clip cos(angle) to its proper domain to avoid NaNs from rounding errors
-        cos_angle = np.clip(cos_angle, -1., 1.)
+        cos_angle = np.clip(cos_angle, -1.0, 1.0)
         angle = np.arccos(cos_angle)
 
         # If angle is close to zero, use first-order Taylor expansion
-        if np.isclose(angle, 0.):
-            return (X - np.identity(3))
+        if np.isclose(angle, 0.0):
+            return X - np.identity(3)
 
         # Otherwise take the matrix logarithm and return the rotation vector
         return (0.5 * angle / np.sin(angle)) * (X - np.transpose(X))

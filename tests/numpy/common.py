@@ -3,7 +3,7 @@ from scipy.linalg import expm, logm
 
 
 def _test_wedge_vee(G):
-    x = 0.1*np.random.random((G.dof, 1))
+    x = 0.1 * np.random.random((G.dof, 1))
     x_test = G.vee(G.wedge(x))
     assert np.allclose(x, x_test, 1e-15)
 
@@ -28,4 +28,3 @@ def _test_exp_log_inverse(G):
     Xi = G.log(X)
     assert np.allclose(X, G.exp(G.log(X)))
     assert np.allclose(Xi, G.log(G.exp(Xi)))
-
