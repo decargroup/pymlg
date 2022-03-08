@@ -7,6 +7,10 @@ class MatrixLieGroup:
     _small_angle_tol = 1e-14
 
     @staticmethod
+    def synthesize():
+        raise NotImplementedError()
+
+    @staticmethod
     def random():
         raise NotImplementedError()
 
