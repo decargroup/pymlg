@@ -49,6 +49,11 @@ def _test_left_jacobian_inverse(G):
     assert np.allclose(J_left_inv, np.linalg.inv(J_left))
 
 def _test_left_jacobian_numerically(G):
+    """
+    This will not work for SO(2). SO(2) is weird. It only has 
+    1 degree of freedom yet we write its jacobian as a 2 x 2 matrix,
+    which doesnt make sense.
+    """
     x_bar = G.Log(G.random())
     J_left = G.left_jacobian(x_bar)
 
