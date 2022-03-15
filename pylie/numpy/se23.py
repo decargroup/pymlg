@@ -1,6 +1,5 @@
 from .base import MatrixLieGroup
 import numpy as np
-from math import sin, cos, tan
 from .so3 import SO3
 
 
@@ -48,7 +47,7 @@ class SE23(MatrixLieGroup):
         phi = np.random.uniform(0, 2 * np.pi, (3, 1))
         v = np.random.normal(0, 1, (3, 1))
         r = np.random.normal(0, 1, (3, 1))
-        
+
         C = SO3.Exp(phi)
 
         X = SE23.synthesize(C, v, r)

@@ -62,10 +62,10 @@ class MatrixLieGroup:
     @staticmethod
     def odot(b):
         """
-        odot operator as defined in Barfoot. I.e., an operator on an element of 
-        R^n such that 
+        odot operator as defined in Barfoot. I.e., an operator on an element of
+        R^n such that
 
-        a^\wedge b = b^\odot a        
+        a^\wedge b = b^\odot a
         """
         raise NotImplementedError()
 

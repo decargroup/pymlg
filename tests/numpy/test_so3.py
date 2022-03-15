@@ -1,7 +1,6 @@
-from pylie import SO3
+from pylie import SO3 as G
 import numpy as np
 import common
-G = SO3
 
 
 def test_wedge_vee():
