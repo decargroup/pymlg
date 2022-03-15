@@ -91,3 +91,7 @@ class SO3(MatrixLieGroup):
             - (phi / 2) * SO3.wedge(a)
         )
         return J_inv
+
+    @staticmethod 
+    def odot(xi):
+        return -SO3.wedge(xi)

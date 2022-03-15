@@ -28,3 +28,12 @@ def _test_exp_log_inverse(G):
     Xi = G.log(X)
     assert np.allclose(X, G.exp(G.log(X)))
     assert np.allclose(Xi, G.log(G.exp(Xi)))
+
+def _test_odot_wedge(G):
+    X = G.random()
+    a = G.Log(X)
+    b = np.random.normal(0,1,(X.shape[0],1))
+
+    test1 = np.dot(G.wedge(a), b)
+    test2 = np.dot(G.odot(b), a)
+    assert np.allclose(test1, test2)
