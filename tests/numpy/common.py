@@ -37,3 +37,11 @@ def _test_odot_wedge(G):
     test1 = np.dot(G.wedge(a), b)
     test2 = np.dot(G.odot(b), a)
     assert np.allclose(test1, test2)
+
+def _test_left_jacobian_inverse(G):
+    X = G.random()
+    xi = G.Log(X)
+    J_left = G.left_jacobian(xi)
+    J_left_inv = G.left_jacobian_inv(xi)
+
+    assert np.allclose(J_left_inv, np.linalg.inv(J_left))

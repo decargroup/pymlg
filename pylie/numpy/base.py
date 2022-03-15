@@ -4,7 +4,11 @@ import numpy as np
 
 class MatrixLieGroup:
 
-    _small_angle_tol = 1e-14
+    _small_angle_tol = 1e-7
+
+    @staticmethod
+    def synthesize():
+        raise NotImplementedError()
 
     @staticmethod
     def random():
@@ -120,4 +124,3 @@ class MatrixLieGroup:
         Shortcut method: group to R^n directly.
         """
         return cls.vee(cls.log(x))
-

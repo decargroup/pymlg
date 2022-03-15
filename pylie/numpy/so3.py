@@ -28,24 +28,35 @@ class SO3(MatrixLieGroup):
         return X
 
     @staticmethod
+    def cross(xi):
+        return SO3.wedge(xi)
+
+    @staticmethod
     def vee(X):
         xi = np.array([[-X[1, 2]], [X[0, 2]], [-X[0, 1]]])
         return xi
 
     @staticmethod
-    def exp(Xi):
-        xi_vec = SO3.vee(Xi)
-        phi = np.linalg.norm(xi_vec)
-        if np.abs(phi) < SO3._small_angle_tol:
-            return np.identity(3)
+    def exp(element_so3):
+        """Maps elements of the matrix Lie algebra so(3) to the group.
 
-        a = xi_vec / phi
-        X = (
-            cos(phi) * np.identity(3)
-            + (1 - np.cos(phi)) * np.dot(a, np.transpose(a))
-            + sin(phi) * SO3.wedge(a)
-        )
-        return X
+        From Section 8.3 of Lie Groups for Computer Vision by Ethan Eade. When
+        theta is small, use Taylor series expansion given in Section 11.
+        """
+        phi = SO3.vee(element_so3)
+        angle = np.linalg.norm(phi)
+
+        # Use Taylor series expansion
+        if angle < SO3._small_angle_tol:
+            t2 = angle**2
+            A = 1.0 - t2 / 6.0 * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0))
+            B = 1.0 / 2.0 * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+        else:
+            A = sin(angle) / angle
+            B = (1.0 - cos(angle)) / (angle**2)
+
+        # Rodirgues rotation formula (103)
+        return np.eye(3) + A * element_so3 + B * (element_so3 @ element_so3)
 
     @staticmethod
     def log(X):
@@ -64,34 +75,49 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian(xi):
-        phi = np.linalg.norm(xi)
-        if np.abs(phi) < SO3._small_angle_tol:
-            return np.identity(3)
+        """Computes the Left Jacobian of SO(3).
+        From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade.  When
+        angle is small, use Taylor series expansion given in Section 11.
+        """
+        angle = np.linalg.norm(xi)
 
-        a = xi / phi
-        spp = sin(phi) / phi
-        J = (
-            spp * np.identity(3)
-            + (1 - spp) * np.dot(a, np.transpose(a))
-            + ((1 - cos(phi)) / phi) * SO3.wedge(a)
-        )
-        return J
+        if angle < SO3._small_angle_tol:
+            t2 = angle**2
+            # Taylor series expansion.  See (157), (159).
+            A = (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+            B = (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
+        else:
+            A = (1 - cos(angle)) / (angle**2)
+            B = (angle - sin(angle)) / (angle**3)
+
+        cross_xi = SO3.cross(xi)
+
+        J_left = np.eye(3) + A * cross_xi + B * (cross_xi @ cross_xi)
+        return J_left
 
     @staticmethod
     def left_jacobian_inv(xi):
-        phi = np.linalg.norm(xi)
-        if np.abs(phi) < SO3._small_angle_tol:
-            return np.identity(3)
-        a = xi / phi
+        """Computes the inverse of the left Jacobian of SO(3).
+        From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade. When
+        angle is small, use Taylor series expansion given in Section 11.
+        """
+        angle = np.linalg.norm(xi)
+        if angle < SO3._small_angle_tol:
+            t2 = angle**2
 
-        ct = 1 / tan(phi / 2)
-        J_inv = (
-            (phi / 2) * ct * np.identity(3)
-            + (1 - phi / 2 * ct) * np.dot(a, np.transpose(a))
-            - (phi / 2) * SO3.wedge(a)
-        )
-        return J_inv
+            # Taylor Series expansion
+            A = (1.0 / 12.0) * (1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0)))
+        else:
+            A = (1.0 / angle**2) * (
+                1.0 - (angle * sin(angle) / (2.0 * (1.0 - cos(angle))))
+            )
+
+        cross_xi = SO3.cross(xi)
+        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * cross_xi @ cross_xi
+
+        return J_left_inv
 
     @staticmethod 
     def odot(xi):
         return -SO3.wedge(xi)
+        

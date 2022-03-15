@@ -22,3 +22,7 @@ def test_exp_log_inverse():
 
 def test_odot_wedge():
     common._test_odot_wedge(G)
+
+
+def test_group_jacobians():
+    common._test_left_jacobian_inverse(G)
