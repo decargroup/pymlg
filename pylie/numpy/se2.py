@@ -53,6 +53,17 @@ class SE2(MatrixLieGroup):
         return Xi
 
     @staticmethod
+    def odot(b):
+        """
+        odot operator as defined in Barfoot. I.e., an operator on an element of
+        R^n such that
+
+        a^\wedge b = b^\odot a
+        """
+        b = b.flatten()
+        return np.array([[-b[1], b[2], 0], [b[0], 0, b[2]], [0, 0, 0]])
+
+    @staticmethod
     def left_jacobian(xi):
         rho = xi[1:]  # translation part
         phi = xi[0]  # rotation part

@@ -48,12 +48,12 @@ class SO3(MatrixLieGroup):
 
         # Use Taylor series expansion
         if angle < SO3._small_angle_tol:
-            t2 = angle**2
+            t2 = angle ** 2
             A = 1.0 - t2 / 6.0 * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0))
             B = 1.0 / 2.0 * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
         else:
             A = sin(angle) / angle
-            B = (1.0 - cos(angle)) / (angle**2)
+            B = (1.0 - cos(angle)) / (angle ** 2)
 
         # Rodirgues rotation formula (103)
         return np.eye(3) + A * element_so3 + B * (element_so3 @ element_so3)
@@ -82,13 +82,13 @@ class SO3(MatrixLieGroup):
         angle = np.linalg.norm(xi)
 
         if angle < SO3._small_angle_tol:
-            t2 = angle**2
+            t2 = angle ** 2
             # Taylor series expansion.  See (157), (159).
             A = (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
             B = (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
         else:
-            A = (1 - cos(angle)) / (angle**2)
-            B = (angle - sin(angle)) / (angle**3)
+            A = (1 - cos(angle)) / (angle ** 2)
+            B = (angle - sin(angle)) / (angle ** 3)
 
         cross_xi = SO3.cross(xi)
 
@@ -103,12 +103,12 @@ class SO3(MatrixLieGroup):
         """
         angle = np.linalg.norm(xi)
         if angle < SO3._small_angle_tol:
-            t2 = angle**2
+            t2 = angle ** 2
 
             # Taylor Series expansion
             A = (1.0 / 12.0) * (1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0)))
         else:
-            A = (1.0 / angle**2) * (
+            A = (1.0 / angle ** 2) * (
                 1.0 - (angle * sin(angle) / (2.0 * (1.0 - cos(angle))))
             )
 
@@ -116,3 +116,7 @@ class SO3(MatrixLieGroup):
         J_left_inv = np.eye(3) - 0.5 * cross_xi + A * cross_xi @ cross_xi
 
         return J_left_inv
+
+    @staticmethod
+    def odot(xi):
+        return -SO3.wedge(xi)

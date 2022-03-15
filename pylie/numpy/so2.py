@@ -18,7 +18,12 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def wedge(phi):
         if isinstance(phi, np.ndarray):
-            phi = phi[0]
+            if len(phi.shape) == 2:
+                phi = phi[0, 0]
+            elif len(phi.shape) == 1:
+                phi = phi[0]
+            else:
+                raise RuntimeError("Input should be a scalar.")
 
         X = np.array(
             [

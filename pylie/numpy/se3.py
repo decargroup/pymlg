@@ -61,3 +61,13 @@ class SE3(MatrixLieGroup):
         xi_r = np.dot(SO3.left_jacobian_inv(SO3.vee(Xi_phi)), r.reshape((-1, 1)))
         Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 4))]])
         return Xi
+
+    @staticmethod
+    def odot(b):
+        b = b.flatten()
+        return np.block(
+            [
+                [-SO3.wedge(b[0:3]), b[3] * np.identity(3)],
+                [np.zeros((1, 3)), np.zeros((1, 3))],
+            ]
+        )

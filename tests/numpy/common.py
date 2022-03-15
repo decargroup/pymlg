@@ -30,7 +30,17 @@ def _test_exp_log_inverse(G):
     assert np.allclose(Xi, G.log(G.exp(Xi)))
 
 
-def _test_group_jacobians(G):
+def _test_odot_wedge(G):
+    X = G.random()
+    a = G.Log(X)
+    b = np.random.normal(0, 1, (X.shape[0], 1))
+
+    test1 = np.dot(G.wedge(a), b)
+    test2 = np.dot(G.odot(b), a)
+    assert np.allclose(test1, test2)
+
+
+def _test_left_jacobian_inverse(G):
     X = G.random()
     xi = G.Log(X)
     J_left = G.left_jacobian(xi)
