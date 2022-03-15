@@ -12,6 +12,16 @@ class SE3(MatrixLieGroup):
     dof = 6
 
     @staticmethod
+    def synthesize(rot, disp):
+        # Check if rotation component is a rotation vector or full DCM
+        if rot.size == 9:
+            C = rot
+        else:
+            C = SO3.Exp(rot)
+
+        return np.block([[C, disp], [np.zeros((1, 3)), 1]])
+
+    @staticmethod
     def random():
         phi = np.random.uniform(0, 2 * np.pi, (3, 1))
         r = np.random.normal(0, 1, (3, 1))

@@ -49,3 +49,6 @@ Thumbs.db
 *.wmv
 
 pylie.egg-info/
+
+# Virtual environement 
+*.venv

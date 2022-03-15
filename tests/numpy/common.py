@@ -28,3 +28,12 @@ def _test_exp_log_inverse(G):
     Xi = G.log(X)
     assert np.allclose(X, G.exp(G.log(X)))
     assert np.allclose(Xi, G.log(G.exp(Xi)))
+
+
+def _test_group_jacobians(G):
+    X = G.random()
+    xi = G.Log(X)
+    J_left = G.left_jacobian(xi)
+    J_left_inv = G.left_jacobian_inv(xi)
+
+    assert np.allclose(J_left_inv, np.linalg.inv(J_left))
