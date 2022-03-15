@@ -25,3 +25,7 @@ def test_odot_wedge():
 
 # def test_group_jacobians():
 #     common._test_left_jacobian_inverse(G)
+
+
+# def test_left_jacobian_numerically():
+#     common._test_left_jacobian_numerically(G)

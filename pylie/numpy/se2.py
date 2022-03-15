@@ -58,7 +58,7 @@ class SE2(MatrixLieGroup):
         odot operator as defined in Barfoot. I.e., an operator on an element of
         R^n such that
 
-        a^\wedge b = b^\odot a
+        a^wedge b = b^odot a
         """
         b = b.flatten()
         return np.array([[-b[1], b[2], 0], [b[0], 0, b[2]], [0, 0, 0]])
