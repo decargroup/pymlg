@@ -71,3 +71,7 @@ class SO2(MatrixLieGroup):
         return half_angle * cot_half_angle * np.identity(2) - half_angle * SO2.wedge(
             1.0
         )
+
+    @staticmethod
+    def adjoint(C):
+        return np.identity(2)

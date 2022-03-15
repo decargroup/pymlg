@@ -70,3 +70,9 @@ class SE3(MatrixLieGroup):
                 [np.zeros((1, 3)), np.zeros((1, 3))],
             ]
         )
+
+    @staticmethod
+    def adjoint(T):
+        C = T[0:3, 0:3]
+        r = T[0:3, 3]
+        return np.block([[C, np.zeros((3, 3))], [np.dot(SO3.wedge(r), C), C]])

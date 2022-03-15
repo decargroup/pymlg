@@ -111,3 +111,10 @@ class SE2(MatrixLieGroup):
         )
 
         return temp2
+
+    @staticmethod
+    def adjoint(T):
+        C = T[0:2, 0:2]
+        r = T[0:2, 2].reshape((-1, 1))
+        Om = np.array([[0, -1], [1, 0]])
+        return np.block([[np.array([[1]]), np.zeros((1, 2))], [-np.dot(Om, r), C]])

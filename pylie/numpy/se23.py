@@ -101,3 +101,15 @@ class SE23(MatrixLieGroup):
         )
 
         return element_se23
+
+    @staticmethod
+    def adjoint(X):
+        C, v, r = SE23.to_components(X)
+        O = np.zeros((3, 3))
+        return np.block(
+            [
+                [C, O, O],
+                [np.dot(SO3.wedge(v), C), C, O],
+                [np.dot(SO3.wedge(r), C), O, C],
+            ]
+        )
