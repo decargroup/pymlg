@@ -1,6 +1,5 @@
 from .base import MatrixLieGroup
 import numpy as np
-from math import sin, cos, tan
 from .so3 import SO3
 
 
