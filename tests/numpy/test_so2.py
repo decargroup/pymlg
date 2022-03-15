@@ -18,5 +18,8 @@ def test_exp_log_inverse():
     common._test_exp_log_inverse(G)
 
 
+def test_group_jacobians():
+    common._test_left_jacobian_inverse(G)
+
 if __name__ == "__main__":
     test_wedge_vee()

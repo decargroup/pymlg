@@ -86,28 +86,28 @@ class MatrixLieGroup:
     @staticmethod
     def left_jacobian(x):
         """
-        Group left jacobian evaluated at x \in R^n
+        Group left jacobian evaluated at x in R^n
         """
         raise NotImplementedError()
 
     @classmethod
     def left_jacobian_inv(cls, x):
         """
-        Inverse of group left jacobian evaluated at x \in R^n
+        Inverse of group left jacobian evaluated at x in R^n
         """
         return np.linalg.inv(cls.left_jacobian(x))
 
     @classmethod
     def right_jacobian(cls, x):
         """
-        Group right jacobian evaluated at x \in R^n
+        Group right jacobian evaluated at x in R^n
         """
         return cls.left_jacobian(-x)
 
     @classmethod
     def right_jacobian(cls, x):
         """
-        Inverse of group right jacobian evaluated at x \in R^n
+        Inverse of group right jacobian evaluated at x in R^n
         """
         return np.linalg.inv(cls.right_jacobian(x))
 
