@@ -48,9 +48,10 @@ def _test_left_jacobian_inverse(G):
 
     assert np.allclose(J_left_inv, np.linalg.inv(J_left))
 
+
 def _test_left_jacobian_numerically(G):
     """
-    This will not work for SO(2). SO(2) is weird. It only has 
+    This will not work for SO(2). SO(2) is weird. It only has
     1 degree of freedom yet we write its jacobian as a 2 x 2 matrix,
     which doesnt make sense.
     """
@@ -58,12 +59,20 @@ def _test_left_jacobian_numerically(G):
     J_left = G.left_jacobian(x_bar)
 
     exp_inv = G.inverse(G.Exp(x_bar))
-    J_fd = np.zeros((G.dof, G.dof)) 
+    J_fd = np.zeros((G.dof, G.dof))
     h = 1e-8
     for i in range(G.dof):
-        dx = np.zeros((G.dof,1))
+        dx = np.zeros((G.dof, 1))
         dx[i] = h
-        J_fd[:,i] = (G.Log(np.dot(G.Exp(x_bar + dx), exp_inv))/h).flatten()
+        J_fd[:, i] = (G.Log(np.dot(G.Exp(x_bar + dx), exp_inv)) / h).flatten()
 
-    
     assert np.allclose(J_fd, J_left)
+
+
+def _test_adjoint_identity(G):
+    X = G.random()
+    xi = G.Log(G.random())
+
+    side1 = G.wedge(np.dot(G.adjoint(X), xi))
+    side2 = np.dot(X, np.dot(G.wedge(xi), G.inverse(X)))
+    assert np.allclose(side1, side2)

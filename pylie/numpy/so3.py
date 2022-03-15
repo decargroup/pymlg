@@ -120,3 +120,7 @@ class SO3(MatrixLieGroup):
     @staticmethod
     def odot(xi):
         return -SO3.wedge(xi)
+
+    @staticmethod
+    def adjoint(C):
+        return C

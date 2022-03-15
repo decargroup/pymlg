@@ -7,10 +7,6 @@ class MatrixLieGroup:
     _small_angle_tol = 1e-7
 
     @staticmethod
-    def synthesize():
-        raise NotImplementedError()
-
-    @staticmethod
     def random():
         """
         Return a random element of the group.
@@ -70,7 +66,7 @@ class MatrixLieGroup:
         raise NotImplementedError()
 
     @staticmethod
-    def adjoint(Xi):
+    def adjoint(X):
         """
         Adjoint representation of GROUP element.
         """

@@ -18,5 +18,9 @@ def test_exp_log_inverse():
     common._test_exp_log_inverse(G)
 
 
+def test_adjoint_identity():
+    common._test_adjoint_identity(G)
+
+
 if __name__ == "__main__":
     test_wedge_vee()
