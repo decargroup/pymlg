@@ -14,7 +14,8 @@ from pylie import SE3
 T = SE3.random()
 
 # R^n to group directly (using "Capital" notation)
-T = SE3.Exp([0.1, 0.2, 0.3, 4, 5, 6])
+x = np.array([0.1, 0.2, 0.3, 4, 5, 6])
+T = SE3.Exp(x)
 
 # Group to R^n directly
 x = SE3.Log(T)
@@ -27,4 +28,18 @@ x = SE3.vee(x)
 T = SE3.exp(Xi)
 Xi = SE3.log(T)
 
+# Adjoint representation of group element
+A = SE3.adjoint(T)
+
+# Group left/right jacobians
+J_L = SE3.left_jacobian(x)
+J_R = SE3.right_jacobian(x)
+J_L_inv = SE3.left_jacobian_inv(x)
+J_R_inv = SE3.right_jacobian_inv(x)
+
 ```
+
+## Running Tests
+If you use VS Code, you should be able to enable the VS Code testing feature using pytest. Otherwise, you can run tests from the command line when inside this folder using
+
+    pytest tests
