@@ -101,7 +101,7 @@ class MatrixLieGroup:
         return cls.left_jacobian(-x)
 
     @classmethod
-    def right_jacobian(cls, x):
+    def right_jacobian_inv(cls, x):
         """
         Inverse of group right jacobian evaluated at x in R^n
         """
