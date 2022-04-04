@@ -8,34 +8,35 @@ To install, go to this directory and run
 ## Example 
 
 ```python
-from pylie import SE3 
+from pylie import SE2 
+import numpy as np
 
 # Random pose
-T = SE3.random()
+T = SE2.random()
 
 # R^n to group directly (using "Capital" notation)
-x = np.array([0.1, 0.2, 0.3, 4, 5, 6])
-T = SE3.Exp(x)
+x = np.array([0.1, 2, 3])
+T = SE2.Exp(x)
 
 # Group to R^n directly
-x = SE3.Log(T)
+x = SE2.Log(T)
 
 # Wedge, vee
-Xi = SE3.wedge(x)
-x = SE3.vee(x)
+Xi = SE2.wedge(x)
+x = SE2.vee(Xi)
 
 # Actual exp/log maps 
-T = SE3.exp(Xi)
-Xi = SE3.log(T)
+T = SE2.exp(Xi)
+Xi = SE2.log(T)
 
 # Adjoint representation of group element
-A = SE3.adjoint(T)
+A = SE2.adjoint(T)
 
 # Group left/right jacobians
-J_L = SE3.left_jacobian(x)
-J_R = SE3.right_jacobian(x)
-J_L_inv = SE3.left_jacobian_inv(x)
-J_R_inv = SE3.right_jacobian_inv(x)
+J_L = SE2.left_jacobian(x)
+J_R = SE2.right_jacobian(x)
+J_L_inv = SE2.left_jacobian_inv(x)
+J_R_inv = SE2.right_jacobian_inv(x)
 
 ```
 
