@@ -1,6 +1,5 @@
 from .base import MatrixLieGroup
 import numpy as np
-from math import sin, cos, tan
 from .so2 import SO2
 
 
@@ -18,6 +17,21 @@ class SE2(MatrixLieGroup):
         C = SO2.Exp(phi)
         T = np.block([[C, r], [np.zeros((1, 2)), 1]])
         return T
+
+    @staticmethod
+    def from_components(rot, trans):
+        if rot.size == 3:
+            rot = SO2.Exp(rot)
+        C = rot
+        r = trans
+        T = np.block([[C, r], [np.zeros((1, 2)), 1]])
+        return T
+
+    @staticmethod
+    def to_components(T):
+        C = T[0:2, 0:2]
+        r = T[0:2, 2]
+        return C, r
 
     @staticmethod
     def wedge(xi):
@@ -65,6 +79,7 @@ class SE2(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian(xi):
+        xi = xi.flatten()
         rho = xi[1:]  # translation part
         phi = xi[0]  # rotation part
 
@@ -100,7 +115,7 @@ class SE2(MatrixLieGroup):
 
         jac[2][2] = 1
 
-        # NEED TO SWITCH JACOBIAN ORDER
+        # Jacobian order switched below to comply with our lie algebra ordering
         temp = np.array([jac[2, :], jac[0, :], jac[1, :]])
         temp2 = np.hstack(
             (

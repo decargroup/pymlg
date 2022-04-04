@@ -115,8 +115,8 @@ class MatrixLieGroup:
         return cls.exp(cls.wedge(x))
 
     @classmethod
-    def Log(cls, x):
+    def Log(cls, X):
         """
         Shortcut method: group to R^n directly.
         """
-        return cls.vee(cls.log(x))
+        return cls.vee(cls.log(X))

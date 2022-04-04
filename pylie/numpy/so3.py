@@ -1,6 +1,5 @@
 from .base import MatrixLieGroup
 import numpy as np
-from math import sin, cos, tan
 
 
 class SO3(MatrixLieGroup):
@@ -48,12 +47,12 @@ class SO3(MatrixLieGroup):
 
         # Use Taylor series expansion
         if angle < SO3._small_angle_tol:
-            t2 = angle ** 2
+            t2 = angle**2
             A = 1.0 - t2 / 6.0 * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0))
             B = 1.0 / 2.0 * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
         else:
-            A = sin(angle) / angle
-            B = (1.0 - cos(angle)) / (angle ** 2)
+            A = np.sin(angle) / angle
+            B = (1.0 - np.cos(angle)) / (angle**2)
 
         # Rodirgues rotation formula (103)
         return np.eye(3) + A * element_so3 + B * (element_so3 @ element_so3)
@@ -82,13 +81,13 @@ class SO3(MatrixLieGroup):
         angle = np.linalg.norm(xi)
 
         if angle < SO3._small_angle_tol:
-            t2 = angle ** 2
+            t2 = angle**2
             # Taylor series expansion.  See (157), (159).
             A = (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
             B = (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
         else:
-            A = (1 - cos(angle)) / (angle ** 2)
-            B = (angle - sin(angle)) / (angle ** 3)
+            A = (1 - np.cos(angle)) / (angle**2)
+            B = (angle - np.sin(angle)) / (angle**3)
 
         cross_xi = SO3.cross(xi)
 
@@ -103,13 +102,13 @@ class SO3(MatrixLieGroup):
         """
         angle = np.linalg.norm(xi)
         if angle < SO3._small_angle_tol:
-            t2 = angle ** 2
+            t2 = angle**2
 
             # Taylor Series expansion
             A = (1.0 / 12.0) * (1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0)))
         else:
-            A = (1.0 / angle ** 2) * (
-                1.0 - (angle * sin(angle) / (2.0 * (1.0 - cos(angle))))
+            A = (1.0 / angle**2) * (
+                1.0 - (angle * np.sin(angle) / (2.0 * (1.0 - np.cos(angle))))
             )
 
         cross_xi = SO3.cross(xi)
@@ -123,4 +122,29 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def adjoint(C):
+        return C
+
+    @staticmethod 
+    def from_euler(theta, order=[3,2,1]):
+        """
+        Creates a DCM from a 3-element vector of euler angles with specified 
+        order.
+
+        PARAMETERS
+        ----------
+        theta: ndarray of euler angles with shape (3,) or (3,1)
+        order: list of integers specifying the order sequence. for example,
+            the default order=[3,2,1] rotates the third axis, followed by 
+            the second, followed by the first.
+        """
+
+        C = np.identity(3)
+        theta = theta.flatten()
+
+        for i in range(3):
+            idx = order[i] -1
+            phi = np.zeros(3)
+            phi[idx] = theta[i]
+            C = np.dot(SO3.Exp(phi), C) 
+
         return C

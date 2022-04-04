@@ -52,3 +52,6 @@ pylie.egg-info/
 
 # Virtual environement 
 *.venv
+
+# VS Code settings 
+.vscode

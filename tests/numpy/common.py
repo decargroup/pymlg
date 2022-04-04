@@ -5,6 +5,8 @@ from scipy.linalg import expm, logm
 def _test_wedge_vee(G):
     x = 0.1 * np.random.random((G.dof, 1))
     x_test = G.vee(G.wedge(x))
+    if G.dof > 1:
+        assert x_test.shape == (G.dof, 1)
     assert np.allclose(x, x_test, 1e-15)
 
 
@@ -28,6 +30,15 @@ def _test_exp_log_inverse(G):
     Xi = G.log(X)
     assert np.allclose(X, G.exp(G.log(X)))
     assert np.allclose(Xi, G.log(G.exp(Xi)))
+
+
+def _test_capital_exp_log_inverse(G):
+    T = G.random()
+    x = G.Log(T)
+    assert np.allclose(T, G.Exp(x))
+
+    if G.dof > 1:
+        assert x.shape == (G.dof, 1)
 
 
 def _test_odot_wedge(G):

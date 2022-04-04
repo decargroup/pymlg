@@ -19,6 +19,10 @@ def test_exp_log_inverse():
     common._test_exp_log_inverse(G)
 
 
+def test_capital_exp_log_inverse():
+    common._test_capital_exp_log_inverse(G)
+
+
 def test_odot_wedge():
     common._test_odot_wedge(G)
 

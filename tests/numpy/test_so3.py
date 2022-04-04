@@ -19,6 +19,10 @@ def test_exp_log_inverse():
     common._test_exp_log_inverse(G)
 
 
+def test_capital_exp_log_inverse():
+    common._test_capital_exp_log_inverse(G)
+
+
 def test_odot_wedge():
     common._test_odot_wedge(G)
 
@@ -34,6 +38,19 @@ def test_left_jacobian_numerically():
 def test_adjoint_identity():
     common._test_adjoint_identity(G)
 
+def test_from_euler():
+    theta = np.array([0.1,0.2,0.3])
+    C = G.from_euler(theta)
+    assert np.isclose(np.linalg.det(C), 1)
+    assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
+
+    C = G.from_euler(theta, order=[1,2,3])
+    assert np.isclose(np.linalg.det(C), 1)
+    assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
+
+    C = G.from_euler(theta, order=[3,1,3])
+    assert np.isclose(np.linalg.det(C), 1)
+    assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
 
 if __name__ == "__main__":
-    test_left_jacobian_numerically()
+    test_from_euler()
