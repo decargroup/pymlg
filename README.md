@@ -44,3 +44,8 @@ J_R_inv = SE2.right_jacobian_inv(x)
 If you use VS Code, you should be able to enable the VS Code testing feature using pytest. Otherwise, you can run tests from the command line when inside this folder using
 
     pytest tests
+
+## Credit to UTIAS's STARS group
+We would also like to advertise the [UTIAS STARS Lie group library](https://github.com/utiasSTARS/liegroups), which has very similar functionality and inspired some of the specific function implementations in this repo (such as the SE2 Jacobian functions). It is also definitely a more "mature" work in the sense of better documentation, and probably less bugs. 
+
+We wanted to make our own mainly for abiding by our group's conventions, as well as to enjoy the simplicity of an instantiation-free implementation. That is, all functions in this repo are static methods operating on numpy arrays. 
