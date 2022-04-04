@@ -40,6 +40,9 @@ J_R_inv = SE2.right_jacobian_inv(x)
 
 ```
 
+**Note:** functions which output "vectors", such as `SE2.Log(T)` all return a 2D numpy array with dimensions `(n, 1)`.
+
+
 ## Running Tests
 If you use VS Code, you should be able to enable the VS Code testing feature using pytest. Otherwise, you can run tests from the command line when inside this folder using
 
