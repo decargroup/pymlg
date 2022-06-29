@@ -29,6 +29,8 @@ def test_group_jacobians():
 def test_adjoint_identity():
     common._test_adjoint_identity(G)
 
+def test_odot_wedge():
+    common._test_odot_wedge(G)
 
 if __name__ == "__main__":
     pass
