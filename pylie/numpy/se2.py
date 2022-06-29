@@ -20,10 +20,11 @@ class SE2(MatrixLieGroup):
 
     @staticmethod
     def from_components(rot, trans):
+        rot = np.array(rot)
         if rot.size == 3:
             rot = SO2.Exp(rot)
-        C = rot
-        r = trans
+        C = rot.reshape((2,2))
+        r = np.array(trans).reshape((-1,1))
         T = np.block([[C, r], [np.zeros((1, 2)), 1]])
         return T
 
@@ -75,7 +76,8 @@ class SE2(MatrixLieGroup):
         a^wedge b = b^odot a
         """
         b = b.flatten()
-        return np.array([[-b[1], b[2], 0], [b[0], 0, b[2]], [0, 0, 0]])
+        return np.block([[SO2.odot(b[0:2]), b[2]*np.identity(2)],
+                         [np.zeros((1,1)), np.zeros((1,2))]])
 
     @staticmethod
     def left_jacobian(xi):

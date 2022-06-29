@@ -16,7 +16,7 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = xi.reshape((-1, 1))
+        xi = np.array(xi).reshape((-1, 1))
         X = np.array(
             [
                 [0, -xi[2, 0], xi[1, 0]],

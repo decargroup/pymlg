@@ -12,11 +12,17 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def synthesize(rot, disp):
+        return SE3.from_components(rot, disp)
+
+    @staticmethod
+    def from_components(rot, disp):
         # Check if rotation component is a rotation vector or full DCM
         if rot.size == 9:
             C = rot
         else:
             C = SO3.Exp(rot)
+
+        disp = np.array(disp).reshape((-1,1))
 
         return np.block([[C, disp], [np.zeros((1, 3)), 1]])
 
@@ -30,7 +36,7 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = xi.reshape((-1, 1))
+        xi = np.array(xi).reshape((-1, 1))
         phi = xi[0:3, :]
         xi_r = xi[3:, :]
         Xi_phi = SO3.wedge(phi)
@@ -66,7 +72,7 @@ class SE3(MatrixLieGroup):
         b = b.flatten()
         return np.block(
             [
-                [-SO3.wedge(b[0:3]), b[3] * np.identity(3)],
+                [SO3.odot(b[0:3]), b[3] * np.identity(3)],
                 [np.zeros((1, 3)), np.zeros((1, 3))],
             ]
         )
