@@ -5,6 +5,7 @@ import numpy as np
 class MatrixLieGroup:
 
     _small_angle_tol = 1e-7
+    dof = None
 
     @staticmethod
     def random():
