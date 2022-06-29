@@ -74,3 +74,8 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def adjoint(C):
         return np.identity(2)
+
+    @staticmethod 
+    def odot(b):
+        b = np.array(b).flatten()
+        return np.array([-b[1], b[0]]).reshape((-1,1))
