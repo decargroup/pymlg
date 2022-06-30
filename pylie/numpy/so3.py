@@ -156,10 +156,11 @@ class SO3(MatrixLieGroup):
 
         PARAMETERS
         ----------
-        q: list or ndarray of size 4
+        q: list or ndarray of size 4, of unit length
         order: "wxyz" or "xyzw". specifies what each component in q means.
         """
         q = np.array(q).ravel()
+        q = q/np.linalg.norm(q)
 
         if q.size != 4:
             raise ValueError("q must have size 4.")
@@ -180,3 +181,34 @@ class SO3(MatrixLieGroup):
             + 2 * np.matmul(eps, np.transpose(eps))
             - 2 * eta * SO3.wedge(eps)
         )
+
+    @staticmethod
+    def to_quat(C, order="wxyz"):
+        """
+        Returns the quaternion corresponding to DCM C. 
+
+        PARAMETERS
+        ----------
+        C: numpy ndarray with shape (3,3)
+        order: "wxyz" or "xyzw". specifies what each component in q means.
+        """
+        C = C.reshape((3,3))
+        if C.shape != (3,3):
+            raise ValueError("C must have shape (3,3).")
+
+
+        eta = 0.5*(np.trace(C) + 1) ** 0.5
+        eps = np.array([
+            C[1,2] - C[2,1],
+            C[2,0] - C[0,2],
+            C[0,1] - C[1,0]
+        ])/(4*eta)
+
+        if order == "wxyz":
+            q = np.hstack((eta, eps)).reshape((-1,1))
+        elif order == "xyzw":
+            q = np.hstack((eps, eta)).reshape((-1,1))
+        else:
+            raise ValueError("order must be 'wxyz' or 'xyzw'. ")
+
+        return q

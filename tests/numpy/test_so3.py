@@ -52,5 +52,17 @@ def test_from_euler():
     assert np.isclose(np.linalg.det(C), 1)
     assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
 
+def test_quaternion():
+    q = np.array([1,2,3,4]).reshape((-1,1))
+    q = q/np.linalg.norm(q)
+    C = G.from_quat(q)
+    assert np.isclose(np.linalg.det(C), 1)
+    assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
+
+    q_test = G.to_quat(C) 
+    assert np.allclose(q, q_test)
+
+    C_test = G.from_quat(-q)
+    assert np.allclose(C, C_test)
 if __name__ == "__main__":
-    test_from_euler()
+    test_quaternion()
