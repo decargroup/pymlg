@@ -148,3 +148,35 @@ class SO3(MatrixLieGroup):
             C = np.dot(SO3.Exp(phi), C) 
 
         return C
+
+    @staticmethod 
+    def from_quat(q, order="wxyz"):
+        """
+        Returns the DCM corresponding to the quaternion representation q. 
+
+        PARAMETERS
+        ----------
+        q: list or ndarray of size 4
+        order: "wxyz" or "xyzw". specifies what each component in q means.
+        """
+        q = np.array(q).ravel()
+
+        if q.size != 4:
+            raise ValueError("q must have size 4.")
+        if order == "wxyz":
+            eta = q[0]
+            eps = q[1:]
+        elif order == "xyzw":
+            eta = q[3]
+            eps = q[0:3]
+        else:
+            raise ValueError("order must be 'wxyz' or 'xyzw'. ")
+            
+
+        eps = eps.reshape((-1, 1))
+
+        return (
+            (1 - 2 * np.matmul(np.transpose(eps), eps)) * np.eye(3)
+            + 2 * np.matmul(eps, np.transpose(eps))
+            - 2 * eta * SO3.wedge(eps)
+        )
