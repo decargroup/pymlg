@@ -55,14 +55,26 @@ def test_from_euler():
 def test_quaternion():
     q = np.array([1,2,3,4]).reshape((-1,1))
     q = q/np.linalg.norm(q)
-    C = G.from_quat(q)
+    C = G.from_quat(q, order = "wxyz")
     assert np.isclose(np.linalg.det(C), 1)
     assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
 
-    q_test = G.to_quat(C) 
+    q_test = G.to_quat(C, order = "wxyz") 
     assert np.allclose(q, q_test)
 
-    C_test = G.from_quat(-q)
+    C_test = G.from_quat(-q, order = "wxyz")
     assert np.allclose(C, C_test)
+
+    # Different order
+    C = G.from_quat(q, order = "xyzw")
+    assert np.isclose(np.linalg.det(C), 1)
+    assert np.allclose(np.dot(C, np.transpose(C)), np.identity(3))
+
+    q_test = G.to_quat(C, order = "xyzw") 
+    assert np.allclose(q, q_test)
+
+    C_test = G.from_quat(-q, order = "xyzw")
+    assert np.allclose(C, C_test)
+    
 if __name__ == "__main__":
     test_quaternion()
