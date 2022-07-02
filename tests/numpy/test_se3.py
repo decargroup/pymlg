@@ -31,9 +31,13 @@ def test_adjoint_identity():
     common._test_adjoint_identity(G)
 
 
-# def test_group_jacobians():
-#     common._test_left_jacobian_inverse(G)
+def test_group_jacobians():
+    common._test_left_jacobian_inverse(G)
 
 
-# def test_left_jacobian_numerically():
-#     common._test_left_jacobian_numerically(G)
+def test_left_jacobian_numerically():
+    common._test_left_jacobian_numerically(G)
+
+
+if __name__ == "__main__":
+    test_left_jacobian_numerically()

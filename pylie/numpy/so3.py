@@ -139,7 +139,7 @@ class SO3(MatrixLieGroup):
         """
 
         C = np.identity(3)
-        theta = theta.flatten()
+        theta = theta.ravel()
 
         for i in range(3):
             idx = order[i] -1

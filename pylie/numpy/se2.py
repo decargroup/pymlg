@@ -75,13 +75,13 @@ class SE2(MatrixLieGroup):
 
         a^wedge b = b^odot a
         """
-        b = b.flatten()
+        b = b.ravel()
         return np.block([[SO2.odot(b[0:2]), b[2]*np.identity(2)],
                          [np.zeros((1,1)), np.zeros((1,2))]])
 
     @staticmethod
     def left_jacobian(xi):
-        xi = xi.flatten()
+        xi = xi.ravel()
         rho = xi[1:]  # translation part
         phi = xi[0]  # rotation part
 
