@@ -36,7 +36,7 @@ class SE2(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = xi.reshape((-1, 1))
+        xi = np.array(xi).reshape((-1, 1))
         phi = xi[0:1, 0]
         xi_r = xi[1:, 0]
         Xi_phi = SO2.wedge(phi)

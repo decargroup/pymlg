@@ -55,3 +55,4 @@ pylie.egg-info/
 
 # VS Code settings 
 .vscode
+.pytest_cache/

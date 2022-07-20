@@ -6,5 +6,5 @@ from .numpy.se23 import SE23
 
 try:
     from . import torch
-except ModuleNotFoundError:
+except ImportError:
     pass
