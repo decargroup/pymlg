@@ -3,7 +3,7 @@ from .numpy.se3 import SE3
 from .numpy.so2 import SO2
 from .numpy.se2 import SE2
 from .numpy.se23 import SE23
-
+from .numpy.sl3 import SL3
 try:
     from . import torch
 except ModuleNotFoundError:
