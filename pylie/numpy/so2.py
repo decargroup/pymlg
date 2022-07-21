@@ -77,5 +77,5 @@ class SO2(MatrixLieGroup):
 
     @staticmethod 
     def odot(b):
-        b = np.array(b).flatten()
+        b = np.array(b).ravel()
         return np.array([-b[1], b[0]]).reshape((-1,1))

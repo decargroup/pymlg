@@ -81,8 +81,8 @@ class SE23(MatrixLieGroup):
         C = SO3.exp(Xi_phi)
 
         J_left = SO3.left_jacobian(xi_phi)
-        v = J_left @ xi_v
-        r = J_left @ xi_r
+        v = np.dot(J_left, xi_v)
+        r = np.dot(J_left, xi_r)
 
         element_SE23 = np.block(
             [[C, v, r], [np.zeros((1, 3)), 1, 0], [np.zeros((1, 3)), 0, 1]]
@@ -97,7 +97,7 @@ class SE23(MatrixLieGroup):
         J_left_inv = SO3.left_jacobian_inv(phi)
 
         element_se23 = np.block(
-            [[SO3.cross(phi), J_left_inv @ v, J_left_inv @ r], [np.zeros((2, 5))]]
+            [[SO3.cross(phi), np.dot(J_left_inv, v), np.dot(J_left_inv, r)], [np.zeros((2, 5))]]
         )
 
         return element_se23

@@ -64,14 +64,14 @@ class SO3(MatrixLieGroup):
         return torch.stack((X[:, 2, 1], X[:, 0, 2], X[:, 1, 0]), dim=1)
 
     @staticmethod
-    def Exp(phi: torch.Tensor):
+    def Exp(phi):
         """
         Exponential map of SO3. This function accepts a batch of rotation vectors
         in R^n of dimension [N x 3] and returns a batch of rotation matrices
         of dimension [N x 3 x 3].
         """
         if phi.shape == (3, 1):
-            phi = phi.flatten().unsqueeze(0)
+            phi = phi.ravel().unsqueeze(0)
         elif len(phi.shape) == 1:
             phi = phi.unsqueeze(0)
         elif len(phi.shape) == 2 and phi.shape[1] == 3:

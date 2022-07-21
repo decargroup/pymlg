@@ -55,7 +55,7 @@ class SO3(MatrixLieGroup):
             B = (1.0 - np.cos(angle)) / (angle**2)
 
         # Rodirgues rotation formula (103)
-        return np.eye(3) + A * element_so3 + B * (element_so3 @ element_so3)
+        return np.eye(3) + A * element_so3 + B * np.dot(element_so3, element_so3)
 
     @staticmethod
     def log(X):
@@ -91,7 +91,7 @@ class SO3(MatrixLieGroup):
 
         cross_xi = SO3.cross(xi)
 
-        J_left = np.eye(3) + A * cross_xi + B * (cross_xi @ cross_xi)
+        J_left = np.eye(3) + A * cross_xi + B * np.dot(cross_xi, cross_xi)
         return J_left
 
     @staticmethod
@@ -112,7 +112,7 @@ class SO3(MatrixLieGroup):
             )
 
         cross_xi = SO3.cross(xi)
-        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * cross_xi @ cross_xi
+        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * np.dot(cross_xi, cross_xi)
 
         return J_left_inv
 
@@ -139,7 +139,7 @@ class SO3(MatrixLieGroup):
         """
 
         C = np.identity(3)
-        theta = theta.flatten()
+        theta = theta.ravel()
 
         for i in range(3):
             idx = order[i] -1

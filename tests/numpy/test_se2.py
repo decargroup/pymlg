@@ -1,7 +1,5 @@
-from pylie import SE2
+from pylie import SE2 as G
 import common
-
-G = SE2
 
 
 def test_wedge_vee():
