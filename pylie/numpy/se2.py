@@ -40,7 +40,10 @@ class SE2(MatrixLieGroup):
         phi = xi[0:1, 0]
         xi_r = xi[1:, 0]
         Xi_phi = SO2.wedge(phi)
-        return np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 3))]])
+        Xi = np.zeros((3,3))
+        Xi[0:2, 0:2] = Xi_phi
+        Xi[0:2, 2] =  xi_r
+        return Xi #np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 3))]])
 
     @staticmethod
     def vee(Xi):
@@ -56,7 +59,11 @@ class SE2(MatrixLieGroup):
         xi_r = Xi[0:2, 2]
         C = SO2.exp(Xi_phi)
         r = np.dot(SO2.left_jacobian(phi), xi_r.reshape((-1, 1)))
-        T = np.block([[C, r], [np.zeros((1, 2)), 1]])
+        T = np.zeros((3,3))
+        T[0:2, 0:2] = C
+        T[0:2, 2] = r.flatten()
+        T[2,2] = 1
+        #T = np.block([[C, r], [np.zeros((1, 2)), 1]])
         return T
 
     @staticmethod
@@ -64,7 +71,10 @@ class SE2(MatrixLieGroup):
         Xi_phi = SO2.log(T[0:2, 0:2])
         r = T[0:2, 2]
         xi_r = np.dot(SO2.left_jacobian_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1)))
-        Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
+        #Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
+        Xi = np.zeros((3,3))
+        Xi[0:2, 0:2] = Xi_phi
+        Xi[0:2, 2] =  xi_r.flatten()
         return Xi
 
     @staticmethod
@@ -134,4 +144,8 @@ class SE2(MatrixLieGroup):
         C = T[0:2, 0:2]
         r = T[0:2, 2].reshape((-1, 1))
         Om = np.array([[0, -1], [1, 0]])
-        return np.block([[np.array([[1]]), np.zeros((1, 2))], [-np.dot(Om, r), C]])
+        A = np.zeros((3,3))
+        A[0,0] = 1
+        A[1:, 0] = - np.dot(Om, r).flatten()
+        A[1:, 1:] = C
+        return A

@@ -51,7 +51,7 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def left_jacobian(phi):
         # Near phi==0, use first order Taylor expansion
-        if np.isclose(phi, 0.0):
+        if np.abs(phi) < SO2._small_angle_tol:
             return np.identity(2) + 0.5 * SO2.wedge(phi)
 
         s = np.sin(phi)
@@ -62,7 +62,7 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def left_jacobian_inv(phi):
         # Near phi==0, use first order Taylor expansion
-        if np.isclose(phi, 0.0):
+        if np.abs(phi) < SO2._small_angle_tol:
             return np.identity(2) - 0.5 * SO2.wedge(phi)
 
         half_angle = 0.5 * phi
