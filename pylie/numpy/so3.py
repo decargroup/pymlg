@@ -212,3 +212,24 @@ class SO3(MatrixLieGroup):
             raise ValueError("order must be 'wxyz' or 'xyzw'. ")
 
         return q
+
+    @staticmethod
+    def to_euler(C):
+        """Convert a rotation matrix to RPY Euler angles :math:`(\\alpha, \\beta, \\gamma)`."""
+        pitch = np.arctan2(-C[2, 0],
+                           np.sqrt(C[0, 0]**2 + C[1, 0]**2))
+
+        if np.isclose(pitch, np.pi / 2.):
+            yaw = 0.
+            roll = np.arctan2(C[0, 1], C[1, 1])
+        elif np.isclose(pitch, -np.pi / 2.):
+            yaw = 0.
+            roll = -np.arctan2(C[0, 1], C[1, 1])
+        else:
+            sec_pitch = 1. / np.cos(pitch)
+            yaw = np.arctan2(C[1, 0] * sec_pitch,
+                             C[0, 0] * sec_pitch)
+            roll = np.arctan2(C[2, 1] * sec_pitch,
+                              C[2, 2] * sec_pitch)
+
+        return np.array([roll, pitch, yaw]).ravel()

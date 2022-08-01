@@ -55,7 +55,7 @@ class SE23(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = xi.reshape((-1, 1))
+        xi = np.array(xi).reshape((-1, 1))
         xi_phi = xi[0:3, [0]]
         xi_v = xi[3:6, [0]]
         xi_r = xi[6:9, [0]]

@@ -27,6 +27,20 @@ class SE3(MatrixLieGroup):
         return np.block([[C, disp], [np.zeros((1, 3)), 1]])
 
     @staticmethod
+    def to_components(T):
+        C = T[0:3, 0:3]
+        r = T[0:3, 3]
+        return C, r
+
+    @staticmethod 
+    def from_ros(pose_msg):
+        q = pose_msg.orientation
+        pos = pose_msg.position
+        C = SO3.from_quat([q.w, q.x, q.y, q.z], order ="wxyz")
+        r = np.array([pos.x, pos.y, pos.z])
+        return SE3.from_components(C, r)
+
+    @staticmethod
     def random():
         phi = np.random.uniform(0, 2 * np.pi, (3, 1))
         r = np.random.normal(0, 1, (3, 1))
