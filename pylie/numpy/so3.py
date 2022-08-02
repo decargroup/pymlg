@@ -139,12 +139,12 @@ class SO3(MatrixLieGroup):
         """
 
         C = np.identity(3)
-        theta = theta.ravel()
+        theta = np.array(theta).ravel()
 
         for i in range(3):
             idx = order[i] -1
             phi = np.zeros(3)
-            phi[idx] = theta[i]
+            phi[idx] = theta[idx]
             C = np.dot(SO3.Exp(phi), C) 
 
         return C
