@@ -45,6 +45,13 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def from_ros(pose_msg):
+        """Constructs an SE(3) matrix from a ROS Pose message.
+
+        :param pose_msg: pose message.
+        :type pose_msg: geometry_msgs/Pose
+        :return: SE(3) pose transformation matrix.
+        :rtype: ndarray with shape (4,4)
+        """
         q = pose_msg.orientation
         pos = pose_msg.position
         C = SO3.from_quat([q.w, q.x, q.y, q.z], order="wxyz")
@@ -61,9 +68,9 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = np.array(xi).reshape((-1, 1))
-        phi = xi[0:3, :]
-        xi_r = xi[3:, :]
+        xi = np.array(xi).ravel()
+        phi = xi[0:3]
+        xi_r = xi[3:]
         Xi_phi = SO3.wedge(phi)
         return np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 4))]])
 
@@ -94,7 +101,7 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def odot(b):
-        b = b.ravel()
+        b = np.array(b).ravel()
         return np.block(
             [
                 [SO3.odot(b[0:3]), b[3] * np.identity(3)],
@@ -110,8 +117,9 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def _left_jacobian_Q_matrix(xi):
+        xi = np.array(xi).ravel()
 
-        if len(xi) != SE3.dof:
+        if xi.size != SE3.dof:
             raise ValueError("xi must have length {}".format(SE3.dof))
 
         phi = xi[0:3]  # rotation part
@@ -146,6 +154,7 @@ class SE3(MatrixLieGroup):
     @staticmethod
     def left_jacobian(xi):
 
+        xi = np.array(xi).ravel()
         if np.linalg.norm(xi) < SE3._small_angle_tol:
             return np.identity(6)
 

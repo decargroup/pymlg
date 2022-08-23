@@ -16,12 +16,12 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = np.array(xi).reshape((-1, 1))
+        xi = np.array(xi).ravel()
         X = np.array(
             [
-                [0, -xi[2, 0], xi[1, 0]],
-                [xi[2, 0], 0, -xi[0, 0]],
-                [-xi[1, 0], xi[0, 0], 0],
+                [0, -xi[2], xi[1]],
+                [xi[2], 0, -xi[0]],
+                [-xi[1], xi[0], 0],
             ]
         )
         return X
@@ -36,13 +36,13 @@ class SO3(MatrixLieGroup):
         return xi
 
     @staticmethod
-    def exp(element_so3):
+    def exp(Xi):
         """Maps elements of the matrix Lie algebra so(3) to the group.
 
         From Section 8.3 of Lie Groups for Computer Vision by Ethan Eade. When
         theta is small, use Taylor series expansion given in Section 11.
         """
-        phi = SO3.vee(element_so3)
+        phi = SO3.vee(Xi)
         angle = np.linalg.norm(phi)
 
         # Use Taylor series expansion
@@ -55,7 +55,7 @@ class SO3(MatrixLieGroup):
             B = (1.0 - np.cos(angle)) / (angle**2)
 
         # Rodirgues rotation formula (103)
-        return np.eye(3) + A * element_so3 + B * np.dot(element_so3, element_so3)
+        return np.eye(3) + A * Xi + B * np.dot(Xi, Xi)
 
     @staticmethod
     def log(X):
@@ -78,6 +78,7 @@ class SO3(MatrixLieGroup):
         From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade.  When
         angle is small, use Taylor series expansion given in Section 11.
         """
+        xi = np.array(xi).ravel()
         angle = np.linalg.norm(xi)
 
         if angle < SO3._small_angle_tol:
@@ -100,6 +101,7 @@ class SO3(MatrixLieGroup):
         From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade. When
         angle is small, use Taylor series expansion given in Section 11.
         """
+        xi = np.array(xi).ravel()
         angle = np.linalg.norm(xi)
         if angle < SO3._small_angle_tol:
             t2 = angle**2
@@ -125,40 +127,47 @@ class SO3(MatrixLieGroup):
         return C
 
     @staticmethod
-    def from_euler(theta, order=[3, 2, 1]):
-        """
-        Creates a DCM from a 3-element vector of euler angles with specified
+    def from_euler(angles, order=[3, 2, 1]):
+        """Creates a DCM from a 3-element vector of euler angles with specified 
         order.
 
-        PARAMETERS
-        ----------
-        theta: ndarray of euler angles with shape (3,) or (3,1)
-        order: list of integers specifying the order sequence. for example,
-        the default order=[3,2,1] rotates the third axis, followed by
-        the second, followed by the first.
+        :param angles: euler angle values
+        :type angles: list[float] or ndarray of size 3
+        :param order: euler angle sequence. For example, the default 
+            order=[3,2,1] rotates the third axis, followed by the second, followed by the first.
+        :type order: list[int], optional
+        :return: DCM corresponding to euler angles
+        :rtype: ndarray with shape (3,3)
         """
+        
+        
 
         C = np.identity(3)
-        theta = np.array(theta).ravel()
+        angles = np.array(angles).ravel()
 
         for i in range(3):
             idx = order[i] - 1
             phi = np.zeros(3)
-            phi[idx] = theta[idx]
+            phi[idx] = angles[idx]
             C = np.dot(SO3.Exp(phi), C)
 
         return C
 
     @staticmethod
     def from_quat(q, order="wxyz"):
-        """
-        Returns the DCM corresponding to the quaternion representation q.
+        """Returns the DCM corresponding to the quaternion representation q.
 
-        PARAMETERS
-        ----------
-        q: list or ndarray of size 4, of unit length
-        order: "wxyz" or "xyzw". specifies what each component in q means.
+        :param q: quaternion
+        :type q: list[float] or ndarray of size 4
+        :param order: quaternion element order "xyzw" or "wxyz", defaults to "wxyz"
+        :type order: str, optional
+        :raises ValueError: if `q` is not of size 4
+        :raises ValueError: if `order` is not "xyzw" or "wxyz"
+        :return: DCM corresponding to `q`
+        :rtype: ndarray with shape (3,3)
         """
+        
+        
         q = np.array(q).ravel()
         q = q / np.linalg.norm(q)
 
@@ -183,14 +192,18 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def to_quat(C, order="wxyz"):
-        """
-        Returns the quaternion corresponding to DCM C.
+        """ Returns the quaternion corresponding to DCM C.
 
-        PARAMETERS
-        ----------
-        C: numpy ndarray with shape (3,3)
-        order: "wxyz" or "xyzw". specifies what each component in q means.
+        :param C: DCM/rotation matrix to convert.
+        :type C: ndarray with shape (3,3)
+        :param order: quaternion element order "xyzw" or "wxyz", defaults to "wxyz"
+        :type order: str, optional
+        :raises ValueError: if `C` does not have shape (3,3)
+        :raises ValueError: if `order` is not "xyzw" or "wxyz"
+        :return: quaternion representation of C
+        :rtype: ndarray with shape (4,1)
         """
+
         C = C.reshape((3, 3))
         if C.shape != (3, 3):
             raise ValueError("C must have shape (3,3).")
@@ -211,7 +224,11 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def to_euler(C):
-        """Convert a rotation matrix to RPY Euler angles :math:`(\\alpha, \\beta, \\gamma)`."""
+        """
+        Convert a rotation matrix to RPY Euler angles 
+        :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1) 
+        Euler-angle sequence.
+        """
         pitch = np.arctan2(-C[2, 0], np.sqrt(C[0, 0] ** 2 + C[1, 0] ** 2))
 
         if np.isclose(pitch, np.pi / 2.0):
