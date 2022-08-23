@@ -128,19 +128,23 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def from_euler(angles, order=[3, 2, 1]):
-        """Creates a DCM from a 3-element vector of euler angles with specified 
+        """
+        Creates a DCM from a 3-element vector of euler angles with specified 
         order.
 
-        :param angles: euler angle values
-        :type angles: list[float] or ndarray of size 3
-        :param order: euler angle sequence. For example, the default 
-            order=[3,2,1] rotates the third axis, followed by the second, followed by the first.
-        :type order: list[int], optional
-        :return: DCM corresponding to euler angles
-        :rtype: ndarray with shape (3,3)
+        Parameters
+        ----------
+        angles : list[float] or ndarray of size 3
+            euler angle values
+        order : list[int], optional
+            euler angle sequence. For example, the default order=[3,2,1] rotates
+            the third axis, followed by the second, followed by the first.
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to euler angles
         """
-        
-        
 
         C = np.identity(3)
         angles = np.array(angles).ravel()
@@ -155,18 +159,28 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def from_quat(q, order="wxyz"):
-        """Returns the DCM corresponding to the quaternion representation q.
-
-        :param q: quaternion
-        :type q: list[float] or ndarray of size 4
-        :param order: quaternion element order "xyzw" or "wxyz", defaults to "wxyz"
-        :type order: str, optional
-        :raises ValueError: if `q` is not of size 4
-        :raises ValueError: if `order` is not "xyzw" or "wxyz"
-        :return: DCM corresponding to `q`
-        :rtype: ndarray with shape (3,3)
         """
-        
+        Returns the DCM corresponding to the quaternion representation q.
+
+        Parameters
+        ----------
+        q : list[float] or ndarray of size 4
+            quaternion
+        order : str, optional
+            quaternion element order "xyzw" or "wxyz", by default "wxyz"
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to `q`
+
+        Raises
+        ------
+        ValueError
+            if `q` is not of size 4
+        ValueError
+            if `order` is not "xyzw" or "wxyz"
+        """
         
         q = np.array(q).ravel()
         q = q / np.linalg.norm(q)
@@ -192,16 +206,27 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def to_quat(C, order="wxyz"):
-        """ Returns the quaternion corresponding to DCM C.
+        """
+        Returns the quaternion corresponding to DCM C.
 
-        :param C: DCM/rotation matrix to convert.
-        :type C: ndarray with shape (3,3)
-        :param order: quaternion element order "xyzw" or "wxyz", defaults to "wxyz"
-        :type order: str, optional
-        :raises ValueError: if `C` does not have shape (3,3)
-        :raises ValueError: if `order` is not "xyzw" or "wxyz"
-        :return: quaternion representation of C
-        :rtype: ndarray with shape (4,1)
+        Parameters
+        ----------
+        C : ndarray with shape (3,3)
+            DCM/rotation matrix to convert.
+        order : str, optional
+            quaternion element order "xyzw" or "wxyz", by default "wxyz"
+
+        Returns
+        -------
+        ndarray with shape (4,1)
+             quaternion representation of C
+
+        Raises
+        ------
+        ValueError
+            if `C` does not have shape (3,3)
+        ValueError
+            if `order` is not "xyzw" or "wxyz"
         """
 
         C = C.reshape((3, 3))

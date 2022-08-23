@@ -521,14 +521,14 @@ theta is small, use Taylor series expansion given in Section 11.</p>
 <dl class="py method">
 <dt id="pylie.SO3.from_euler">
 <em class="property">static </em><code class="sig-name descname">from_euler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angles</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">[3, 2, 1]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.from_euler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a DCM from a 3-element vector of euler angles with specified 
+<dd><p>Creates a DCM from a 3-element vector of euler angles with specified
 order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>angles</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray of size 3</em>) – euler angle values</p></li>
-<li><p><strong>order</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – euler angle sequence. For example, the default 
-order=[3,2,1] rotates the third axis, followed by the second, followed by the first.</p></li>
+<li><p><strong>order</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – euler angle sequence. For example, the default order=[3,2,1] rotates
+the third axis, followed by the second, followed by the first.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -548,20 +548,20 @@ order=[3,2,1] rotates the third axis, followed by the second, followed by the fi
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray of size 4</em>) – quaternion</p></li>
-<li><p><strong>order</strong> (<em>str</em><em>, </em><em>optional</em>) – quaternion element order “xyzw” or “wxyz”, defaults to “wxyz”</p></li>
+<li><p><strong>order</strong> (<em>str</em><em>, </em><em>optional</em>) – quaternion element order “xyzw” or “wxyz”, by default “wxyz”</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DCM corresponding to <cite>q</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray with shape (3,3)</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – if <cite>q</cite> is not of size 4</p></li>
 <li><p><strong>ValueError</strong> – if <cite>order</cite> is not “xyzw” or “wxyz”</p></li>
 </ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>DCM corresponding to <cite>q</cite></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>ndarray with shape (3,3)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -635,8 +635,8 @@ R^n such that</p>
 <dl class="py method">
 <dt id="pylie.SO3.to_euler">
 <em class="property">static </em><code class="sig-name descname">to_euler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">C</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.to_euler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a rotation matrix to RPY Euler angles 
-<span class="math notranslate nohighlight">\((\alpha, \beta, \gamma)\)</span> corresponding to a (3,2,1) 
+<dd><p>Convert a rotation matrix to RPY Euler angles
+<span class="math notranslate nohighlight">\((\alpha, \beta, \gamma)\)</span> corresponding to a (3,2,1)
 Euler-angle sequence.</p>
 </dd></dl>
 
@@ -648,20 +648,20 @@ Euler-angle sequence.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>C</strong> (<em>ndarray with shape</em><em> (</em><em>3</em><em>,</em><em>3</em><em>)</em>) – DCM/rotation matrix to convert.</p></li>
-<li><p><strong>order</strong> (<em>str</em><em>, </em><em>optional</em>) – quaternion element order “xyzw” or “wxyz”, defaults to “wxyz”</p></li>
+<li><p><strong>order</strong> (<em>str</em><em>, </em><em>optional</em>) – quaternion element order “xyzw” or “wxyz”, by default “wxyz”</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>quaternion representation of C</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray with shape (4,1)</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – if <cite>C</cite> does not have shape (3,3)</p></li>
 <li><p><strong>ValueError</strong> – if <cite>order</cite> is not “xyzw” or “wxyz”</p></li>
 </ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>quaternion representation of C</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>ndarray with shape (4,1)</p>
 </dd>
 </dl>
 </dd></dl>
