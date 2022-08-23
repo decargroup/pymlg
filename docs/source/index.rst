@@ -7,7 +7,7 @@ pylie
 =================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
 
@@ -51,31 +51,28 @@ Example
 API
 ==================
 
-SO(2)
------
 .. autoclass:: pylie.SO2
     :members:
     :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
     :undoc-members:
 
-SE(2)
------
 .. autoclass:: pylie.SE2
     :members: 
     :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
     :undoc-members:
 
-SO(3)
------
 .. autoclass:: pylie.SO3
     :members:
     :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
     :undoc-members:
 
-
-SE(3)
------
 .. autoclass:: pylie.SE3
+    :members: 
+    :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :undoc-members:
+    
+
+.. autoclass:: pylie.SE23
     :members: 
     :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
     :undoc-members:
