@@ -37,7 +37,8 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def exp(Xi):
-        """Maps elements of the matrix Lie algebra so(3) to the group.
+        """
+        Maps elements of the matrix Lie algebra so(3) to the group.
 
         From Section 8.3 of Lie Groups for Computer Vision by Ethan Eade. When
         theta is small, use Taylor series expansion given in Section 11.
@@ -74,7 +75,8 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian(xi):
-        """Computes the Left Jacobian of SO(3).
+        """
+        Computes the Left Jacobian of SO(3).
         From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade.  When
         angle is small, use Taylor series expansion given in Section 11.
         """
@@ -97,7 +99,8 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian_inv(xi):
-        """Computes the inverse of the left Jacobian of SO(3).
+        """
+        Computes the inverse of the left Jacobian of SO(3).
         From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade. When
         angle is small, use Taylor series expansion given in Section 11.
         """
@@ -162,6 +165,13 @@ class SO3(MatrixLieGroup):
         """
         Returns the DCM corresponding to the quaternion representation q.
 
+        .. math::
+            \mathbf{C} = (1 - 2 \mathbf{\epsilon}^T \mathbf{\epsilon}) \mathbf{1} \\
+            + 2 \mathbf{\epsilon \epsilon}^T + 2 \eta \mathbf{\epsilon}^{\\times}
+
+        Note that the final term is positive to abide by robotics convention. 
+        This differs from Barfoot (2019).
+        
         Parameters
         ----------
         q : list[float] or ndarray of size 4

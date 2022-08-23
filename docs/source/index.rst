@@ -51,29 +51,33 @@ Example
 API
 ==================
 
+.. autoclass:: pylie.MatrixLieGroup
+    :members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :undoc-members:
+
 .. autoclass:: pylie.SO2
     :members:
-    :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :show-inheritance:
     :undoc-members:
 
 .. autoclass:: pylie.SE2
     :members: 
-    :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :show-inheritance:
     :undoc-members:
 
 .. autoclass:: pylie.SO3
     :members:
-    :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :show-inheritance:
     :undoc-members:
 
 .. autoclass:: pylie.SE3
     :members: 
-    :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :show-inheritance:
     :undoc-members:
     
 
 .. autoclass:: pylie.SE23
     :members: 
-    :inherited-members: Exp, Log, right_jacobian, right_jacobian_inv, identity
+    :show-inheritance:
     :undoc-members:
     
