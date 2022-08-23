@@ -82,8 +82,8 @@ class SE23(MatrixLieGroup):
     def exp(Xi):
         Xi_phi = Xi[0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
-        xi_v = Xi[0:3, [3]]
-        xi_r = Xi[0:3, [4]]
+        xi_v = Xi[0:3, 3].reshape((-1,1))
+        xi_r = Xi[0:3, 4].reshape((-1,1))
         C = SO3.exp(Xi_phi)
 
         J_left = SO3.left_jacobian(xi_phi)
