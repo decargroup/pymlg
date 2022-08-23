@@ -19,31 +19,37 @@ class SE2(MatrixLieGroup):
         return T
 
     @staticmethod
-    def from_components(rot, trans):
-        rot = np.array(rot)
-        if rot.size == 3:
-            rot = SO2.Exp(rot)
-        C = rot.reshape((2,2))
-        r = np.array(trans).reshape((-1,1))
+    def from_components(C, r):
+        """
+        Construct an SE(2) matrix from a rotation matrix and translation vector.
+        """
+        C = np.array(C)
+        if C.size == 3:
+            C = SO2.Exp(C)
+        C = C.reshape((2, 2))
+        r = np.array(r).reshape((-1, 1))
         T = np.block([[C, r], [np.zeros((1, 2)), 1]])
         return T
 
     @staticmethod
     def to_components(T):
+        """
+        Decompose an SE(2) matrix into a rotation matrix and translation vector.
+        """
         C = T[0:2, 0:2]
         r = T[0:2, 2]
         return C, r
 
     @staticmethod
     def wedge(xi):
-        xi = np.array(xi).reshape((-1, 1))
-        phi = xi[0:1, 0]
-        xi_r = xi[1:, 0]
+        xi = np.array(xi).ravel()
+        phi = xi[0]
+        xi_r = xi[1:]
         Xi_phi = SO2.wedge(phi)
-        Xi = np.zeros((3,3))
+        Xi = np.zeros((3, 3))
         Xi[0:2, 0:2] = Xi_phi
-        Xi[0:2, 2] =  xi_r
-        return Xi #np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 3))]])
+        Xi[0:2, 2] = xi_r
+        return Xi  # np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 3))]])
 
     @staticmethod
     def vee(Xi):
@@ -59,11 +65,11 @@ class SE2(MatrixLieGroup):
         xi_r = Xi[0:2, 2]
         C = SO2.exp(Xi_phi)
         r = np.dot(SO2.left_jacobian(phi), xi_r.reshape((-1, 1)))
-        T = np.zeros((3,3))
+        T = np.zeros((3, 3))
         T[0:2, 0:2] = C
-        T[0:2, 2] = r.flatten()
-        T[2,2] = 1
-        #T = np.block([[C, r], [np.zeros((1, 2)), 1]])
+        T[0:2, 2] = r.ravel()
+        T[2, 2] = 1
+        # T = np.block([[C, r], [np.zeros((1, 2)), 1]])
         return T
 
     @staticmethod
@@ -71,10 +77,10 @@ class SE2(MatrixLieGroup):
         Xi_phi = SO2.log(T[0:2, 0:2])
         r = T[0:2, 2]
         xi_r = np.dot(SO2.left_jacobian_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1)))
-        #Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
-        Xi = np.zeros((3,3))
+        # Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
+        Xi = np.zeros((3, 3))
         Xi[0:2, 0:2] = Xi_phi
-        Xi[0:2, 2] =  xi_r.flatten()
+        Xi[0:2, 2] = xi_r.ravel()
         return Xi
 
     @staticmethod
@@ -85,13 +91,17 @@ class SE2(MatrixLieGroup):
 
         a^wedge b = b^odot a
         """
-        b = b.ravel()
-        return np.block([[SO2.odot(b[0:2]), b[2]*np.identity(2)],
-                         [np.zeros((1,1)), np.zeros((1,2))]])
+        b = np.array(b).ravel()
+        return np.block(
+            [
+                [SO2.odot(b[0:2]), b[2] * np.identity(2)],
+                [np.zeros((1, 1)), np.zeros((1, 2))],
+            ]
+        )
 
     @staticmethod
     def left_jacobian(xi):
-        xi = xi.ravel()
+        xi = np.array(xi).ravel()
         rho = xi[1:]  # translation part
         phi = xi[0]  # rotation part
 
@@ -144,8 +154,8 @@ class SE2(MatrixLieGroup):
         C = T[0:2, 0:2]
         r = T[0:2, 2].reshape((-1, 1))
         Om = np.array([[0, -1], [1, 0]])
-        A = np.zeros((3,3))
-        A[0,0] = 1
-        A[1:, 0] = - np.dot(Om, r).flatten()
+        A = np.zeros((3, 3))
+        A[0, 0] = 1
+        A[1:, 0] = -np.dot(Om, r).ravel()
         A[1:, 1:] = C
         return A

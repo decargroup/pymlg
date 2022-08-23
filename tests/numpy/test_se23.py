@@ -27,4 +27,4 @@ def test_adjoint_identity():
 
 
 if __name__ == "__main__":
-    test_wedge_vee()
+    test_log()

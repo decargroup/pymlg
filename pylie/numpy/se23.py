@@ -13,34 +13,40 @@ class SE23(MatrixLieGroup):
     @staticmethod
     def synthesize(C, v, r):
         """
+        Deprecated. Use from_components().
+
         Form an element of SE_2(3).
         """
-        return np.block([[C, v, r], [np.zeros((1, 3)), 1, 0], [np.zeros((1, 3)), 0, 1]])
+        return SE23.from_components(C, v, r)
 
     @staticmethod
     def decompose(element_SE23):
         """
+        Deprecated. Use to_components().
+
         Decompose an element of SE_2(3) into its constituent parts.
         """
-        C = element_SE23[0:3, 0:3]
-        v = element_SE23[0:3, [3]]
-        r = element_SE23[0:3, [4]]
-
-        return (C, v, r)
+        return SE23.to_components(element_SE23)
 
     @staticmethod
     def from_components(C, v, r):
         """
         Construct an SE_2(3) matrix from rotation, velocity, position.
         """
-        return SE23.synthesize(C, v, r)
+        v = np.array(v).reshape((-1,1))
+        r = np.array(r).reshape((-1,1))
+        return np.block([[C, v, r], [np.zeros((1, 3)), 1, 0], [np.zeros((1, 3)), 0, 1]])
 
     @staticmethod
     def to_components(X):
         """
         Extract rotation, velocity, position from SE_2(3) matrix.
         """
-        return SE23.decompose(X)
+        C = X[0:3, 0:3]
+        v = X[0:3, 3].reshape((-1,1))
+        r = X[0:3, 4].reshape((-1,1))
+
+        return (C, v, r)
 
     @staticmethod
     def random():
@@ -55,20 +61,20 @@ class SE23(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = np.array(xi).reshape((-1, 1))
-        xi_phi = xi[0:3, [0]]
-        xi_v = xi[3:6, [0]]
-        xi_r = xi[6:9, [0]]
+        xi = np.array(xi).ravel()
+        xi_phi = xi[0:3]
+        xi_v = xi[3:6].reshape((-1,1))
+        xi_r = xi[6:9].reshape((-1,1))
         element_se23 = np.block([[SO3.cross(xi_phi), xi_v, xi_r], [np.zeros((2, 5))]])
         return element_se23
 
     @staticmethod
-    def vee(element_se23):
-        Xi_phi = element_se23[0:3, 0:3]
+    def vee(Xi):
+        Xi_phi = Xi[0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
 
-        xi_v = element_se23[0:3, [3]]
-        xi_r = element_se23[0:3, [4]]
+        xi_v = Xi[0:3, 3].reshape((-1,1))
+        xi_r = Xi[0:3, 4].reshape((-1,1))
 
         return np.vstack((xi_phi, xi_v, xi_r))
 
@@ -76,8 +82,8 @@ class SE23(MatrixLieGroup):
     def exp(Xi):
         Xi_phi = Xi[0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
-        xi_v = Xi[0:3, [3]]
-        xi_r = Xi[0:3, [4]]
+        xi_v = Xi[0:3, 3].reshape((-1,1))
+        xi_r = Xi[0:3, 4].reshape((-1,1))
         C = SO3.exp(Xi_phi)
 
         J_left = SO3.left_jacobian(xi_phi)
@@ -91,13 +97,16 @@ class SE23(MatrixLieGroup):
         return element_SE23
 
     @staticmethod
-    def log(element_SE23):
-        (C, v, r) = SE23.decompose(element_SE23)
+    def log(X):
+        (C, v, r) = SE23.to_components(X)
         phi = SO3.Log(C)
         J_left_inv = SO3.left_jacobian_inv(phi)
 
         element_se23 = np.block(
-            [[SO3.cross(phi), np.dot(J_left_inv, v), np.dot(J_left_inv, r)], [np.zeros((2, 5))]]
+            [
+                [SO3.cross(phi), np.dot(J_left_inv, v), np.dot(J_left_inv, r)],
+                [np.zeros((2, 5))],
+            ]
         )
 
         return element_se23

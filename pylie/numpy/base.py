@@ -17,7 +17,7 @@ class MatrixLieGroup:
     @staticmethod
     def wedge(x):
         """
-        Wedge operator from R^n to algebra.
+        Wedge operator from R^n to algebra.        
         """
         raise NotImplementedError()
 
@@ -69,14 +69,14 @@ class MatrixLieGroup:
     @staticmethod
     def adjoint(X):
         """
-        Adjoint representation of GROUP element.
+        Adjoint representation of *group* element.
         """
         raise NotImplementedError()
 
     @staticmethod
     def adjoint_algebra(Xi):
         """
-        Adjoint representation of ALGEBRA element.
+        Adjoint representation of *algebra* element.
         """
         raise NotImplementedError()
 
@@ -121,3 +121,10 @@ class MatrixLieGroup:
         Shortcut method: group to R^n directly.
         """
         return cls.vee(cls.log(X))
+
+    @classmethod
+    def identity(cls):
+        """
+        Returns an identity matrix of the group.
+        """
+        return np.identity(cls.dof)

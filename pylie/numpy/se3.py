@@ -11,32 +11,50 @@ class SE3(MatrixLieGroup):
     dof = 6
 
     @staticmethod
-    def synthesize(rot, disp):
-        return SE3.from_components(rot, disp)
+    def synthesize(C, r):
+        """
+        Deprecated. Use from_components()
+
+        Construct an SE(3) matrix from a rotation matrix and translation vector.
+        """
+        return SE3.from_components(C, r)
 
     @staticmethod
-    def from_components(rot, disp):
+    def from_components(C, r):
+        """
+        Construct an SE(3) matrix from a rotation matrix and translation vector.
+        """
         # Check if rotation component is a rotation vector or full DCM
-        if rot.size == 9:
-            C = rot
+        if C.size == 9:
+            C = C
         else:
-            C = SO3.Exp(rot)
+            C = SO3.Exp(C)
 
-        disp = np.array(disp).reshape((-1,1))
+        r = np.array(r).reshape((-1, 1))
 
-        return np.block([[C, disp], [np.zeros((1, 3)), 1]])
+        return np.block([[C, r], [np.zeros((1, 3)), 1]])
 
     @staticmethod
     def to_components(T):
+        """
+        Decompose an SE(3) matrix into a rotation matrix and translation vector.
+        """
         C = T[0:3, 0:3]
         r = T[0:3, 3]
         return C, r
 
-    @staticmethod 
+    @staticmethod
     def from_ros(pose_msg):
+        """Constructs an SE(3) matrix from a ROS Pose message.
+
+        :param pose_msg: pose message.
+        :type pose_msg: geometry_msgs/Pose
+        :return: SE(3) pose transformation matrix.
+        :rtype: ndarray with shape (4,4)
+        """
         q = pose_msg.orientation
         pos = pose_msg.position
-        C = SO3.from_quat([q.w, q.x, q.y, q.z], order ="wxyz")
+        C = SO3.from_quat([q.w, q.x, q.y, q.z], order="wxyz")
         r = np.array([pos.x, pos.y, pos.z])
         return SE3.from_components(C, r)
 
@@ -50,9 +68,9 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = np.array(xi).reshape((-1, 1))
-        phi = xi[0:3, :]
-        xi_r = xi[3:, :]
+        xi = np.array(xi).ravel()
+        phi = xi[0:3]
+        xi_r = xi[3:]
         Xi_phi = SO3.wedge(phi)
         return np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 4))]])
 
@@ -83,7 +101,7 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def odot(b):
-        b = b.ravel()
+        b = np.array(b).ravel()
         return np.block(
             [
                 [SO3.odot(b[0:3]), b[3] * np.identity(3)],
@@ -97,15 +115,15 @@ class SE3(MatrixLieGroup):
         r = T[0:3, 3]
         return np.block([[C, np.zeros((3, 3))], [np.dot(SO3.wedge(r), C), C]])
 
-
     @staticmethod
     def _left_jacobian_Q_matrix(xi):
+        xi = np.array(xi).ravel()
 
-        if len(xi) != SE3.dof:
+        if xi.size != SE3.dof:
             raise ValueError("xi must have length {}".format(SE3.dof))
 
-        phi = xi[0:3] # rotation part
-        rho = xi[3:6] # translation part
+        phi = xi[0:3]  # rotation part
+        rho = xi[3:6]  # translation part
 
         rx = SO3.wedge(rho)
         px = SO3.wedge(phi)
@@ -123,30 +141,30 @@ class SE3(MatrixLieGroup):
 
         m1 = 0.5
         m2 = (ph - sph) / ph3
-        m3 = (0.5 * ph2 + cph - 1.) / ph4
+        m3 = (0.5 * ph2 + cph - 1.0) / ph4
         m4 = (ph - 1.5 * sph + 0.5 * ph * cph) / ph5
 
         t1 = rx
         t2 = px.dot(rx) + rx.dot(px) + px.dot(rx).dot(px)
-        t3 = px.dot(px).dot(rx) + rx.dot(px).dot(px) - 3. * px.dot(rx).dot(px)
+        t3 = px.dot(px).dot(rx) + rx.dot(px).dot(px) - 3.0 * px.dot(rx).dot(px)
         t4 = px.dot(rx).dot(px).dot(px) + px.dot(px).dot(rx).dot(px)
 
         return m1 * t1 + m2 * t2 + m3 * t3 + m4 * t4
 
-
     @staticmethod
     def left_jacobian(xi):
 
+        xi = np.array(xi).ravel()
         if np.linalg.norm(xi) < SE3._small_angle_tol:
             return np.identity(6)
 
         else:
             Q = SE3._left_jacobian_Q_matrix(xi)
 
-            phi = xi[0:3] # rotation part
+            phi = xi[0:3]  # rotation part
 
             J = SO3.left_jacobian(phi)
-            return np.block([[J, np.zeros((3,3))],[Q, J]])
+            return np.block([[J, np.zeros((3, 3))], [Q, J]])
 
     @staticmethod
     def left_jacobian_inv(xi):
@@ -158,12 +176,10 @@ class SE3(MatrixLieGroup):
         else:
             Q = SE3._left_jacobian_Q_matrix(xi)
 
-            phi = xi[0:3] # rotation part
+            phi = xi[0:3]  # rotation part
 
             J_inv = SO3.left_jacobian_inv(phi)
 
-            return np.block([
-                [J_inv, np.zeros((3,3))],
-                [-np.dot(J_inv, np.dot(Q, J_inv)), J_inv]
-            ])
-
+            return np.block(
+                [[J_inv, np.zeros((3, 3))], [-np.dot(J_inv, np.dot(Q, J_inv)), J_inv]]
+            )

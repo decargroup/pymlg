@@ -1,6 +1,6 @@
 from pylie import SO2 as G
 import common
-
+import numpy as np
 
 def test_wedge_vee():
     common._test_wedge_vee(G)
@@ -27,10 +27,17 @@ def test_group_jacobians():
 
 
 def test_adjoint_identity():
-    common._test_adjoint_identity(G)
+    X = G.random()
+    xi = G.Log(G.random())
+
+    side1 = G.wedge(xi)
+    side2 = np.dot(X, np.dot(G.wedge(xi), G.inverse(X)))
+    assert np.allclose(side1, side2)
+
 
 def test_odot_wedge():
     common._test_odot_wedge(G)
 
+
 if __name__ == "__main__":
-    pass
+    test_adjoint_identity()
