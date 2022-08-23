@@ -124,35 +124,35 @@ class SO3(MatrixLieGroup):
     def adjoint(C):
         return C
 
-    @staticmethod 
-    def from_euler(theta, order=[3,2,1]):
+    @staticmethod
+    def from_euler(theta, order=[3, 2, 1]):
         """
-        Creates a DCM from a 3-element vector of euler angles with specified 
+        Creates a DCM from a 3-element vector of euler angles with specified
         order.
 
         PARAMETERS
         ----------
         theta: ndarray of euler angles with shape (3,) or (3,1)
         order: list of integers specifying the order sequence. for example,
-            the default order=[3,2,1] rotates the third axis, followed by 
-            the second, followed by the first.
+        the default order=[3,2,1] rotates the third axis, followed by
+        the second, followed by the first.
         """
 
         C = np.identity(3)
         theta = np.array(theta).ravel()
 
         for i in range(3):
-            idx = order[i] -1
+            idx = order[i] - 1
             phi = np.zeros(3)
             phi[idx] = theta[idx]
-            C = np.dot(SO3.Exp(phi), C) 
+            C = np.dot(SO3.Exp(phi), C)
 
         return C
 
-    @staticmethod 
+    @staticmethod
     def from_quat(q, order="wxyz"):
         """
-        Returns the DCM corresponding to the quaternion representation q. 
+        Returns the DCM corresponding to the quaternion representation q.
 
         PARAMETERS
         ----------
@@ -160,7 +160,7 @@ class SO3(MatrixLieGroup):
         order: "wxyz" or "xyzw". specifies what each component in q means.
         """
         q = np.array(q).ravel()
-        q = q/np.linalg.norm(q)
+        q = q / np.linalg.norm(q)
 
         if q.size != 4:
             raise ValueError("q must have size 4.")
@@ -172,7 +172,6 @@ class SO3(MatrixLieGroup):
             eps = q[0:3]
         else:
             raise ValueError("order must be 'wxyz' or 'xyzw'. ")
-            
 
         eps = eps.reshape((-1, 1))
 
@@ -185,29 +184,26 @@ class SO3(MatrixLieGroup):
     @staticmethod
     def to_quat(C, order="wxyz"):
         """
-        Returns the quaternion corresponding to DCM C. 
+        Returns the quaternion corresponding to DCM C.
 
         PARAMETERS
         ----------
         C: numpy ndarray with shape (3,3)
         order: "wxyz" or "xyzw". specifies what each component in q means.
         """
-        C = C.reshape((3,3))
-        if C.shape != (3,3):
+        C = C.reshape((3, 3))
+        if C.shape != (3, 3):
             raise ValueError("C must have shape (3,3).")
 
-
-        eta = 0.5*(np.trace(C) + 1) ** 0.5
-        eps = np.array([
-            C[1,2] - C[2,1],
-            C[2,0] - C[0,2],
-            C[0,1] - C[1,0]
-        ])/(4*eta)
+        eta = 0.5 * (np.trace(C) + 1) ** 0.5
+        eps = np.array([C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]) / (
+            4 * eta
+        )
 
         if order == "wxyz":
-            q = np.hstack((eta, eps)).reshape((-1,1))
+            q = np.hstack((eta, eps)).reshape((-1, 1))
         elif order == "xyzw":
-            q = np.hstack((eps, eta)).reshape((-1,1))
+            q = np.hstack((eps, eta)).reshape((-1, 1))
         else:
             raise ValueError("order must be 'wxyz' or 'xyzw'. ")
 
@@ -216,20 +212,17 @@ class SO3(MatrixLieGroup):
     @staticmethod
     def to_euler(C):
         """Convert a rotation matrix to RPY Euler angles :math:`(\\alpha, \\beta, \\gamma)`."""
-        pitch = np.arctan2(-C[2, 0],
-                           np.sqrt(C[0, 0]**2 + C[1, 0]**2))
+        pitch = np.arctan2(-C[2, 0], np.sqrt(C[0, 0] ** 2 + C[1, 0] ** 2))
 
-        if np.isclose(pitch, np.pi / 2.):
-            yaw = 0.
+        if np.isclose(pitch, np.pi / 2.0):
+            yaw = 0.0
             roll = np.arctan2(C[0, 1], C[1, 1])
-        elif np.isclose(pitch, -np.pi / 2.):
-            yaw = 0.
+        elif np.isclose(pitch, -np.pi / 2.0):
+            yaw = 0.0
             roll = -np.arctan2(C[0, 1], C[1, 1])
         else:
-            sec_pitch = 1. / np.cos(pitch)
-            yaw = np.arctan2(C[1, 0] * sec_pitch,
-                             C[0, 0] * sec_pitch)
-            roll = np.arctan2(C[2, 1] * sec_pitch,
-                              C[2, 2] * sec_pitch)
+            sec_pitch = 1.0 / np.cos(pitch)
+            yaw = np.arctan2(C[1, 0] * sec_pitch, C[0, 0] * sec_pitch)
+            roll = np.arctan2(C[2, 1] * sec_pitch, C[2, 2] * sec_pitch)
 
         return np.array([roll, pitch, yaw]).ravel()

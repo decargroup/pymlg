@@ -11,18 +11,18 @@ class SO2(MatrixLieGroup):
 
     @staticmethod
     def random():
+        
         phi = np.random.uniform(0, 2 * np.pi, (1, 1))
         return SO2.Exp(phi)
 
     @staticmethod
     def wedge(phi):
-        if isinstance(phi, np.ndarray):
-            if len(phi.shape) == 2:
-                phi = phi[0, 0]
-            elif len(phi.shape) == 1:
-                phi = phi[0]
-            else:
-                raise RuntimeError("Input should be a scalar.")
+        """
+        
+        :param phi: Rotation vector, element of R^n.
+        :type phi: float or numpy.ndarray
+        """
+        phi = np.array(phi).item()
 
         X = np.array(
             [
@@ -75,7 +75,7 @@ class SO2(MatrixLieGroup):
     def adjoint(C):
         return np.identity(2)
 
-    @staticmethod 
+    @staticmethod
     def odot(b):
         b = np.array(b).ravel()
-        return np.array([-b[1], b[0]]).reshape((-1,1))
+        return np.array([-b[1], b[0]]).reshape((-1, 1))

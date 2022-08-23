@@ -18,6 +18,10 @@ class MatrixLieGroup:
     def wedge(x):
         """
         Wedge operator from R^n to algebra.
+        
+        :param x: Element of R^n.
+        :type kind: list[str] or numpy.ndarray
+        
         """
         raise NotImplementedError()
 
@@ -121,3 +125,7 @@ class MatrixLieGroup:
         Shortcut method: group to R^n directly.
         """
         return cls.vee(cls.log(X))
+
+    @classmethod
+    def identity(cls):
+        return np.identity(cls.dof)

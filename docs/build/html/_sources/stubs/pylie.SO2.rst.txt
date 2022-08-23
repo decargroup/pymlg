@@ -1,0 +1,45 @@
+﻿pylie.SO2
+=========
+
+.. currentmodule:: pylie
+
+.. autoclass:: SO2
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SO2.Exp
+      ~SO2.Log
+      ~SO2.__init__
+      ~SO2.adjoint
+      ~SO2.adjoint_algebra
+      ~SO2.exp
+      ~SO2.identity
+      ~SO2.inverse
+      ~SO2.left_jacobian
+      ~SO2.left_jacobian_inv
+      ~SO2.log
+      ~SO2.normalize
+      ~SO2.odot
+      ~SO2.random
+      ~SO2.right_jacobian
+      ~SO2.right_jacobian_inv
+      ~SO2.vee
+      ~SO2.wedge
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SO2.dof
+   
+   
