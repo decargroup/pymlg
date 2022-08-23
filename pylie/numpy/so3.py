@@ -187,7 +187,7 @@ class SO3(MatrixLieGroup):
         return (
             (1 - 2 * np.matmul(np.transpose(eps), eps)) * np.eye(3)
             + 2 * np.matmul(eps, np.transpose(eps))
-            - 2 * eta * SO3.wedge(eps)
+            + 2 * eta * SO3.wedge(eps)
         )
 
     @staticmethod
@@ -209,7 +209,7 @@ class SO3(MatrixLieGroup):
             raise ValueError("C must have shape (3,3).")
 
         eta = 0.5 * (np.trace(C) + 1) ** 0.5
-        eps = np.array([C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]) / (
+        eps = -np.array([C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]) / (
             4 * eta
         )
 
