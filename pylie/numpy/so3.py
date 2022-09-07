@@ -1,6 +1,14 @@
 from .base import MatrixLieGroup
 import numpy as np
 
+try:
+    # We do not want to make ROS a hard dependency, so we import it only if
+    # available.
+    from geometry_msgs.msg import Quaternion
+except ImportError:
+    pass  # ROS is not installed
+except:
+    raise
 
 class SO3(MatrixLieGroup):
     """
@@ -278,3 +286,31 @@ class SO3(MatrixLieGroup):
             roll = np.arctan2(C[2, 1] * sec_pitch, C[2, 2] * sec_pitch)
 
         return np.array([roll, pitch, yaw]).ravel()
+
+    @staticmethod
+    def from_ros(q):
+        """
+        Converts a ROS quaternion to a DCM.
+
+        Parameters
+        ----------
+        q : geometry_msgs.msg.Quaternion
+            ROS quaternion
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to `q`
+        """
+        q = np.array([q.x, q.y, q.z, q.w])
+        return SO3.from_quat(q, order="xyzw")
+
+    @staticmethod 
+    def to_ros(C):
+        q = SO3.to_quat(C, order = "wxyz")
+        msg = Quaternion()
+        msg.w = q[0]
+        msg.x = q[1]
+        msg.y = q[2]
+        msg.z = q[3]
+        return msg

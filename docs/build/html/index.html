@@ -79,6 +79,7 @@
 <li><a class="reference internal" href="#pylie.SO3.exp"><code class="docutils literal notranslate"><span class="pre">exp</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.from_euler"><code class="docutils literal notranslate"><span class="pre">from_euler</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.from_quat"><code class="docutils literal notranslate"><span class="pre">from_quat</span></code></a></li>
+<li><a class="reference internal" href="#pylie.SO3.from_ros"><code class="docutils literal notranslate"><span class="pre">from_ros</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.left_jacobian"><code class="docutils literal notranslate"><span class="pre">left_jacobian</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.left_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">left_jacobian_inv</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.log"><code class="docutils literal notranslate"><span class="pre">log</span></code></a></li>
@@ -86,6 +87,7 @@
 <li><a class="reference internal" href="#pylie.SO3.random"><code class="docutils literal notranslate"><span class="pre">random</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.to_euler"><code class="docutils literal notranslate"><span class="pre">to_euler</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.to_quat"><code class="docutils literal notranslate"><span class="pre">to_quat</span></code></a></li>
+<li><a class="reference internal" href="#pylie.SO3.to_ros"><code class="docutils literal notranslate"><span class="pre">to_ros</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.vee"><code class="docutils literal notranslate"><span class="pre">vee</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SO3.wedge"><code class="docutils literal notranslate"><span class="pre">wedge</span></code></a></li>
 </ul>
@@ -102,6 +104,7 @@
 <li><a class="reference internal" href="#pylie.SE3.random"><code class="docutils literal notranslate"><span class="pre">random</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SE3.synthesize"><code class="docutils literal notranslate"><span class="pre">synthesize</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SE3.to_components"><code class="docutils literal notranslate"><span class="pre">to_components</span></code></a></li>
+<li><a class="reference internal" href="#pylie.SE3.to_ros"><code class="docutils literal notranslate"><span class="pre">to_ros</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SE3.vee"><code class="docutils literal notranslate"><span class="pre">vee</span></code></a></li>
 <li><a class="reference internal" href="#pylie.SE3.wedge"><code class="docutils literal notranslate"><span class="pre">wedge</span></code></a></li>
 </ul>
@@ -476,6 +479,23 @@ This differs from Barfoot (2019).</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pylie.SO3.from_ros">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_ros</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.from_ros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a ROS quaternion to a DCM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>q</strong> (<em>geometry_msgs.msg.Quaternion</em>) – ROS quaternion</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DCM corresponding to <cite>q</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray with shape (3,3)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pylie.SO3.left_jacobian">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">left_jacobian</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.left_jacobian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Left Jacobian of SO(3).
@@ -549,6 +569,11 @@ Euler-angle sequence.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pylie.SO3.to_ros">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_ros</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.to_ros" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pylie.SO3.vee">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">vee</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.vee" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vee operator <span class="math notranslate nohighlight">\((\cdot)^\vee: \mathfrak{g} \to  \mathbb{R}^n\)</span>.</p>
@@ -598,15 +623,12 @@ Euler-angle sequence.</p>
 <dt id="pylie.SE3.from_ros">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_ros</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pose_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE3.from_ros" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs an SE(3) matrix from a ROS Pose message.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pose_msg</strong> (<em>geometry_msgs/Pose</em>) – pose message.</p>
+<dl class="simple">
+<dt>pose_msg: Pose</dt><dd><p>ROS Pose message from geometry_msgs</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>SE(3) pose transformation matrix.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray with shape (4,4)</p>
+</dl>
+<dl class="simple">
+<dt>np.ndarray with shape (4,4)</dt><dd><p>SE(3) pose transformation matrix</p>
 </dd>
 </dl>
 </dd></dl>
@@ -660,6 +682,11 @@ R^n such that</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pylie.SE3.to_ros">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_ros</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE3.to_ros" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pylie.SE3.vee">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">vee</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE3.vee" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vee operator <span class="math notranslate nohighlight">\((\cdot)^\vee: \mathfrak{g} \to  \mathbb{R}^n\)</span>.</p>
@@ -690,7 +717,6 @@ R^n such that</p>
 <dt id="pylie.SE23.decompose">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">decompose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_SE23</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.decompose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deprecated. Use to_components().</p>
-<p>Decompose an element of SE_2(3) into its constituent parts.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -709,7 +735,23 @@ R^n such that</p>
 <dl class="py method">
 <dt id="pylie.SE23.from_components">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_components</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.from_components" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct an SE_2(3) matrix from rotation, velocity, position.</p>
+<dd><p>Construct an <span class="math notranslate nohighlight">\(SE_2(3)\)</span> matrix from attitude, velocity, position
+components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>C</strong> (<em>ndarray with shape</em><em> (</em><em>3</em><em>,</em><em>3</em><em>)</em>) – DCM/rotation matrix</p></li>
+<li><p><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray with size 3</em>) – velocity vector</p></li>
+<li><p><strong>r</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray with size 3</em>) – position vector</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(SE_2(3)\)</span> matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray with shape (5,5)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -730,7 +772,6 @@ R^n such that</p>
 <dt id="pylie.SE23.synthesize">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">synthesize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.synthesize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deprecated. Use from_components().</p>
-<p>Form an element of SE_2(3).</p>
 </dd></dl>
 
 <dl class="py method">

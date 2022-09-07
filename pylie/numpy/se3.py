@@ -2,6 +2,14 @@ from .base import MatrixLieGroup
 import numpy as np
 from .so3 import SO3
 
+try:
+    # We do not want to make ROS a hard dependency, so we import it only if
+    # available.
+    from geometry_msgs.msg import Pose
+except ImportError:
+    pass  # ROS is not installed
+except:
+    raise
 
 class SE3(MatrixLieGroup):
     """
@@ -45,18 +53,39 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def from_ros(pose_msg):
-        """Constructs an SE(3) matrix from a ROS Pose message.
+        """
+        Constructs an SE(3) matrix from a ROS Pose message.
 
-        :param pose_msg: pose message.
-        :type pose_msg: geometry_msgs/Pose
-        :return: SE(3) pose transformation matrix.
-        :rtype: ndarray with shape (4,4)
+        Parameters:
+        -----------
+        pose_msg: Pose
+            ROS Pose message from geometry_msgs
+
+        Returns:
+        --------
+        np.ndarray with shape (4,4)
+            SE(3) pose transformation matrix
         """
         q = pose_msg.orientation
         pos = pose_msg.position
         C = SO3.from_quat([q.w, q.x, q.y, q.z], order="wxyz")
         r = np.array([pos.x, pos.y, pos.z])
         return SE3.from_components(C, r)
+
+    @staticmethod 
+    def to_ros(T):
+        C, r = SE3.to_components(T)
+        q = SO3.to_quat(C, order="wxyz")
+        msg = Pose()
+        msg.position.x = r[0]
+        msg.position.y = r[1]
+        msg.position.z = r[2]
+        msg.orientation.w = q[0]
+        msg.orientation.x = q[1]
+        msg.orientation.y = q[2]
+        msg.orientation.z = q[3]
+        return msg         
+
 
     @staticmethod
     def random():

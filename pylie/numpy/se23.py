@@ -14,8 +14,6 @@ class SE23(MatrixLieGroup):
     def synthesize(C, v, r):
         """
         Deprecated. Use from_components().
-
-        Form an element of SE_2(3).
         """
         return SE23.from_components(C, v, r)
 
@@ -23,15 +21,28 @@ class SE23(MatrixLieGroup):
     def decompose(element_SE23):
         """
         Deprecated. Use to_components().
-
-        Decompose an element of SE_2(3) into its constituent parts.
         """
         return SE23.to_components(element_SE23)
 
     @staticmethod
     def from_components(C, v, r):
         """
-        Construct an SE_2(3) matrix from rotation, velocity, position.
+        Construct an :math:`SE_2(3)` matrix from attitude, velocity, position 
+        components.
+
+        Parameters
+        ----------
+        C : ndarray with shape (3,3)
+            DCM/rotation matrix
+        v : list[float] or ndarray with size 3
+            velocity vector
+        r : list[float] or ndarray with size 3
+            position vector
+
+        Returns
+        -------
+        ndarray with shape (5,5)
+            :math:`SE_2(3)` matrix
         """
         v = np.array(v).reshape((-1,1))
         r = np.array(r).reshape((-1,1))
