@@ -75,7 +75,8 @@ class SE3(MatrixLieGroup):
     @staticmethod 
     def to_ros(T):
         C, r = SE3.to_components(T)
-        q = SO3.to_quat(C, order="wxyz")
+        r = r.ravel()
+        q = SO3.to_quat(C, order="wxyz").ravel()
         msg = Pose()
         msg.position.x = r[0]
         msg.position.y = r[1]

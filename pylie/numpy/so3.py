@@ -307,7 +307,7 @@ class SO3(MatrixLieGroup):
 
     @staticmethod 
     def to_ros(C):
-        q = SO3.to_quat(C, order = "wxyz")
+        q = SO3.to_quat(C, order = "wxyz").ravel()
         msg = Quaternion()
         msg.w = q[0]
         msg.x = q[1]
