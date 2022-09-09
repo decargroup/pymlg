@@ -21,7 +21,7 @@ class SE3(MatrixLieGroup):
     @staticmethod
     def synthesize(C, r):
         """
-        Deprecated. Use from_components()
+        Deprecated. Use `SE3.from_components(C,r)` instead.
 
         Construct an SE(3) matrix from a rotation matrix and translation vector.
         """
@@ -56,13 +56,13 @@ class SE3(MatrixLieGroup):
         """
         Constructs an SE(3) matrix from a ROS Pose message.
 
-        Parameters:
-        -----------
-        pose_msg: Pose
+        Parameters
+        ----------
+        pose_msg: geometry_msgs.msg.Pose
             ROS Pose message from geometry_msgs
 
-        Returns:
-        --------
+        Returns
+        -------
         np.ndarray with shape (4,4)
             SE(3) pose transformation matrix
         """
@@ -74,6 +74,19 @@ class SE3(MatrixLieGroup):
 
     @staticmethod 
     def to_ros(T):
+        """
+        Constructs a ROS Pose message from an SE(3) matrix.
+
+        Parameters
+        ----------
+        T : np.ndarray with shape (4,4)
+            SE(3) pose transformation matrix
+
+        Returns
+        -------
+        geometry_msgs.msg.Pose
+            ROS Pose message
+        """
         C, r = SE3.to_components(T)
         r = r.ravel()
         q = SO3.to_quat(C, order="wxyz").ravel()

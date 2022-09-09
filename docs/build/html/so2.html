@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SO2 &mdash; pylie 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SO3" href="so3.html" />
+    <link rel="prev" title="PYLIE" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> pylie
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SO2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pylie</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>SO2</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/so2.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="so2">
+<h1>SO2<a class="headerlink" href="#so2" title="Permalink to this heading"></a></h1>
+<p><span class="math notranslate nohighlight">\(SO(2)\)</span> - Special Orthogonal Group in 2D</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pylie.SO2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pylie.</span></span><span class="sig-name descname"><span class="pre">SO2</span></span><a class="headerlink" href="#pylie.SO2" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="index.html#pylie.MatrixLieGroup" title="pylie.numpy.base.MatrixLieGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatrixLieGroup</span></code></a></p>
+<p>An instantiation-free implementation of the SO2 matrix Lie group.</p>
+<p><strong>Methods:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.Exp" title="pylie.SO2.Exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exp</span></code></a></p></td>
+<td><p>Shortcut method: R^n to group directly.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.Log" title="pylie.SO2.Log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Log</span></code></a></p></td>
+<td><p>Shortcut method: group to R^n directly.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.adjoint" title="pylie.SO2.adjoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjoint</span></code></a></p></td>
+<td><p>Adjoint representation of <em>group</em> element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.adjoint_algebra" title="pylie.SO2.adjoint_algebra"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjoint_algebra</span></code></a></p></td>
+<td><p>Adjoint representation of <em>algebra</em> element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.exp" title="pylie.SO2.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></p></td>
+<td><p>Exponential map from algebra to group.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.identity" title="pylie.SO2.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Returns an identity matrix of the group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.inverse" title="pylie.SO2.inverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse</span></code></a></p></td>
+<td><p>Group inverse.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.left_jacobian" title="pylie.SO2.left_jacobian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">left_jacobian</span></code></a></p></td>
+<td><p>Group left jacobian evaluated at x in R^n</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.left_jacobian_inv" title="pylie.SO2.left_jacobian_inv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">left_jacobian_inv</span></code></a></p></td>
+<td><p>Inverse of group left jacobian evaluated at x in R^n</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.log" title="pylie.SO2.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></p></td>
+<td><p>Logarithmic map from algebra to group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.normalize" title="pylie.SO2.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a></p></td>
+<td><p>Eliminates rounding errors: ensures matrix is proper group element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.odot" title="pylie.SO2.odot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odot</span></code></a></p></td>
+<td><p>odot operator as defined in Barfoot.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.random" title="pylie.SO2.random"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random</span></code></a></p></td>
+<td><p>Return a random element of the group.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.right_jacobian" title="pylie.SO2.right_jacobian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">right_jacobian</span></code></a></p></td>
+<td><p>Group right jacobian evaluated at x in R^n.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.right_jacobian_inv" title="pylie.SO2.right_jacobian_inv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">right_jacobian_inv</span></code></a></p></td>
+<td><p>Inverse of group right jacobian evaluated at x in R^n.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO2.vee" title="pylie.SO2.vee"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vee</span></code></a></p></td>
+<td><p>Vee operator <span class="math notranslate nohighlight">\((\cdot)^\vee: \mathfrak{g} \to  \mathbb{R}^n\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.wedge" title="pylie.SO2.wedge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wedge</span></code></a></p></td>
+<td><p>Wedge operator <span class="math notranslate nohighlight">\((\cdot)^\wedge: \mathbb{R}^n \to \mathfrak{g}\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO2.dof" title="pylie.SO2.dof"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dof</span></code></a></p></td>
+<td><p>The degrees of freedom of the group.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.Exp">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.Exp" title="Permalink to this definition"></a></dt>
+<dd><p>Shortcut method: R^n to group directly.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Exp}: \mathbb{R}^n \to G\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.Log">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.Log" title="Permalink to this definition"></a></dt>
+<dd><p>Shortcut method: group to R^n directly.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Log}: G \to \mathbb{R}^n\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.adjoint">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.adjoint" title="Permalink to this definition"></a></dt>
+<dd><p>Adjoint representation of <em>group</em> element.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Ad}(\mathbf{X})\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.adjoint_algebra">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adjoint_algebra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.adjoint_algebra" title="Permalink to this definition"></a></dt>
+<dd><p>Adjoint representation of <em>algebra</em> element.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{ad}(\mathbf{\Xi})\]</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pylie.SO2.dof">
+<span class="sig-name descname"><span class="pre">dof</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pylie.SO2.dof" title="Permalink to this definition"></a></dt>
+<dd><p>The degrees of freedom of the group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.exp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.exp" title="Permalink to this definition"></a></dt>
+<dd><p>Exponential map from algebra to group.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{exp}: \mathfrak{g} \to G\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.identity">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.identity" title="Permalink to this definition"></a></dt>
+<dd><p>Returns an identity matrix of the group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.inverse" title="Permalink to this definition"></a></dt>
+<dd><p>Group inverse.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.left_jacobian">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.left_jacobian" title="Permalink to this definition"></a></dt>
+<dd><p>Group left jacobian evaluated at x in R^n</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.left_jacobian_inv">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.left_jacobian_inv" title="Permalink to this definition"></a></dt>
+<dd><p>Inverse of group left jacobian evaluated at x in R^n</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.log">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.log" title="Permalink to this definition"></a></dt>
+<dd><p>Logarithmic map from algebra to group.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{log}: G \to \mathfrak{g}\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.normalize">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.normalize" title="Permalink to this definition"></a></dt>
+<dd><p>Eliminates rounding errors: ensures matrix is proper group element.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.odot">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">odot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.odot" title="Permalink to this definition"></a></dt>
+<dd><p>odot operator as defined in Barfoot. I.e., an operator on an element of
+R^n such that</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{a}^\wedge \mathbf{b} = \mathbf{b}^\odot \mathbf{a}\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.random">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.random" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random element of the group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.right_jacobian">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">right_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.right_jacobian" title="Permalink to this definition"></a></dt>
+<dd><p>Group right jacobian evaluated at x in R^n. Requires the subclass to
+implement <cite>left_jacobian()</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.right_jacobian_inv">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">right_jacobian_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.right_jacobian_inv" title="Permalink to this definition"></a></dt>
+<dd><p>Inverse of group right jacobian evaluated at x in R^n. Requires the
+subclass to implement <cite>left_jacobian()</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.vee">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.vee" title="Permalink to this definition"></a></dt>
+<dd><p>Vee operator <span class="math notranslate nohighlight">\((\cdot)^\vee: \mathfrak{g} \to  \mathbb{R}^n\)</span>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylie.SO2.wedge">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wedge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO2.wedge" title="Permalink to this definition"></a></dt>
+<dd><p>Wedge operator <span class="math notranslate nohighlight">\((\cdot)^\wedge: \mathbb{R}^n \to \mathfrak{g}\)</span>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="PYLIE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="so3.html" class="btn btn-neutral float-right" title="SO3" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Charles C. Cossette, Mitchell Cohen, Arturo Del Castillo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

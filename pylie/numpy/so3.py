@@ -36,6 +36,9 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def cross(xi):
+        """ 
+        Alternate name for `SO3.wedge`
+        """
         return SO3.wedge(xi)
 
     @staticmethod
@@ -307,6 +310,19 @@ class SO3(MatrixLieGroup):
 
     @staticmethod 
     def to_ros(C):
+        """
+        Converts a DCM to a ROS quaternion.
+
+        Parameters
+        ----------
+        C : ndarray with shape (3,3)
+            DCM to convert
+
+        Returns
+        -------
+        geometry_msgs.msg.Quaternion
+            ROS quaternion corresponding to `C`
+        """
         q = SO3.to_quat(C, order = "wxyz").ravel()
         msg = Quaternion()
         msg.w = q[0]

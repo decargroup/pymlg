@@ -10,7 +10,18 @@ class MatrixLieGroup:
     """
 
     _small_angle_tol = 1e-7
+
+    #:int: The degrees of freedom of the group.
     dof = None
+
+    
+    def __init__(self):
+        raise RuntimeError("""
+        This class is not meant to be instantiated! The methods are all static,
+        which means you can call them directly with
+
+        Y = <class_name_without_brackets>.<method_name>(X)
+        """)
 
     @staticmethod
     def random():

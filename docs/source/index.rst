@@ -3,15 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-pylie
+PYLIE
 =================================
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Contents:
-
-
 An instantiation-free python library for common matrix Lie group operations. Functions in this repo operate entirely on numpy arrays, with the intention of minimizing overhead and keeping the implementation as simple as possible.
+
+**All class methods are static.** This allows for an easy, simple, consistent, instantiation-free use of the library. 
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Contents:
+
+    so2 
+    so3 
+    se2 
+    se3 
+    se23
 
 Example
 -------
@@ -47,37 +54,16 @@ Example
     J_R = SE2.right_jacobian(x)
     J_L_inv = SE2.left_jacobian_inv(x)
     J_R_inv = SE2.right_jacobian_inv(x)
-    
-API
-==================
 
+
+
+Matrix Lie Group Base Class 
+---------------------------
 .. autoclass:: pylie.MatrixLieGroup
-    :members: Exp, Log, right_jacobian, right_jacobian_inv, identity
-    :undoc-members:
-
-.. autoclass:: pylie.SO2
     :members:
-    :show-inheritance:
     :undoc-members:
 
-.. autoclass:: pylie.SE2
-    :members: 
-    :show-inheritance:
-    :undoc-members:
 
-.. autoclass:: pylie.SO3
-    :members:
-    :show-inheritance:
-    :undoc-members:
 
-.. autoclass:: pylie.SE3
-    :members: 
-    :show-inheritance:
-    :undoc-members:
-    
 
-.. autoclass:: pylie.SE23
-    :members: 
-    :show-inheritance:
-    :undoc-members:
-    
+

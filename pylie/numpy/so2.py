@@ -17,11 +17,6 @@ class SO2(MatrixLieGroup):
 
     @staticmethod
     def wedge(phi):
-        """
-        
-        :param phi: Rotation vector, element of R^n.
-        :type phi: float or numpy.ndarray
-        """
         phi = np.array(phi).item()
 
         X = np.array(

@@ -34,8 +34,8 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.mathjax",
-    "sphinxcontrib.toctree_plus",
     "sphinx.ext.napoleon",
+    "autodocsumm",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

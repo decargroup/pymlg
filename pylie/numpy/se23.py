@@ -13,14 +13,14 @@ class SE23(MatrixLieGroup):
     @staticmethod
     def synthesize(C, v, r):
         """
-        Deprecated. Use from_components().
+        Deprecated. Use `SE23.from_components(C, v, r)`.
         """
         return SE23.from_components(C, v, r)
 
     @staticmethod
     def decompose(element_SE23):
         """
-        Deprecated. Use to_components().
+        Deprecated. Use `SE23.to_components(X)`.
         """
         return SE23.to_components(element_SE23)
 
@@ -67,7 +67,7 @@ class SE23(MatrixLieGroup):
 
         C = SO3.Exp(phi)
 
-        X = SE23.synthesize(C, v, r)
+        X = SE23.from_components(C, v, r)
         return X
 
     @staticmethod
@@ -76,8 +76,8 @@ class SE23(MatrixLieGroup):
         xi_phi = xi[0:3]
         xi_v = xi[3:6].reshape((-1,1))
         xi_r = xi[6:9].reshape((-1,1))
-        element_se23 = np.block([[SO3.cross(xi_phi), xi_v, xi_r], [np.zeros((2, 5))]])
-        return element_se23
+        Xi = np.block([[SO3.cross(xi_phi), xi_v, xi_r], [np.zeros((2, 5))]])
+        return Xi
 
     @staticmethod
     def vee(Xi):
@@ -101,11 +101,11 @@ class SE23(MatrixLieGroup):
         v = np.dot(J_left, xi_v)
         r = np.dot(J_left, xi_r)
 
-        element_SE23 = np.block(
+        X = np.block(
             [[C, v, r], [np.zeros((1, 3)), 1, 0], [np.zeros((1, 3)), 0, 1]]
         )
 
-        return element_SE23
+        return X
 
     @staticmethod
     def log(X):
@@ -113,14 +113,14 @@ class SE23(MatrixLieGroup):
         phi = SO3.Log(C)
         J_left_inv = SO3.left_jacobian_inv(phi)
 
-        element_se23 = np.block(
+        Xi = np.block(
             [
                 [SO3.cross(phi), np.dot(J_left_inv, v), np.dot(J_left_inv, r)],
                 [np.zeros((2, 5))],
             ]
         )
 
-        return element_se23
+        return Xi
 
     @staticmethod
     def adjoint(X):

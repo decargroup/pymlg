@@ -1,0 +1,13 @@
+SE23
+---------------------------------------------------
+:math:`SE_2(3)` - Group of double direct isometries
+
+
+.. autoclass:: pylie.SE23
+    :members:
+    :show-inheritance:
+    :undoc-members:
+    :inherited-members:
+    :autosummary:
+    :autosummary-nosignatures:
+    :autosummary-no-nesting:
