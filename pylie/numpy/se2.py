@@ -159,3 +159,7 @@ class SE2(MatrixLieGroup):
         A[1:, 0] = -np.dot(Om, r).ravel()
         A[1:, 1:] = C
         return A
+
+    @staticmethod
+    def identity():
+        return np.identity(3)

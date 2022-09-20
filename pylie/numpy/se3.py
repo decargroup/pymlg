@@ -226,3 +226,7 @@ class SE3(MatrixLieGroup):
             return np.block(
                 [[J_inv, np.zeros((3, 3))], [-np.dot(J_inv, np.dot(Q, J_inv)), J_inv]]
             )
+
+    @staticmethod
+    def identity():
+        return np.identity(4)

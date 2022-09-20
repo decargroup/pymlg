@@ -133,3 +133,9 @@ class SE23(MatrixLieGroup):
                 [np.dot(SO3.wedge(r), C), O, C],
             ]
         )
+
+    @staticmethod
+    def identity():
+        return np.eye(5)
+
+        

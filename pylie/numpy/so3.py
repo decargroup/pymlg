@@ -330,3 +330,10 @@ class SO3(MatrixLieGroup):
         msg.y = q[2]
         msg.z = q[3]
         return msg
+
+    @staticmethod
+    def identity():
+        """
+        Returns the identity DCM.
+        """
+        return np.eye(3)

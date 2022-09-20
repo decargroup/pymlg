@@ -167,4 +167,4 @@ class MatrixLieGroup:
         """
         Returns an identity matrix of the group.
         """
-        return np.identity(cls.dof)
+        raise NotImplementedError()
