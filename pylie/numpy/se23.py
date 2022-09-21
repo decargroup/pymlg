@@ -1,6 +1,7 @@
 from .base import MatrixLieGroup
 import numpy as np
 from .so3 import SO3
+from .se3 import SE3
 
 
 class SE23(MatrixLieGroup):
@@ -139,3 +140,34 @@ class SE23(MatrixLieGroup):
         return np.eye(5)
 
         
+    @staticmethod
+    def left_jacobian(xi):
+        xi_phi = xi[0:3]
+        xi_v = xi[3:6].reshape((-1,1))
+        xi_r = xi[6:9].reshape((-1,1))
+        Q_v = SE3._left_jacobian_Q_matrix(xi_phi, xi_v)
+        Q_r = SE3._left_jacobian_Q_matrix(xi_phi, xi_r)
+        J = SO3.left_jacobian(xi_phi)
+        J_left = np.identity(9)
+        J_left[0:3, 0:3] = J
+        J_left[3:6, 3:6] = J 
+        J_left[6:9, 6:9] = J
+        J_left[3:6, 0:3] = Q_v
+        J_left[6:9, 0:3] = Q_r
+        return J_left
+
+    @staticmethod
+    def left_jacobian_inv(xi):
+        xi_phi = xi[0:3]
+        xi_v = xi[3:6].reshape((-1,1))
+        xi_r = xi[6:9].reshape((-1,1))
+        Q_v = SE3._left_jacobian_Q_matrix(xi_phi, xi_v)
+        Q_r = SE3._left_jacobian_Q_matrix(xi_phi, xi_r)
+        J_inv = SO3.left_jacobian_inv(xi_phi)
+        J_left_inv = np.identity(9)
+        J_left_inv[0:3, 0:3] = J_inv
+        J_left_inv[3:6, 3:6] = J_inv
+        J_left_inv[6:9, 6:9] = J_inv
+        J_left_inv[3:6, 0:3] = -J_inv @ Q_v @ J_inv
+        J_left_inv[6:9, 0:3] = -J_inv @ Q_r @ J_inv
+        return J_left_inv

@@ -159,14 +159,9 @@ class SE3(MatrixLieGroup):
         return np.block([[C, np.zeros((3, 3))], [np.dot(SO3.wedge(r), C), C]])
 
     @staticmethod
-    def _left_jacobian_Q_matrix(xi):
-        xi = np.array(xi).ravel()
-
-        if xi.size != SE3.dof:
-            raise ValueError("xi must have length {}".format(SE3.dof))
-
-        phi = xi[0:3]  # rotation part
-        rho = xi[3:6]  # translation part
+    def _left_jacobian_Q_matrix(phi, rho):
+        phi = np.array(phi).ravel()
+        rho = np.array(rho).ravel()
 
         rx = SO3.wedge(rho)
         px = SO3.wedge(phi)
@@ -202,7 +197,10 @@ class SE3(MatrixLieGroup):
             return np.identity(6)
 
         else:
-            Q = SE3._left_jacobian_Q_matrix(xi)
+
+            phi = xi[0:3]  # rotation part
+            rho = xi[3:6]  # translation part
+            Q = SE3._left_jacobian_Q_matrix(phi, rho)
 
             phi = xi[0:3]  # rotation part
 
@@ -217,9 +215,11 @@ class SE3(MatrixLieGroup):
             return np.identity(6)
 
         else:
-            Q = SE3._left_jacobian_Q_matrix(xi)
 
             phi = xi[0:3]  # rotation part
+            rho = xi[3:6]  # translation part
+            Q = SE3._left_jacobian_Q_matrix(phi, rho)
+
 
             J_inv = SO3.left_jacobian_inv(phi)
 
