@@ -142,9 +142,14 @@ class SE23(MatrixLieGroup):
         
     @staticmethod
     def left_jacobian(xi):
+        xi = np.array(xi).ravel()
         xi_phi = xi[0:3]
         xi_v = xi[3:6].reshape((-1,1))
         xi_r = xi[6:9].reshape((-1,1))
+
+        if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
+            return np.identity(9)
+
         Q_v = SE3._left_jacobian_Q_matrix(xi_phi, xi_v)
         Q_r = SE3._left_jacobian_Q_matrix(xi_phi, xi_r)
         J = SO3.left_jacobian(xi_phi)
@@ -158,9 +163,14 @@ class SE23(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian_inv(xi):
+        xi = np.array(xi).ravel()
         xi_phi = xi[0:3]
         xi_v = xi[3:6].reshape((-1,1))
         xi_r = xi[6:9].reshape((-1,1))
+
+        if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
+            return np.identity(9)
+
         Q_v = SE3._left_jacobian_Q_matrix(xi_phi, xi_v)
         Q_r = SE3._left_jacobian_Q_matrix(xi_phi, xi_r)
         J_inv = SO3.left_jacobian_inv(xi_phi)

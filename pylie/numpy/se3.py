@@ -167,8 +167,7 @@ class SE3(MatrixLieGroup):
         px = SO3.wedge(phi)
 
         ph = np.linalg.norm(phi)
-        if ph < SE3._small_angle_tol:
-            l = 1
+            
         ph2 = ph * ph
         ph3 = ph2 * ph
         ph4 = ph3 * ph
@@ -193,13 +192,15 @@ class SE3(MatrixLieGroup):
     def left_jacobian(xi):
 
         xi = np.array(xi).ravel()
-        if np.linalg.norm(xi) < SE3._small_angle_tol:
+
+
+        phi = xi[0:3]  # rotation part
+        rho = xi[3:6]  # translation part
+
+        if np.linalg.norm(phi) < SE3._small_angle_tol:
             return np.identity(6)
 
         else:
-
-            phi = xi[0:3]  # rotation part
-            rho = xi[3:6]  # translation part
             Q = SE3._left_jacobian_Q_matrix(phi, rho)
 
             phi = xi[0:3]  # rotation part
