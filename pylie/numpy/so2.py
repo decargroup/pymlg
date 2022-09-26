@@ -44,37 +44,29 @@ class SO2(MatrixLieGroup):
         return SO2.wedge(phi)
 
     @staticmethod
-    def left_jacobian(phi):
-        # Near phi==0, use first order Taylor expansion
-        if np.abs(phi) < SO2._small_angle_tol:
-            return np.identity(2) + 0.5 * SO2.wedge(phi)
-
-        s = np.sin(phi)
-        c = np.cos(phi)
-
-        return (s / phi) * np.identity(2) + ((1 - c) / phi) * SO2.wedge(1.0)
+    def left_jacobian(x):
+        return np.array([[1]])
+    
+    @staticmethod 
+    def left_jacobian_inv(x):
+        return np.array([[1]])
 
     @staticmethod
-    def left_jacobian_inv(phi):
-        # Near phi==0, use first order Taylor expansion
-        if np.abs(phi) < SO2._small_angle_tol:
-            return np.identity(2) - 0.5 * SO2.wedge(phi)
-
-        half_angle = 0.5 * phi
-        cot_half_angle = 1.0 / np.tan(half_angle)
-        return half_angle * cot_half_angle * np.identity(2) - half_angle * SO2.wedge(
-            1.0
-        )
+    def right_jacobian(x):
+        return np.array([[1]])
+    
+    @staticmethod
+    def right_jacobian_inv(x):
+        return np.array([[1]])
 
     @staticmethod
     def adjoint(C):
-        return np.identity(2)
+        return np.array([[1]])
 
     @staticmethod
     def odot(b):
         b = np.array(b).ravel()
         return np.array([-b[1], b[0]]).reshape((-1, 1))
-
 
     @staticmethod 
     def identity():

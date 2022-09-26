@@ -27,16 +27,14 @@ def test_group_jacobians():
 
 
 def test_adjoint_identity():
-    X = G.random()
-    xi = G.Log(G.random())
-
-    side1 = G.wedge(xi)
-    side2 = np.dot(X, np.dot(G.wedge(xi), G.inverse(X)))
-    assert np.allclose(side1, side2)
-
+    common._test_adjoint_identity(G)
 
 def test_odot_wedge():
     common._test_odot_wedge(G)
+
+
+def test_left_jacobian_numerically():
+    common._test_left_jacobian_numerically(G)
 
 
 if __name__ == "__main__":

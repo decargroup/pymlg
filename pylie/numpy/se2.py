@@ -64,7 +64,7 @@ class SE2(MatrixLieGroup):
         phi = SO2.vee(Xi_phi)
         xi_r = Xi[0:2, 2]
         C = SO2.exp(Xi_phi)
-        r = np.dot(SO2.left_jacobian(phi), xi_r.reshape((-1, 1)))
+        r = np.dot(SE2.V_matrix(phi), xi_r.reshape((-1, 1)))
         T = np.zeros((3, 3))
         T[0:2, 0:2] = C
         T[0:2, 2] = r.ravel()
@@ -76,7 +76,7 @@ class SE2(MatrixLieGroup):
     def log(T):
         Xi_phi = SO2.log(T[0:2, 0:2])
         r = T[0:2, 2]
-        xi_r = np.dot(SO2.left_jacobian_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1)))
+        xi_r = np.dot(SE2.V_matrix_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1)))
         # Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
         Xi = np.zeros((3, 3))
         Xi[0:2, 0:2] = Xi_phi
@@ -163,3 +163,26 @@ class SE2(MatrixLieGroup):
     @staticmethod
     def identity():
         return np.identity(3)
+
+    @staticmethod
+    def V_matrix(phi):
+        # Near phi==0, use first order Taylor expansion
+        if np.abs(phi) < SO2._small_angle_tol:
+            return np.identity(2) + 0.5 * SO2.wedge(phi)
+
+        s = np.sin(phi)
+        c = np.cos(phi)
+
+        return (s / phi) * np.identity(2) + ((1 - c) / phi) * SO2.wedge(1.0)
+
+    @staticmethod
+    def V_matrix_inv(phi):
+        # Near phi==0, use first order Taylor expansion
+        if np.abs(phi) < SO2._small_angle_tol:
+            return np.identity(2) - 0.5 * SO2.wedge(phi)
+
+        half_angle = 0.5 * phi
+        cot_half_angle = 1.0 / np.tan(half_angle)
+        return half_angle * cot_half_angle * np.identity(2) - half_angle * SO2.wedge(
+            1.0
+        )
