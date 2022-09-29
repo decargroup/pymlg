@@ -1,6 +1,6 @@
 from .base import MatrixLieGroup
 import numpy as np
-
+import math
 
 class SL3(MatrixLieGroup):
     """
@@ -45,20 +45,20 @@ class SL3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian(xi):
-        """Computes the Left Jacobian of SO(3).
+        """Computes the Left Jacobian of SL(3) numerically.
 
         """
+        X = SL3.Exp(xi)
+        exp_inv = SL3.inverse(X)
+        J_fd = np.zeros((SL3.dof, SL3.dof))
+        h = 1e-8
+        for i in range(SL3.dof):
+            dx = np.zeros(SL3.dof)
+            dx[i] =  h 
+            J_fd[:, i] = (SL3.Log(SL3.Exp(xi + dx) @ exp_inv) / h).ravel()
+            #J_fd[:, i] = np.imag(SL3.Exp (dx)@ X) / h
+        return J_fd
 
-        return 
-
-    @staticmethod
-    def left_jacobian_inv(xi):
-        """Computes the inverse of the left Jacobian of SO(3).
-
-        """
-
-
-        return 
 
     @staticmethod
     def odot(p):
@@ -122,4 +122,13 @@ class SL3(MatrixLieGroup):
                         [0, 0, -xi[6], 3*xi[7], -xi[7], xi[6], xi[2]-xi[5], -(3*xi[3]-xi[4])]
                         ])
         return ad
- 
+    
+    """ @staticmethod
+    def exp(Xi, ord = 5):
+
+
+        res = np.eye(3)
+        for i in range(1,ord):
+            a = math.factorial(i)
+            res += 1/a * np.linalg.matrix_power(Xi, i)
+        return res """
