@@ -1,6 +1,14 @@
 from .base import MatrixLieGroup
 import numpy as np
 
+try:
+    # We do not want to make ROS a hard dependency, so we import it only if
+    # available.
+    from geometry_msgs.msg import Quaternion
+except ImportError:
+    pass  # ROS is not installed
+except:
+    raise
 
 class SO3(MatrixLieGroup):
     """
@@ -16,18 +24,21 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def wedge(xi):
-        xi = np.array(xi).reshape((-1, 1))
+        xi = np.array(xi).ravel()
         X = np.array(
             [
-                [0, -xi[2, 0], xi[1, 0]],
-                [xi[2, 0], 0, -xi[0, 0]],
-                [-xi[1, 0], xi[0, 0], 0],
+                [0, -xi[2], xi[1]],
+                [xi[2], 0, -xi[0]],
+                [-xi[1], xi[0], 0],
             ]
         )
         return X
 
     @staticmethod
     def cross(xi):
+        """ 
+        Alternate name for `SO3.wedge`
+        """
         return SO3.wedge(xi)
 
     @staticmethod
@@ -36,13 +47,14 @@ class SO3(MatrixLieGroup):
         return xi
 
     @staticmethod
-    def exp(element_so3):
-        """Maps elements of the matrix Lie algebra so(3) to the group.
+    def exp(Xi):
+        """
+        Maps elements of the matrix Lie algebra so(3) to the group.
 
         From Section 8.3 of Lie Groups for Computer Vision by Ethan Eade. When
         theta is small, use Taylor series expansion given in Section 11.
         """
-        phi = SO3.vee(element_so3)
+        phi = SO3.vee(Xi)
         angle = np.linalg.norm(phi)
 
         # Use Taylor series expansion
@@ -55,7 +67,7 @@ class SO3(MatrixLieGroup):
             B = (1.0 - np.cos(angle)) / (angle**2)
 
         # Rodirgues rotation formula (103)
-        return np.eye(3) + A * element_so3 + B * np.dot(element_so3, element_so3)
+        return np.eye(3) + A * Xi + B * np.dot(Xi, Xi)
 
     @staticmethod
     def log(X):
@@ -74,10 +86,12 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian(xi):
-        """Computes the Left Jacobian of SO(3).
+        """
+        Computes the Left Jacobian of SO(3).
         From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade.  When
         angle is small, use Taylor series expansion given in Section 11.
         """
+        xi = np.array(xi).ravel()
         angle = np.linalg.norm(xi)
 
         if angle < SO3._small_angle_tol:
@@ -96,10 +110,12 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian_inv(xi):
-        """Computes the inverse of the left Jacobian of SO(3).
+        """
+        Computes the inverse of the left Jacobian of SO(3).
         From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade. When
         angle is small, use Taylor series expansion given in Section 11.
         """
+        xi = np.array(xi).ravel()
         angle = np.linalg.norm(xi)
         if angle < SO3._small_angle_tol:
             t2 = angle**2
@@ -124,43 +140,71 @@ class SO3(MatrixLieGroup):
     def adjoint(C):
         return C
 
-    @staticmethod 
-    def from_euler(theta, order=[3,2,1]):
+    @staticmethod
+    def from_euler(angles, order=[3, 2, 1]):
         """
         Creates a DCM from a 3-element vector of euler angles with specified 
         order.
 
-        PARAMETERS
+        Parameters
         ----------
-        theta: ndarray of euler angles with shape (3,) or (3,1)
-        order: list of integers specifying the order sequence. for example,
-            the default order=[3,2,1] rotates the third axis, followed by 
-            the second, followed by the first.
+        angles : list[float] or ndarray of size 3
+            euler angle values
+        order : list[int], optional
+            euler angle sequence. For example, the default order=[3,2,1] rotates
+            the third axis, followed by the second, followed by the first.
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to euler angles
         """
 
         C = np.identity(3)
-        theta = theta.ravel()
+        angles = np.array(angles).ravel()
 
         for i in range(3):
-            idx = order[i] -1
+            idx = order[i] - 1
             phi = np.zeros(3)
-            phi[idx] = theta[i]
-            C = np.dot(SO3.Exp(phi), C) 
+            phi[idx] = angles[idx]
+            C = np.dot(SO3.Exp(phi), C)
 
         return C
 
-    @staticmethod 
+    @staticmethod
     def from_quat(q, order="wxyz"):
         """
-        Returns the DCM corresponding to the quaternion representation q. 
+        Returns the DCM corresponding to the quaternion representation q.
 
-        PARAMETERS
+        .. math::
+            \mathbf{C} = (1 - 2 \mathbf{\epsilon}^T \mathbf{\epsilon}) \mathbf{1} \\
+            + 2 \mathbf{\epsilon \epsilon}^T + 2 \eta \mathbf{\epsilon}^{\\times}
+
+        Note that the final term is positive to abide by robotics convention. 
+        This differs from Barfoot (2019).
+        
+        Parameters
         ----------
-        q: list or ndarray of size 4, of unit length
-        order: "wxyz" or "xyzw". specifies what each component in q means.
+        q : list[float] or ndarray of size 4
+            quaternion
+        order : str, optional
+            quaternion element order "xyzw" or "wxyz", by default "wxyz"
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to `q`
+
+        Raises
+        ------
+        ValueError
+            if `q` is not of size 4
+        ValueError
+            if `order` is not "xyzw" or "wxyz"
         """
+        
         q = np.array(q).ravel()
-        q = q/np.linalg.norm(q)
+        q = q / np.linalg.norm(q)
 
         if q.size != 4:
             raise ValueError("q must have size 4.")
@@ -172,43 +216,124 @@ class SO3(MatrixLieGroup):
             eps = q[0:3]
         else:
             raise ValueError("order must be 'wxyz' or 'xyzw'. ")
-            
 
         eps = eps.reshape((-1, 1))
 
         return (
             (1 - 2 * np.matmul(np.transpose(eps), eps)) * np.eye(3)
             + 2 * np.matmul(eps, np.transpose(eps))
-            - 2 * eta * SO3.wedge(eps)
+            + 2 * eta * SO3.wedge(eps)
         )
 
     @staticmethod
     def to_quat(C, order="wxyz"):
         """
-        Returns the quaternion corresponding to DCM C. 
+        Returns the quaternion corresponding to DCM C.
 
-        PARAMETERS
+        Parameters
         ----------
-        C: numpy ndarray with shape (3,3)
-        order: "wxyz" or "xyzw". specifies what each component in q means.
+        C : ndarray with shape (3,3)
+            DCM/rotation matrix to convert.
+        order : str, optional
+            quaternion element order "xyzw" or "wxyz", by default "wxyz"
+
+        Returns
+        -------
+        ndarray with shape (4,1)
+             quaternion representation of C
+
+        Raises
+        ------
+        ValueError
+            if `C` does not have shape (3,3)
+        ValueError
+            if `order` is not "xyzw" or "wxyz"
         """
-        C = C.reshape((3,3))
-        if C.shape != (3,3):
+
+        C = C.reshape((3, 3))
+        if C.shape != (3, 3):
             raise ValueError("C must have shape (3,3).")
 
-
-        eta = 0.5*(np.trace(C) + 1) ** 0.5
-        eps = np.array([
-            C[1,2] - C[2,1],
-            C[2,0] - C[0,2],
-            C[0,1] - C[1,0]
-        ])/(4*eta)
+        eta = 0.5 * (np.trace(C) + 1) ** 0.5
+        eps = -np.array([C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]) / (
+            4 * eta
+        )
 
         if order == "wxyz":
-            q = np.hstack((eta, eps)).reshape((-1,1))
+            q = np.hstack((eta, eps)).reshape((-1, 1))
         elif order == "xyzw":
-            q = np.hstack((eps, eta)).reshape((-1,1))
+            q = np.hstack((eps, eta)).reshape((-1, 1))
         else:
             raise ValueError("order must be 'wxyz' or 'xyzw'. ")
 
         return q
+
+    @staticmethod
+    def to_euler(C):
+        """
+        Convert a rotation matrix to RPY Euler angles 
+        :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1) 
+        Euler-angle sequence.
+        """
+        pitch = np.arctan2(-C[2, 0], np.sqrt(C[0, 0] ** 2 + C[1, 0] ** 2))
+
+        if np.isclose(pitch, np.pi / 2.0):
+            yaw = 0.0
+            roll = np.arctan2(C[0, 1], C[1, 1])
+        elif np.isclose(pitch, -np.pi / 2.0):
+            yaw = 0.0
+            roll = -np.arctan2(C[0, 1], C[1, 1])
+        else:
+            sec_pitch = 1.0 / np.cos(pitch)
+            yaw = np.arctan2(C[1, 0] * sec_pitch, C[0, 0] * sec_pitch)
+            roll = np.arctan2(C[2, 1] * sec_pitch, C[2, 2] * sec_pitch)
+
+        return np.array([roll, pitch, yaw]).ravel()
+
+    @staticmethod
+    def from_ros(q):
+        """
+        Converts a ROS quaternion to a DCM.
+
+        Parameters
+        ----------
+        q : geometry_msgs.msg.Quaternion
+            ROS quaternion
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to `q`
+        """
+        q = np.array([q.x, q.y, q.z, q.w])
+        return SO3.from_quat(q, order="xyzw")
+
+    @staticmethod 
+    def to_ros(C):
+        """
+        Converts a DCM to a ROS quaternion.
+
+        Parameters
+        ----------
+        C : ndarray with shape (3,3)
+            DCM to convert
+
+        Returns
+        -------
+        geometry_msgs.msg.Quaternion
+            ROS quaternion corresponding to `C`
+        """
+        q = SO3.to_quat(C, order = "wxyz").ravel()
+        msg = Quaternion()
+        msg.w = q[0]
+        msg.x = q[1]
+        msg.y = q[2]
+        msg.z = q[3]
+        return msg
+
+    @staticmethod
+    def identity():
+        """
+        Returns the identity DCM.
+        """
+        return np.eye(3)

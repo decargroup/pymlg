@@ -3,9 +3,25 @@ import numpy as np
 
 
 class MatrixLieGroup:
+    """
+    Base class inherited by all groups, providing a few group-general
+    methods.
+
+    """
 
     _small_angle_tol = 1e-7
+
+    #:int: The degrees of freedom of the group.
     dof = None
+
+    
+    def __init__(self):
+        raise RuntimeError("""
+        This class is not meant to be instantiated! The methods are all static,
+        which means you can call them directly with
+
+        Y = <class_name_without_brackets>.<method_name>(X)
+        """)
 
     @staticmethod
     def random():
@@ -17,14 +33,14 @@ class MatrixLieGroup:
     @staticmethod
     def wedge(x):
         """
-        Wedge operator from R^n to algebra.
+        Wedge operator :math:`(\cdot)^\\wedge: \mathbb{R}^n \\to \mathfrak{g}`. 
         """
         raise NotImplementedError()
 
     @staticmethod
     def vee(Xi):
         """
-        Vee operator from algebra to R^n.
+        Vee operator :math:`(\cdot)^\\vee: \mathfrak{g} \\to  \mathbb{R}^n`. 
         """
         raise NotImplementedError()
 
@@ -32,6 +48,9 @@ class MatrixLieGroup:
     def exp(Xi):
         """
         Exponential map from algebra to group.
+
+        .. math::
+            \mathrm{exp}: \mathfrak{g} \\to G
         """
         return expm(Xi)
 
@@ -39,6 +58,9 @@ class MatrixLieGroup:
     def log(X):
         """
         Logarithmic map from algebra to group.
+
+        .. math::
+            \mathrm{log}: G \\to \mathfrak{g}
         """
         return logm(X)
 
@@ -62,21 +84,28 @@ class MatrixLieGroup:
         odot operator as defined in Barfoot. I.e., an operator on an element of
         R^n such that
 
-        a^wedge b = b^odot a
+        .. math::
+            \mathbf{a}^\wedge \mathbf{b} = \mathbf{b}^\odot \mathbf{a}
         """
         raise NotImplementedError()
 
     @staticmethod
     def adjoint(X):
         """
-        Adjoint representation of GROUP element.
+        Adjoint representation of *group* element.
+
+        .. math::
+            \mathrm{Ad}(\mathbf{X})
         """
         raise NotImplementedError()
 
     @staticmethod
     def adjoint_algebra(Xi):
         """
-        Adjoint representation of ALGEBRA element.
+        Adjoint representation of *algebra* element.
+
+        .. math::
+            \mathrm{ad}(\mathbf{\Xi})
         """
         raise NotImplementedError()
 
@@ -97,14 +126,16 @@ class MatrixLieGroup:
     @classmethod
     def right_jacobian(cls, x):
         """
-        Group right jacobian evaluated at x in R^n
+        Group right jacobian evaluated at x in R^n. Requires the subclass to
+        implement `left_jacobian()`.
         """
         return cls.left_jacobian(-x)
 
     @classmethod
     def right_jacobian_inv(cls, x):
         """
-        Inverse of group right jacobian evaluated at x in R^n
+        Inverse of group right jacobian evaluated at x in R^n. Requires the
+        subclass to implement `left_jacobian()`.
         """
         return np.linalg.inv(cls.right_jacobian(x))
 
@@ -112,6 +143,11 @@ class MatrixLieGroup:
     def Exp(cls, x):
         """
         Shortcut method: R^n to group directly.
+
+
+        .. math::
+            \mathrm{Exp}: \mathbb{R}^n \\to G
+
         """
         return cls.exp(cls.wedge(x))
 
@@ -119,5 +155,16 @@ class MatrixLieGroup:
     def Log(cls, X):
         """
         Shortcut method: group to R^n directly.
+
+        .. math::
+            \mathrm{Log}: G \\to \mathbb{R}^n
+
         """
         return cls.vee(cls.log(X))
+
+    @classmethod
+    def identity(cls):
+        """
+        Returns an identity matrix of the group.
+        """
+        raise NotImplementedError()

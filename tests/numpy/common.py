@@ -77,7 +77,7 @@ def _test_left_jacobian_numerically(G):
         dx[i] = h
         J_fd[:, i] = (G.Log(np.dot(G.Exp(x_bar + dx), exp_inv)) / h).ravel()
 
-    assert np.allclose(J_fd, J_left, atol = 1e-7)
+    assert np.allclose(J_fd, J_left, atol=1e-7)
 
 
 def _test_adjoint_identity(G):

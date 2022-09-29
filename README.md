@@ -1,13 +1,14 @@
 # Pylie
 An instantiation-free python library for common matrix Lie group operations. Functions in this repo operate entirely on numpy arrays, with the intention of minimizing overhead and keeping the implementation as simple as possible.
 
-
-__Definitely a work in progress! :)__
-
 ## Installation
 Begin by cloning this repo somewhere. To install, go to the clone directory and run
 
     pip install -e .
+
+## Documentation
+
+After you have cloned on the repo, [open this file in your browser](./docs/build/html/index.html)
 
 ## Example 
 
