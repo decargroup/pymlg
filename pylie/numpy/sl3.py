@@ -16,7 +16,7 @@ class SL3(MatrixLieGroup):
 
     @staticmethod 
     def wedge(xi):
-        xi = xi.ravel()
+        xi = np.array(xi).ravel()
         X = np.array(
             [
                 [xi[3]+xi[4], -xi[2]+xi[5], xi[0]],
