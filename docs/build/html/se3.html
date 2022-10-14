@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -43,7 +44,35 @@
 <li class="toctree-l1"><a class="reference internal" href="so2.html">SO2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">SE3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SE3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pylie.SE3"><code class="docutils literal notranslate"><span class="pre">SE3</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.Exp"><code class="docutils literal notranslate"><span class="pre">SE3.Exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.Log"><code class="docutils literal notranslate"><span class="pre">SE3.Log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.adjoint"><code class="docutils literal notranslate"><span class="pre">SE3.adjoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.adjoint_algebra"><code class="docutils literal notranslate"><span class="pre">SE3.adjoint_algebra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.dof"><code class="docutils literal notranslate"><span class="pre">SE3.dof</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.exp"><code class="docutils literal notranslate"><span class="pre">SE3.exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.from_components"><code class="docutils literal notranslate"><span class="pre">SE3.from_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.from_ros"><code class="docutils literal notranslate"><span class="pre">SE3.from_ros()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.identity"><code class="docutils literal notranslate"><span class="pre">SE3.identity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.inverse"><code class="docutils literal notranslate"><span class="pre">SE3.inverse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.left_jacobian"><code class="docutils literal notranslate"><span class="pre">SE3.left_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.left_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">SE3.left_jacobian_inv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.log"><code class="docutils literal notranslate"><span class="pre">SE3.log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.normalize"><code class="docutils literal notranslate"><span class="pre">SE3.normalize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.odot"><code class="docutils literal notranslate"><span class="pre">SE3.odot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.random"><code class="docutils literal notranslate"><span class="pre">SE3.random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.right_jacobian"><code class="docutils literal notranslate"><span class="pre">SE3.right_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.right_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">SE3.right_jacobian_inv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.synthesize"><code class="docutils literal notranslate"><span class="pre">SE3.synthesize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.to_components"><code class="docutils literal notranslate"><span class="pre">SE3.to_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.to_ros"><code class="docutils literal notranslate"><span class="pre">SE3.to_ros()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.vee"><code class="docutils literal notranslate"><span class="pre">SE3.vee()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE3.wedge"><code class="docutils literal notranslate"><span class="pre">SE3.wedge()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
 </ul>
 
@@ -242,7 +271,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylie.SE3.identity">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE3.identity" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE3.identity" title="Permalink to this definition"></a></dt>
 <dd><p>Returns an identity matrix of the group.</p>
 </dd></dl>
 

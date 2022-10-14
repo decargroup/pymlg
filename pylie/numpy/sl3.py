@@ -4,7 +4,7 @@ import math
 
 class SL3(MatrixLieGroup):
     """
-    An instantiation-free implementation of the SO3 matrix Lie group.
+    An instantiation-free implementation of the SL3 matrix Lie group.
     """
 
     dof = 8
@@ -27,10 +27,6 @@ class SL3(MatrixLieGroup):
         return X
 
     @staticmethod
-    def cross(xi):
-        return SL3.wedge(xi)
-
-    @staticmethod
     def vee(X):
         xi = np.array([[X[0, 2]], 
                         [X[1, 2]], 
@@ -45,8 +41,8 @@ class SL3(MatrixLieGroup):
 
     @staticmethod
     def left_jacobian(xi):
-        """Computes the Left Jacobian of SL(3) numerically.
-
+        """
+        Computes the Left Jacobian of SL(3) numerically.
         """
         X = SL3.Exp(xi)
         exp_inv = SL3.inverse(X)
@@ -56,13 +52,12 @@ class SL3(MatrixLieGroup):
             dx = np.zeros(SL3.dof)
             dx[i] =  h 
             J_fd[:, i] = (SL3.Log(SL3.Exp(xi + dx) @ exp_inv) / h).ravel()
-            #J_fd[:, i] = np.imag(SL3.Exp (dx)@ X) / h
         return J_fd
 
 
     @staticmethod
     def odot(p):
-        """"
+        """
         This expression helps obtain p^\odot where
         Xi * p = p_odot * xi,
         and p is a vector of 3x1, usually representing position.
@@ -75,9 +70,10 @@ class SL3(MatrixLieGroup):
 
     @staticmethod
     def adjoint(H):
-
-        """" Adjoint representation of GROUP element.
-        Obtained from Section 7.4 of Lie Groups for Computer Vision by Eade"""
+        """ 
+        Adjoint representation of GROUP element.
+        Obtained from Section 7.4 of Lie Groups for Computer Vision by Eade
+        """
         alg = np.array([[0, 0, 0, 1, 1, 0, 0, 0],
                         [0, 0, -1, 0, 0, 1, 0, 0],
                         [1, 0, 0, 0, 0, 0, 0, 0],
@@ -106,8 +102,7 @@ class SL3(MatrixLieGroup):
     @staticmethod
     def adjoint_algebra(xi):
         """
-        Adjoint representation of ALGEBRA element.
-        [Xi_1, Xi_2]^\vee = ad(Xi_1)xi_2
+        Adjoint representation of ALGEBRA element. 
         """
         xi = xi.ravel()
         
@@ -122,13 +117,3 @@ class SL3(MatrixLieGroup):
                         [0, 0, -xi[6], 3*xi[7], -xi[7], xi[6], xi[2]-xi[5], -(3*xi[3]-xi[4])]
                         ])
         return ad
-    
-    """ @staticmethod
-    def exp(Xi, ord = 5):
-
-
-        res = np.eye(3)
-        for i in range(1,ord):
-            a = math.factorial(i)
-            res += 1/a * np.linalg.matrix_power(Xi, i)
-        return res """

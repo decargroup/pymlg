@@ -19,6 +19,7 @@ An instantiation-free python library for common matrix Lie group operations. Fun
     se2 
     se3 
     se23
+    sl3
 
 Example
 -------
@@ -55,7 +56,9 @@ Example
     J_L_inv = SE2.left_jacobian_inv(x)
     J_R_inv = SE2.right_jacobian_inv(x)
 
-
+    # odot operator (defined such that wedge(a) * b = odot(b) * a)
+    b = np.array([1, 2, 3]) 
+    B = SE2.odot(b)
 
 Matrix Lie Group Base Class 
 ---------------------------

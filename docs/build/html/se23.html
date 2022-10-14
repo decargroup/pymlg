@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -43,7 +44,34 @@
 <li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">SE23</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SE23</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pylie.SE23"><code class="docutils literal notranslate"><span class="pre">SE23</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.Exp"><code class="docutils literal notranslate"><span class="pre">SE23.Exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.Log"><code class="docutils literal notranslate"><span class="pre">SE23.Log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.adjoint"><code class="docutils literal notranslate"><span class="pre">SE23.adjoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.adjoint_algebra"><code class="docutils literal notranslate"><span class="pre">SE23.adjoint_algebra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.decompose"><code class="docutils literal notranslate"><span class="pre">SE23.decompose()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.dof"><code class="docutils literal notranslate"><span class="pre">SE23.dof</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.exp"><code class="docutils literal notranslate"><span class="pre">SE23.exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.from_components"><code class="docutils literal notranslate"><span class="pre">SE23.from_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.identity"><code class="docutils literal notranslate"><span class="pre">SE23.identity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.inverse"><code class="docutils literal notranslate"><span class="pre">SE23.inverse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.left_jacobian"><code class="docutils literal notranslate"><span class="pre">SE23.left_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.left_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">SE23.left_jacobian_inv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.log"><code class="docutils literal notranslate"><span class="pre">SE23.log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.normalize"><code class="docutils literal notranslate"><span class="pre">SE23.normalize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.odot"><code class="docutils literal notranslate"><span class="pre">SE23.odot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.random"><code class="docutils literal notranslate"><span class="pre">SE23.random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.right_jacobian"><code class="docutils literal notranslate"><span class="pre">SE23.right_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.right_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">SE23.right_jacobian_inv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.synthesize"><code class="docutils literal notranslate"><span class="pre">SE23.synthesize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.to_components"><code class="docutils literal notranslate"><span class="pre">SE23.to_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.vee"><code class="docutils literal notranslate"><span class="pre">SE23.vee()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SE23.wedge"><code class="docutils literal notranslate"><span class="pre">SE23.wedge()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -243,7 +271,7 @@ components.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylie.SE23.identity">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.identity" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.identity" title="Permalink to this definition"></a></dt>
 <dd><p>Returns an identity matrix of the group.</p>
 </dd></dl>
 
@@ -255,13 +283,13 @@ components.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylie.SE23.left_jacobian">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.left_jacobian" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.left_jacobian" title="Permalink to this definition"></a></dt>
 <dd><p>Group left jacobian evaluated at x in R^n</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylie.SE23.left_jacobian_inv">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.left_jacobian_inv" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SE23.left_jacobian_inv" title="Permalink to this definition"></a></dt>
 <dd><p>Inverse of group left jacobian evaluated at x in R^n</p>
 </dd></dl>
 

@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -42,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sl3.html">SL3</a></li>
 </ul>
 
         </div>
@@ -100,6 +102,8 @@
 </li>
         <li><a href="se3.html#pylie.SE3.adjoint">(pylie.SE3 static method)</a>
 </li>
+        <li><a href="sl3.html#pylie.SL3.adjoint">(pylie.SL3 static method)</a>
+</li>
         <li><a href="so2.html#pylie.SO2.adjoint">(pylie.SO2 static method)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.adjoint">(pylie.SO3 static method)</a>
@@ -115,6 +119,8 @@
         <li><a href="se23.html#pylie.SE23.adjoint_algebra">(pylie.SE23 static method)</a>
 </li>
         <li><a href="se3.html#pylie.SE3.adjoint_algebra">(pylie.SE3 static method)</a>
+</li>
+        <li><a href="sl3.html#pylie.SL3.adjoint_algebra">(pylie.SL3 static method)</a>
 </li>
         <li><a href="so2.html#pylie.SO2.adjoint_algebra">(pylie.SO2 static method)</a>
 </li>
@@ -146,6 +152,8 @@
 </li>
         <li><a href="se3.html#pylie.SE3.dof">(pylie.SE3 attribute)</a>
 </li>
+        <li><a href="sl3.html#pylie.SL3.dof">(pylie.SL3 attribute)</a>
+</li>
         <li><a href="so2.html#pylie.SO2.dof">(pylie.SO2 attribute)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.dof">(pylie.SO3 attribute)</a>
@@ -169,11 +177,15 @@
 </li>
       <li><a href="se23.html#pylie.SE23.exp">exp() (pylie.SE23 static method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="se3.html#pylie.SE3.Exp">Exp() (pylie.SE3 class method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="se3.html#pylie.SE3.exp">exp() (pylie.SE3 static method)</a>
+</li>
+      <li><a href="sl3.html#pylie.SL3.Exp">Exp() (pylie.SL3 class method)</a>
+</li>
+      <li><a href="sl3.html#pylie.SL3.exp">exp() (pylie.SL3 static method)</a>
 </li>
       <li><a href="so2.html#pylie.SO2.Exp">Exp() (pylie.SO2 class method)</a>
 </li>
@@ -218,15 +230,17 @@
       <li><a href="index.html#pylie.MatrixLieGroup.identity">identity() (pylie.MatrixLieGroup class method)</a>
 
       <ul>
-        <li><a href="se2.html#pylie.SE2.identity">(pylie.SE2 class method)</a>
+        <li><a href="se2.html#pylie.SE2.identity">(pylie.SE2 static method)</a>
 </li>
-        <li><a href="se23.html#pylie.SE23.identity">(pylie.SE23 class method)</a>
+        <li><a href="se23.html#pylie.SE23.identity">(pylie.SE23 static method)</a>
 </li>
-        <li><a href="se3.html#pylie.SE3.identity">(pylie.SE3 class method)</a>
+        <li><a href="se3.html#pylie.SE3.identity">(pylie.SE3 static method)</a>
 </li>
-        <li><a href="so2.html#pylie.SO2.identity">(pylie.SO2 class method)</a>
+        <li><a href="sl3.html#pylie.SL3.identity">(pylie.SL3 class method)</a>
 </li>
-        <li><a href="so3.html#pylie.SO3.identity">(pylie.SO3 class method)</a>
+        <li><a href="so2.html#pylie.SO2.identity">(pylie.SO2 static method)</a>
+</li>
+        <li><a href="so3.html#pylie.SO3.identity">(pylie.SO3 static method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -239,6 +253,8 @@
         <li><a href="se23.html#pylie.SE23.inverse">(pylie.SE23 static method)</a>
 </li>
         <li><a href="se3.html#pylie.SE3.inverse">(pylie.SE3 static method)</a>
+</li>
+        <li><a href="sl3.html#pylie.SL3.inverse">(pylie.SL3 static method)</a>
 </li>
         <li><a href="so2.html#pylie.SO2.inverse">(pylie.SO2 static method)</a>
 </li>
@@ -260,6 +276,8 @@
 </li>
         <li><a href="se3.html#pylie.SE3.left_jacobian">(pylie.SE3 static method)</a>
 </li>
+        <li><a href="sl3.html#pylie.SL3.left_jacobian">(pylie.SL3 static method)</a>
+</li>
         <li><a href="so2.html#pylie.SO2.left_jacobian">(pylie.SO2 static method)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.left_jacobian">(pylie.SO3 static method)</a>
@@ -270,9 +288,11 @@
       <ul>
         <li><a href="se2.html#pylie.SE2.left_jacobian_inv">(pylie.SE2 class method)</a>
 </li>
-        <li><a href="se23.html#pylie.SE23.left_jacobian_inv">(pylie.SE23 class method)</a>
+        <li><a href="se23.html#pylie.SE23.left_jacobian_inv">(pylie.SE23 static method)</a>
 </li>
         <li><a href="se3.html#pylie.SE3.left_jacobian_inv">(pylie.SE3 static method)</a>
+</li>
+        <li><a href="sl3.html#pylie.SL3.left_jacobian_inv">(pylie.SL3 class method)</a>
 </li>
         <li><a href="so2.html#pylie.SO2.left_jacobian_inv">(pylie.SO2 static method)</a>
 </li>
@@ -296,6 +316,10 @@
       <li><a href="se3.html#pylie.SE3.Log">Log() (pylie.SE3 class method)</a>
 </li>
       <li><a href="se3.html#pylie.SE3.log">log() (pylie.SE3 static method)</a>
+</li>
+      <li><a href="sl3.html#pylie.SL3.Log">Log() (pylie.SL3 class method)</a>
+</li>
+      <li><a href="sl3.html#pylie.SL3.log">log() (pylie.SL3 static method)</a>
 </li>
       <li><a href="so2.html#pylie.SO2.Log">Log() (pylie.SO2 class method)</a>
 </li>
@@ -328,6 +352,8 @@
 </li>
         <li><a href="se3.html#pylie.SE3.normalize">(pylie.SE3 static method)</a>
 </li>
+        <li><a href="sl3.html#pylie.SL3.normalize">(pylie.SL3 static method)</a>
+</li>
         <li><a href="so2.html#pylie.SO2.normalize">(pylie.SO2 static method)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.normalize">(pylie.SO3 static method)</a>
@@ -347,6 +373,8 @@
         <li><a href="se23.html#pylie.SE23.odot">(pylie.SE23 static method)</a>
 </li>
         <li><a href="se3.html#pylie.SE3.odot">(pylie.SE3 static method)</a>
+</li>
+        <li><a href="sl3.html#pylie.SL3.odot">(pylie.SL3 static method)</a>
 </li>
         <li><a href="so2.html#pylie.SO2.odot">(pylie.SO2 static method)</a>
 </li>
@@ -368,6 +396,8 @@
 </li>
         <li><a href="se3.html#pylie.SE3.random">(pylie.SE3 static method)</a>
 </li>
+        <li><a href="sl3.html#pylie.SL3.random">(pylie.SL3 static method)</a>
+</li>
         <li><a href="so2.html#pylie.SO2.random">(pylie.SO2 static method)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.random">(pylie.SO3 static method)</a>
@@ -382,7 +412,9 @@
 </li>
         <li><a href="se3.html#pylie.SE3.right_jacobian">(pylie.SE3 class method)</a>
 </li>
-        <li><a href="so2.html#pylie.SO2.right_jacobian">(pylie.SO2 class method)</a>
+        <li><a href="sl3.html#pylie.SL3.right_jacobian">(pylie.SL3 class method)</a>
+</li>
+        <li><a href="so2.html#pylie.SO2.right_jacobian">(pylie.SO2 static method)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.right_jacobian">(pylie.SO3 class method)</a>
 </li>
@@ -398,7 +430,9 @@
 </li>
         <li><a href="se3.html#pylie.SE3.right_jacobian_inv">(pylie.SE3 class method)</a>
 </li>
-        <li><a href="so2.html#pylie.SO2.right_jacobian_inv">(pylie.SO2 class method)</a>
+        <li><a href="sl3.html#pylie.SL3.right_jacobian_inv">(pylie.SL3 class method)</a>
+</li>
+        <li><a href="so2.html#pylie.SO2.right_jacobian_inv">(pylie.SO2 static method)</a>
 </li>
         <li><a href="so3.html#pylie.SO3.right_jacobian_inv">(pylie.SO3 class method)</a>
 </li>
@@ -414,6 +448,8 @@
       <li><a href="se23.html#pylie.SE23">SE23 (class in pylie)</a>
 </li>
       <li><a href="se3.html#pylie.SE3">SE3 (class in pylie)</a>
+</li>
+      <li><a href="sl3.html#pylie.SL3">SL3 (class in pylie)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -459,6 +495,10 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="se2.html#pylie.SE2.V_matrix">V_matrix() (pylie.SE2 static method)</a>
+</li>
+      <li><a href="se2.html#pylie.SE2.V_matrix_inv">V_matrix_inv() (pylie.SE2 static method)</a>
+</li>
       <li><a href="index.html#pylie.MatrixLieGroup.vee">vee() (pylie.MatrixLieGroup static method)</a>
 
       <ul>
@@ -467,6 +507,8 @@
         <li><a href="se23.html#pylie.SE23.vee">(pylie.SE23 static method)</a>
 </li>
         <li><a href="se3.html#pylie.SE3.vee">(pylie.SE3 static method)</a>
+</li>
+        <li><a href="sl3.html#pylie.SL3.vee">(pylie.SL3 static method)</a>
 </li>
         <li><a href="so2.html#pylie.SO2.vee">(pylie.SO2 static method)</a>
 </li>
@@ -487,6 +529,8 @@
         <li><a href="se23.html#pylie.SE23.wedge">(pylie.SE23 static method)</a>
 </li>
         <li><a href="se3.html#pylie.SE3.wedge">(pylie.SE3 static method)</a>
+</li>
+        <li><a href="sl3.html#pylie.SL3.wedge">(pylie.SL3 static method)</a>
 </li>
         <li><a href="so2.html#pylie.SO2.wedge">(pylie.SO2 static method)</a>
 </li>

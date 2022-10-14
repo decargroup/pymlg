@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -44,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sl3.html">SL3</a></li>
 </ul>
 
         </div>
@@ -77,11 +79,30 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="so2.html">SO2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
+<li class="toctree-l1"><a class="reference internal" href="so2.html">SO2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="so2.html#pylie.SO2"><code class="docutils literal notranslate"><span class="pre">SO2</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="so3.html#pylie.SO3"><code class="docutils literal notranslate"><span class="pre">SO3</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="se2.html#pylie.SE2"><code class="docutils literal notranslate"><span class="pre">SE2</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="se3.html#pylie.SE3"><code class="docutils literal notranslate"><span class="pre">SE3</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="se23.html#pylie.SE23"><code class="docutils literal notranslate"><span class="pre">SE23</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sl3.html">SL3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sl3.html#pylie.SL3"><code class="docutils literal notranslate"><span class="pre">SL3</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="example">
@@ -115,6 +136,10 @@
 <span class="n">J_R</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">right_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">J_L_inv</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">left_jacobian_inv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">J_R_inv</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">right_jacobian_inv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># odot operator (defined such that wedge(a) * b = odot(b) * a)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">odot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -41,7 +42,37 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="so2.html">SO2</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">SO3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SO3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pylie.SO3"><code class="docutils literal notranslate"><span class="pre">SO3</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.Exp"><code class="docutils literal notranslate"><span class="pre">SO3.Exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.Log"><code class="docutils literal notranslate"><span class="pre">SO3.Log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.adjoint"><code class="docutils literal notranslate"><span class="pre">SO3.adjoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.adjoint_algebra"><code class="docutils literal notranslate"><span class="pre">SO3.adjoint_algebra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.cross"><code class="docutils literal notranslate"><span class="pre">SO3.cross()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.dof"><code class="docutils literal notranslate"><span class="pre">SO3.dof</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.exp"><code class="docutils literal notranslate"><span class="pre">SO3.exp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.from_euler"><code class="docutils literal notranslate"><span class="pre">SO3.from_euler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.from_quat"><code class="docutils literal notranslate"><span class="pre">SO3.from_quat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.from_ros"><code class="docutils literal notranslate"><span class="pre">SO3.from_ros()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.identity"><code class="docutils literal notranslate"><span class="pre">SO3.identity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.inverse"><code class="docutils literal notranslate"><span class="pre">SO3.inverse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.left_jacobian"><code class="docutils literal notranslate"><span class="pre">SO3.left_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.left_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">SO3.left_jacobian_inv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.log"><code class="docutils literal notranslate"><span class="pre">SO3.log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.normalize"><code class="docutils literal notranslate"><span class="pre">SO3.normalize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.odot"><code class="docutils literal notranslate"><span class="pre">SO3.odot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.random"><code class="docutils literal notranslate"><span class="pre">SO3.random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.right_jacobian"><code class="docutils literal notranslate"><span class="pre">SO3.right_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.right_jacobian_inv"><code class="docutils literal notranslate"><span class="pre">SO3.right_jacobian_inv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.to_euler"><code class="docutils literal notranslate"><span class="pre">SO3.to_euler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.to_quat"><code class="docutils literal notranslate"><span class="pre">SO3.to_quat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.to_ros"><code class="docutils literal notranslate"><span class="pre">SO3.to_ros()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.vee"><code class="docutils literal notranslate"><span class="pre">SO3.vee()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pylie.SO3.wedge"><code class="docutils literal notranslate"><span class="pre">SO3.wedge()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
@@ -114,7 +145,7 @@
 <td><p>Converts a ROS quaternion to a DCM.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pylie.SO3.identity" title="pylie.SO3.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
-<td><p>Returns an identity matrix of the group.</p></td>
+<td><p>Returns the identity DCM.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pylie.SO3.inverse" title="pylie.SO3.inverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse</span></code></a></p></td>
 <td><p>Group inverse.</p></td>
@@ -237,7 +268,7 @@ order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>angles</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray of size 3</em>) – euler angle values</p></li>
+<li><p><strong>angles</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray</em><em> of </em><em>size 3</em>) – euler angle values</p></li>
 <li><p><strong>order</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – euler angle sequence. For example, the default order=[3,2,1] rotates
 the third axis, followed by the second, followed by the first.</p></li>
 </ul>
@@ -263,7 +294,7 @@ This differs from Barfoot (2019).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>q</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray of size 4</em>) – quaternion</p></li>
+<li><p><strong>q</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>ndarray</em><em> of </em><em>size 4</em>) – quaternion</p></li>
 <li><p><strong>order</strong> (<em>str</em><em>, </em><em>optional</em>) – quaternion element order “xyzw” or “wxyz”, by default “wxyz”</p></li>
 </ul>
 </dd>
@@ -301,8 +332,8 @@ This differs from Barfoot (2019).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylie.SO3.identity">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.identity" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an identity matrix of the group.</p>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.SO3.identity" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the identity DCM.</p>
 </dd></dl>
 
 <dl class="py method">
