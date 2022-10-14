@@ -8,7 +8,7 @@ Begin by cloning this repo somewhere. To install, go to the clone directory and 
 
 ## Documentation
 
-After you have cloned on the repo, [open this file in your browser](./docs/build/html/index.html)
+Documentation can be found here: https://decargroup.github.io/pylie
 
 ## Example 
 
