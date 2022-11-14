@@ -103,7 +103,7 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     def random():
-        phi = np.random.uniform(0, 2 * np.pi, (3, 1))
+        phi = np.random.uniform(-np.pi, np.pi, (3,))
         r = np.random.normal(0, 1, (3, 1))
         C = SO3.Exp(phi)
         T = np.block([[C, r], [np.zeros((1, 3)), 1]])

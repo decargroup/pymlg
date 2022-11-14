@@ -124,6 +124,17 @@ class SE23(MatrixLieGroup):
         return Xi
 
     @staticmethod
+    def inverse(X):
+        (C, v, r) = SE23.to_components(X)
+        C_inv = C.T
+        v_inv = -np.dot(C_inv, v)
+        r_inv = -np.dot(C_inv, r)
+
+        X_inv = SE23.from_components(C_inv, v_inv, r_inv)
+
+        return X_inv
+
+    @staticmethod
     def adjoint(X):
         C, v, r = SE23.to_components(X)
         O = np.zeros((3, 3))

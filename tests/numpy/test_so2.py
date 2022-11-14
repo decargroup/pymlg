@@ -36,6 +36,8 @@ def test_odot_wedge():
 def test_left_jacobian_numerically():
     common._test_left_jacobian_numerically(G)
 
-
+def test_inverse():
+    common._test_inverse(G)
+    
 if __name__ == "__main__":
     test_adjoint_identity()

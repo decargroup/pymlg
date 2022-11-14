@@ -37,6 +37,7 @@ def test_left_jacobian_numerically():
 def test_adjoint_identity():
     common._test_adjoint_identity(G)
 
-
+def test_inverse():
+    common._test_inverse(G)
 if __name__ == "__main__":
     test_adjoint_identity()

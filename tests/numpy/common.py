@@ -87,3 +87,11 @@ def _test_adjoint_identity(G):
     side1 = G.wedge(np.dot(G.adjoint(X), xi))
     side2 = np.dot(X, np.dot(G.wedge(xi), G.inverse(X)))
     assert np.allclose(side1, side2)
+
+
+def _test_inverse(G):
+    X = G.random()
+    assert np.allclose(G.inverse(G.inverse(X)), X)
+    assert np.allclose(G.inverse(X), np.linalg.inv(X))
+    assert np.allclose(G.inverse(G.identity()), G.identity())
+    assert np.allclose(G.inverse(X) @ X, G.identity())

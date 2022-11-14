@@ -78,6 +78,8 @@ def test_quaternion():
     C_test = G.from_quat(-q, order="xyzw")
     assert np.allclose(C, C_test)
 
-
+def test_inverse():
+    common._test_inverse(G)
+    
 if __name__ == "__main__":
     test_quaternion()
