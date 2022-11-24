@@ -55,12 +55,15 @@ Example
     b = np.array([1, 2, 3]) 
     B = SE2.odot(b)
 
-Matrix Lie Group Base Class 
----------------------------
+Full Documentation
+------------------
+Click on the table entries below to go to each class' documentation.
+
 .. autosummary:: 
     :toctree: _autosummary/
     :recursive:
     :template: class.rst
+    :nosignatures:
 
     
     pylie.SO2

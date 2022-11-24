@@ -5,7 +5,7 @@ from .so2 import SO2
 
 class SE2(MatrixLieGroup):
     """
-    An instantiation-free implementation of the SE3 matrix Lie group.
+    An instantiation-free implementation of the SE2 matrix Lie group.
     """
 
     dof = 3
