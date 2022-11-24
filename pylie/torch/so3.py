@@ -93,7 +93,9 @@ class SO3(MatrixLieGroup):
 
         Rot = phi.new_empty(dim_batch, 3, 3)
         Rot[mask] = Id[mask] + SO3.wedge(phi[mask])
-        Rot[~mask] = c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
+        Rot[~mask] = (
+            c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
+        )
         return Rot
 
     @staticmethod
@@ -113,7 +115,9 @@ class SO3(MatrixLieGroup):
         mask = angle < 1e-14
         if mask.sum() == 0:
             angle = angle.unsqueeze(1).unsqueeze(1)
-            return SO3.vee((0.5 * angle / angle.sin()) * (C - C.transpose(1, 2)))
+            return SO3.vee(
+                (0.5 * angle / angle.sin()) * (C - C.transpose(1, 2))
+            )
         elif mask.sum() == dim_batch:
             # If angle is close to zero, use first-order Taylor expansion
             return SO3.vee(C - Id)

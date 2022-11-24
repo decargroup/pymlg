@@ -62,7 +62,11 @@ class SO3(MatrixLieGroup):
         if angle < SO3._small_angle_tol:
             t2 = angle**2
             A = 1.0 - t2 / 6.0 * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0))
-            B = 1.0 / 2.0 * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+            B = (
+                1.0
+                / 2.0
+                * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+            )
         else:
             A = np.sin(angle) / angle
             B = (1.0 - np.cos(angle)) / (angle**2)
@@ -98,8 +102,12 @@ class SO3(MatrixLieGroup):
         if angle < SO3._small_angle_tol:
             t2 = angle**2
             # Taylor series expansion.  See (157), (159).
-            A = (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
-            B = (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
+            A = (1.0 / 2.0) * (
+                1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0))
+            )
+            B = (1.0 / 6.0) * (
+                1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0))
+            )
         else:
             A = (1 - np.cos(angle)) / (angle**2)
             B = (angle - np.sin(angle)) / (angle**3)
@@ -122,7 +130,9 @@ class SO3(MatrixLieGroup):
             t2 = angle**2
 
             # Taylor Series expansion
-            A = (1.0 / 12.0) * (1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0)))
+            A = (1.0 / 12.0) * (
+                1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0))
+            )
         else:
             A = (1.0 / angle**2) * (
                 1.0 - (angle * np.sin(angle) / (2.0 * (1.0 - np.cos(angle))))
@@ -256,9 +266,9 @@ class SO3(MatrixLieGroup):
             raise ValueError("C must have shape (3,3).")
 
         eta = 0.5 * (np.trace(C) + 1) ** 0.5
-        eps = -np.array([C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]) / (
-            4 * eta
-        )
+        eps = -np.array(
+            [C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]
+        ) / (4 * eta)
 
         if order == "wxyz":
             q = np.hstack((eta, eps)).reshape((-1, 1))

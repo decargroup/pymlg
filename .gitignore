@@ -56,3 +56,4 @@ pylie.egg-info/
 # VS Code settings 
 .vscode
 .pytest_cache/
+docs/source/_autosummary

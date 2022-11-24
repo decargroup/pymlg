@@ -27,7 +27,11 @@ class MatrixLieGroup:
     @staticmethod
     def random():
         """
-        Return a random element of the group.
+        Returns
+        -------
+        np.ndarray
+            A random element of the group with shape `(n,n)`.
+
         """
         raise NotImplementedError()
 
@@ -35,6 +39,15 @@ class MatrixLieGroup:
     def wedge(x):
         """
         Wedge operator :math:`(\cdot)^\\wedge: \mathbb{R}^n \\to \mathfrak{g}`.
+
+        Parameters
+        ----------
+        x: np.ndarray or List[float] with size `dof`
+
+        Returns
+        -------
+        np.ndarray
+            Element of the Lie algebra with shape `(n,n)`.
         """
         raise NotImplementedError()
 
@@ -42,6 +55,16 @@ class MatrixLieGroup:
     def vee(Xi):
         """
         Vee operator :math:`(\cdot)^\\vee: \mathfrak{g} \\to  \mathbb{R}^n`.
+
+        Parameters
+        ----------
+        Xi : np.ndarray with shape `(n,n)`
+            Element of the Lie algebra.
+        
+        Returns
+        -------
+        np.ndarray
+            Vector with shape (n,1).
         """
         raise NotImplementedError()
 
@@ -52,6 +75,16 @@ class MatrixLieGroup:
 
         .. math::
             \mathrm{exp}: \mathfrak{g} \\to G
+
+        Parameters
+        ----------
+        Xi : np.ndarray with shape `(n,n)`
+            Element of the Lie algebra.
+        
+        Returns
+        -------
+        np.ndarray
+            Element of the group with shape `(n,n)`.
         """
         return expm(Xi)
 
@@ -62,6 +95,16 @@ class MatrixLieGroup:
 
         .. math::
             \mathrm{log}: G \\to \mathfrak{g}
+
+        Parameters
+        ----------
+        X : np.ndarray with shape `(n,n)`
+            Element of the group.
+
+        Returns
+        -------
+        np.ndarray
+            Element of the Lie algebra with shape `(n,n)`.
         """
         return logm(X)
 
@@ -69,6 +112,16 @@ class MatrixLieGroup:
     def inverse(X):
         """
         Group inverse.
+
+        Parameters
+        ----------
+        X : np.ndarray with shape `(n,n)`
+            Element of the group.
+
+        Returns
+        -------
+        np.ndarray
+            Element of the group with shape `(n,n)`.
         """
         return np.linalg.inv(X)
 
@@ -76,6 +129,16 @@ class MatrixLieGroup:
     def normalize(X):
         """
         Eliminates rounding errors: ensures matrix is proper group element.
+
+        Parameters
+        ----------
+        X : np.ndarray with shape `(n,n)`
+            Element of the group.
+
+        Returns
+        -------
+        np.ndarray
+            Element of the group with shape `(n,n)`.
         """
         raise NotImplementedError()
 
@@ -87,6 +150,15 @@ class MatrixLieGroup:
 
         .. math::
             \mathbf{a}^\wedge \mathbf{b} = \mathbf{b}^\odot \mathbf{a}
+
+        Parameters
+        ----------
+        x : np.ndarray or List[float] with size `m`
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math:`\mathbf{b}^\odot` with shape (n, dof).
         """
         raise NotImplementedError()
 
@@ -97,6 +169,16 @@ class MatrixLieGroup:
 
         .. math::
             \mathrm{Ad}(\mathbf{X})
+
+        Parameters
+        ----------
+        X : np.ndarray with shape `(n,n)`
+            Element of the group.
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math:`\mathrm{Ad}(\mathbf{X})` with shape `(dof,dof)`.
         """
         raise NotImplementedError()
 
@@ -107,6 +189,16 @@ class MatrixLieGroup:
 
         .. math::
             \mathrm{ad}(\mathbf{\Xi})
+
+        Parameters
+        ----------
+        Xi : np.ndarray with shape `(n,n)`
+            Element of the Lie algebra.
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math:`\mathrm{ad}(\mathbf{\Xi})`.
         """
         raise NotImplementedError()
 
@@ -114,6 +206,18 @@ class MatrixLieGroup:
     def left_jacobian(x):
         """
         Group left jacobian evaluated at x in R^n
+
+        .. math::
+            \mathbf{J}_\ell(\mathbf{x})
+
+        Parameters
+        ----------
+        x : np.ndarray or List[float] with size `dof`
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math:`\mathbf{J}_\ell(\mathbf{x})` with shape `(dof,dof)`.
         """
         raise NotImplementedError()
 
@@ -121,33 +225,84 @@ class MatrixLieGroup:
     def left_jacobian_inv(cls, x):
         """
         Inverse of group left jacobian evaluated at x in R^n
+
+        .. math::
+            \mathbf{J}_\ell^{-1}(\mathbf{x})
+
+        Parameters
+        ----------
+        x : np.ndarray or List[float] with size `dof`
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math:`\mathbf{J}_\ell^{-1}(\mathbf{x})` with shape `(dof,dof)`.
         """
         return np.linalg.inv(cls.left_jacobian(x))
 
     @classmethod
     def right_jacobian(cls, x):
         """
-        Group right jacobian evaluated at x in R^n. Requires the subclass to
-        implement `left_jacobian()`.
+        Group right jacobian evaluated at x in R^n. This is calculated from the 
+        `left_jacobian()` implementation using the fact that 
+
+        .. math::
+            \mathbf{J}_r(\mathbf{x}) = \mathbf{J}_\ell(-\mathbf{x})
+
+        which holds for all matrix Lie groups.
+
+        Parameters
+        ----------
+        x : np.ndarray or List[float] with size `dof`
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math:`\mathbf{J}_r(\mathbf{x})` with shape `(dof,dof)`.
+
         """
         return cls.left_jacobian(-x)
 
     @classmethod
     def right_jacobian_inv(cls, x):
         """
-        Inverse of group right jacobian evaluated at x in R^n. Requires the
-        subclass to implement `left_jacobian()`.
+        Inverse of group right jacobian evaluated at x in R^n. This is calculated 
+        from the `left_jacobian_inv()` implementation using the fact that 
+
+        .. math::
+            \mathbf{J}_r^{-1}(\mathbf{x}) = \mathbf{J}_\ell^{-1}(-\mathbf{x})
+
+        which holds for all matrix Lie groups.
+
+        Parameters
+        ----------
+        x : np.ndarray or List[float] with size `dof`
+
+        Returns
+        -------
+        np.ndarray
+            The matrix :math: \mathbf{J}_r^{-1}(\mathbf{x})` with shape `(dof,dof)`.
+
         """
-        return np.linalg.inv(cls.right_jacobian(x))
+        return cls.left_jacobian_inv(-x)
 
     @classmethod
     def Exp(cls, x):
         """
         Shortcut method: R^n to group directly.
 
-
         .. math::
             \mathrm{Exp}: \mathbb{R}^n \\to G
+
+        Parameters
+        ----------
+        x : np.ndarray or List[float] with size `dof`
+            Vector of exponential coordinates.
+
+        Returns
+        -------
+        np.ndarray
+            Element of the group with shape `(n,n)`.
 
         """
         return cls.exp(cls.wedge(x))
@@ -160,6 +315,16 @@ class MatrixLieGroup:
         .. math::
             \mathrm{Log}: G \\to \mathbb{R}^n
 
+        Parameters
+        ----------
+        X : np.ndarray with shape `(n,n)`
+            Element of the group.
+
+        Returns
+        -------
+        np.ndarray
+            Vector of exponential coordinates with shape `(n,1)`.
+
         """
         return cls.vee(cls.log(X))
 
@@ -167,5 +332,10 @@ class MatrixLieGroup:
     def identity(cls):
         """
         Returns an identity matrix of the group.
+
+        Returns
+        -------
+        np.ndarray
+            Identity matrix of the group with shape `(n,n)`.
         """
         raise NotImplementedError()

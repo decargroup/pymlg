@@ -11,15 +11,10 @@ An instantiation-free python library for common matrix Lie group operations. Fun
 **All class methods are static.** This allows for an easy, simple, consistent, instantiation-free use of the library. 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 4
     :caption: Contents:
 
-    so2 
-    so3 
-    se2 
-    se3 
-    se23
-    sl3
+    Introduction <self>
 
 Example
 -------
@@ -62,11 +57,19 @@ Example
 
 Matrix Lie Group Base Class 
 ---------------------------
-.. autoclass:: pylie.MatrixLieGroup
-    :members:
-    :undoc-members:
+.. autosummary:: 
+    :toctree: _autosummary/
+    :recursive:
+    :template: class.rst
 
-
+    
+    pylie.SO2
+    pylie.SO3
+    pylie.SE2
+    pylie.SE3
+    pylie.SE23
+    pylie.SL3
+    pylie.MatrixLieGroup
 
 
 

@@ -183,6 +183,6 @@ class SE2(MatrixLieGroup):
 
         half_angle = 0.5 * phi
         cot_half_angle = 1.0 / np.tan(half_angle)
-        return half_angle * cot_half_angle * np.identity(2) - half_angle * SO2.wedge(
-            1.0
-        )
+        return half_angle * cot_half_angle * np.identity(
+            2
+        ) - half_angle * SO2.wedge(1.0)
