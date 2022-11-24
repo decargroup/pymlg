@@ -60,6 +60,15 @@ def _test_left_jacobian_inverse(G):
     assert np.allclose(J_left_inv, np.linalg.inv(J_left))
 
 
+def _test_right_jacobian_inverse(G):
+    X = G.random()
+    xi = G.Log(X)
+    J_right = G.right_jacobian(xi)
+    J_right_inv = G.right_jacobian_inv(xi)
+
+    assert np.allclose(J_right_inv, np.linalg.inv(J_right))
+
+
 def _test_left_jacobian_numerically(G):
     """
     This will not work for SO(2). SO(2) is weird. It only has

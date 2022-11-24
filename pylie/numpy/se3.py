@@ -11,6 +11,7 @@ except ImportError:
 except:
     raise
 
+
 class SE3(MatrixLieGroup):
     """
     An instantiation-free implementation of the SE3 matrix Lie group.
@@ -72,7 +73,7 @@ class SE3(MatrixLieGroup):
         r = np.array([pos.x, pos.y, pos.z])
         return SE3.from_components(C, r)
 
-    @staticmethod 
+    @staticmethod
     def to_ros(T):
         """
         Constructs a ROS Pose message from an SE(3) matrix.
@@ -98,8 +99,7 @@ class SE3(MatrixLieGroup):
         msg.orientation.x = q[1]
         msg.orientation.y = q[2]
         msg.orientation.z = q[3]
-        return msg         
-
+        return msg
 
     @staticmethod
     def random():
@@ -167,7 +167,7 @@ class SE3(MatrixLieGroup):
         px = SO3.wedge(phi)
 
         ph = np.linalg.norm(phi)
-            
+
         ph2 = ph * ph
         ph3 = ph2 * ph
         ph4 = ph3 * ph
@@ -192,7 +192,6 @@ class SE3(MatrixLieGroup):
     def left_jacobian(xi):
 
         xi = np.array(xi).ravel()
-
 
         phi = xi[0:3]  # rotation part
         rho = xi[3:6]  # translation part
@@ -220,7 +219,6 @@ class SE3(MatrixLieGroup):
             phi = xi[0:3]  # rotation part
             rho = xi[3:6]  # translation part
             Q = SE3._left_jacobian_Q_matrix(phi, rho)
-
 
             J_inv = SO3.left_jacobian_inv(phi)
 

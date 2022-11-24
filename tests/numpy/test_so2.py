@@ -2,6 +2,7 @@ from pylie import SO2 as G
 import common
 import numpy as np
 
+
 def test_wedge_vee():
     common._test_wedge_vee(G)
 
@@ -29,15 +30,26 @@ def test_group_jacobians():
 def test_adjoint_identity():
     common._test_adjoint_identity(G)
 
+
 def test_odot_wedge():
     common._test_odot_wedge(G)
+
+
+def test_left_jacobian_inverse():
+    common._test_left_jacobian_inverse(G)
+
+
+def test_right_jacobian_inverse():
+    common._test_right_jacobian_inverse(G)
 
 
 def test_left_jacobian_numerically():
     common._test_left_jacobian_numerically(G)
 
+
 def test_inverse():
     common._test_inverse(G)
-    
+
+
 if __name__ == "__main__":
     test_adjoint_identity()

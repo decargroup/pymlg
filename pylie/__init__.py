@@ -5,6 +5,7 @@ from .numpy.se2 import SE2
 from .numpy.se23 import SE23
 from .numpy.sl3 import SL3
 from .numpy.base import MatrixLieGroup
+
 try:
     from . import torch
 except ImportError:

@@ -39,6 +39,14 @@ def test_adjoint_identity():
     common._test_adjoint_identity(G)
 
 
+def test_left_jacobian_inverse():
+    common._test_left_jacobian_inverse(G)
+
+
+def test_right_jacobian_inverse():
+    common._test_right_jacobian_inverse(G)
+
+
 def test_from_euler():
     theta = np.array([0.1, 0.2, 0.3])
     C = G.from_euler(theta)
@@ -78,8 +86,10 @@ def test_quaternion():
     C_test = G.from_quat(-q, order="xyzw")
     assert np.allclose(C, C_test)
 
+
 def test_inverse():
     common._test_inverse(G)
-    
+
+
 if __name__ == "__main__":
     test_quaternion()

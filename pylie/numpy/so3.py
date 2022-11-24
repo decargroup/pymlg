@@ -10,6 +10,7 @@ except ImportError:
 except:
     raise
 
+
 class SO3(MatrixLieGroup):
     """
     An instantiation-free implementation of the SO3 matrix Lie group.
@@ -36,7 +37,7 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def cross(xi):
-        """ 
+        """
         Alternate name for `SO3.wedge`
         """
         return SO3.wedge(xi)
@@ -143,7 +144,7 @@ class SO3(MatrixLieGroup):
     @staticmethod
     def from_euler(angles, order=[3, 2, 1]):
         """
-        Creates a DCM from a 3-element vector of euler angles with specified 
+        Creates a DCM from a 3-element vector of euler angles with specified
         order.
 
         Parameters
@@ -202,7 +203,7 @@ class SO3(MatrixLieGroup):
         ValueError
             if `order` is not "xyzw" or "wxyz"
         """
-        
+
         q = np.array(q).ravel()
         q = q / np.linalg.norm(q)
 
@@ -271,8 +272,8 @@ class SO3(MatrixLieGroup):
     @staticmethod
     def to_euler(C):
         """
-        Convert a rotation matrix to RPY Euler angles 
-        :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1) 
+        Convert a rotation matrix to RPY Euler angles
+        :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1)
         Euler-angle sequence.
         """
         pitch = np.arctan2(-C[2, 0], np.sqrt(C[0, 0] ** 2 + C[1, 0] ** 2))
@@ -308,7 +309,7 @@ class SO3(MatrixLieGroup):
         q = np.array([q.x, q.y, q.z, q.w])
         return SO3.from_quat(q, order="xyzw")
 
-    @staticmethod 
+    @staticmethod
     def to_ros(C):
         """
         Converts a DCM to a ROS quaternion.
@@ -323,7 +324,7 @@ class SO3(MatrixLieGroup):
         geometry_msgs.msg.Quaternion
             ROS quaternion corresponding to `C`
         """
-        q = SO3.to_quat(C, order = "wxyz").ravel()
+        q = SO3.to_quat(C, order="wxyz").ravel()
         msg = Quaternion()
         msg.w = q[0]
         msg.x = q[1]

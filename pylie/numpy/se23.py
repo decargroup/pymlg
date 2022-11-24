@@ -28,7 +28,7 @@ class SE23(MatrixLieGroup):
     @staticmethod
     def from_components(C, v, r):
         """
-        Construct an :math:`SE_2(3)` matrix from attitude, velocity, position 
+        Construct an :math:`SE_2(3)` matrix from attitude, velocity, position
         components.
 
         Parameters
@@ -45,9 +45,13 @@ class SE23(MatrixLieGroup):
         ndarray with shape (5,5)
             :math:`SE_2(3)` matrix
         """
-        v = np.array(v).reshape((-1,1))
-        r = np.array(r).reshape((-1,1))
-        return np.block([[C, v, r], [np.zeros((1, 3)), 1, 0], [np.zeros((1, 3)), 0, 1]])
+        v = np.array(v).ravel()
+        r = np.array(r).ravel()
+        X = np.identity(5)
+        X[:3, :3] = C
+        X[:3, 3] = v
+        X[:3, 4] = r
+        return X
 
     @staticmethod
     def to_components(X):
@@ -55,8 +59,8 @@ class SE23(MatrixLieGroup):
         Extract rotation, velocity, position from SE_2(3) matrix.
         """
         C = X[0:3, 0:3]
-        v = X[0:3, 3].reshape((-1,1))
-        r = X[0:3, 4].reshape((-1,1))
+        v = X[0:3, 3].reshape((-1, 1))
+        r = X[0:3, 4].reshape((-1, 1))
 
         return (C, v, r)
 
@@ -75,36 +79,43 @@ class SE23(MatrixLieGroup):
     def wedge(xi):
         xi = np.array(xi).ravel()
         xi_phi = xi[0:3]
-        xi_v = xi[3:6].reshape((-1,1))
-        xi_r = xi[6:9].reshape((-1,1))
-        Xi = np.block([[SO3.cross(xi_phi), xi_v, xi_r], [np.zeros((2, 5))]])
+        xi_v = xi[3:6]
+        xi_r = xi[6:9]
+
+        Xi = np.zeros((5, 5))
+        Xi[0:3, 0:3] = SO3.wedge(xi_phi)
+        Xi[0:3, 3] = xi_v
+        Xi[0:3, 4] = xi_r
+
         return Xi
 
     @staticmethod
     def vee(Xi):
         Xi_phi = Xi[0:3, 0:3]
-        xi_phi = SO3.vee(Xi_phi)
 
-        xi_v = Xi[0:3, 3].reshape((-1,1))
-        xi_r = Xi[0:3, 4].reshape((-1,1))
+        xi = np.zeros((9, 1))
+        xi[0:3] = SO3.vee(Xi_phi)
+        xi[3:6] = Xi[0:3, 3].reshape((-1, 1))
+        xi[6:9] = Xi[0:3, 4].reshape((-1, 1))
 
-        return np.vstack((xi_phi, xi_v, xi_r))
+        return xi
 
     @staticmethod
     def exp(Xi):
         Xi_phi = Xi[0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
-        xi_v = Xi[0:3, 3].reshape((-1,1))
-        xi_r = Xi[0:3, 4].reshape((-1,1))
+        xi_v = Xi[0:3, 3].reshape((-1, 1))
+        xi_r = Xi[0:3, 4].reshape((-1, 1))
         C = SO3.exp(Xi_phi)
 
         J_left = SO3.left_jacobian(xi_phi)
         v = np.dot(J_left, xi_v)
         r = np.dot(J_left, xi_r)
 
-        X = np.block(
-            [[C, v, r], [np.zeros((1, 3)), 1, 0], [np.zeros((1, 3)), 0, 1]]
-        )
+        X = np.identity(5)
+        X[0:3, 0:3] = C
+        X[0:3, 3] = v.ravel()
+        X[0:3, 4] = r.ravel()
 
         return X
 
@@ -114,12 +125,10 @@ class SE23(MatrixLieGroup):
         phi = SO3.Log(C)
         J_left_inv = SO3.left_jacobian_inv(phi)
 
-        Xi = np.block(
-            [
-                [SO3.cross(phi), np.dot(J_left_inv, v), np.dot(J_left_inv, r)],
-                [np.zeros((2, 5))],
-            ]
-        )
+        Xi = np.zeros((5, 5))
+        Xi[0:3, 0:3] = SO3.wedge(phi)
+        Xi[0:3, 3] = np.dot(J_left_inv, v).ravel()
+        Xi[0:3, 4] = np.dot(J_left_inv, r).ravel()
 
         return Xi
 
@@ -137,26 +146,26 @@ class SE23(MatrixLieGroup):
     @staticmethod
     def adjoint(X):
         C, v, r = SE23.to_components(X)
-        O = np.zeros((3, 3))
-        return np.block(
-            [
-                [C, O, O],
-                [np.dot(SO3.wedge(v), C), C, O],
-                [np.dot(SO3.wedge(r), C), O, C],
-            ]
-        )
+
+        Ad = np.zeros((9, 9))
+        Ad[0:3, 0:3] = C
+        Ad[3:6, 0:3] = SO3.wedge(v).dot(C)
+        Ad[6:9, 0:3] = SO3.wedge(r).dot(C)
+        Ad[3:6, 3:6] = C
+        Ad[6:9, 6:9] = C
+
+        return Ad
 
     @staticmethod
     def identity():
-        return np.eye(5)
+        return np.identity(5)
 
-        
     @staticmethod
     def left_jacobian(xi):
         xi = np.array(xi).ravel()
         xi_phi = xi[0:3]
-        xi_v = xi[3:6].reshape((-1,1))
-        xi_r = xi[6:9].reshape((-1,1))
+        xi_v = xi[3:6].reshape((-1, 1))
+        xi_r = xi[6:9].reshape((-1, 1))
 
         if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
             return np.identity(9)
@@ -166,7 +175,7 @@ class SE23(MatrixLieGroup):
         J = SO3.left_jacobian(xi_phi)
         J_left = np.identity(9)
         J_left[0:3, 0:3] = J
-        J_left[3:6, 3:6] = J 
+        J_left[3:6, 3:6] = J
         J_left[6:9, 6:9] = J
         J_left[3:6, 0:3] = Q_v
         J_left[6:9, 0:3] = Q_r
@@ -176,8 +185,8 @@ class SE23(MatrixLieGroup):
     def left_jacobian_inv(xi):
         xi = np.array(xi).ravel()
         xi_phi = xi[0:3]
-        xi_v = xi[3:6].reshape((-1,1))
-        xi_r = xi[6:9].reshape((-1,1))
+        xi_v = xi[3:6].reshape((-1, 1))
+        xi_r = xi[6:9].reshape((-1, 1))
 
         if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
             return np.identity(9)

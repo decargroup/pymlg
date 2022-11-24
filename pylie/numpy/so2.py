@@ -11,7 +11,7 @@ class SO2(MatrixLieGroup):
 
     @staticmethod
     def random():
-        
+
         phi = np.random.uniform(0, 2 * np.pi, (1, 1))
         return SO2.Exp(phi)
 
@@ -46,15 +46,15 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def left_jacobian(x):
         return np.array([[1]])
-    
-    @staticmethod 
+
+    @staticmethod
     def left_jacobian_inv(x):
         return np.array([[1]])
 
     @staticmethod
     def right_jacobian(x):
         return np.array([[1]])
-    
+
     @staticmethod
     def right_jacobian_inv(x):
         return np.array([[1]])
@@ -68,6 +68,6 @@ class SO2(MatrixLieGroup):
         b = np.array(b).ravel()
         return np.array([-b[1], b[0]]).reshape((-1, 1))
 
-    @staticmethod 
+    @staticmethod
     def identity():
         return np.identity(2)

@@ -14,14 +14,15 @@ class MatrixLieGroup:
     #:int: The degrees of freedom of the group.
     dof = None
 
-    
     def __init__(self):
-        raise RuntimeError("""
+        raise RuntimeError(
+            """
         This class is not meant to be instantiated! The methods are all static,
         which means you can call them directly with
 
         Y = <class_name_without_brackets>.<method_name>(X)
-        """)
+        """
+        )
 
     @staticmethod
     def random():
@@ -33,14 +34,14 @@ class MatrixLieGroup:
     @staticmethod
     def wedge(x):
         """
-        Wedge operator :math:`(\cdot)^\\wedge: \mathbb{R}^n \\to \mathfrak{g}`. 
+        Wedge operator :math:`(\cdot)^\\wedge: \mathbb{R}^n \\to \mathfrak{g}`.
         """
         raise NotImplementedError()
 
     @staticmethod
     def vee(Xi):
         """
-        Vee operator :math:`(\cdot)^\\vee: \mathfrak{g} \\to  \mathbb{R}^n`. 
+        Vee operator :math:`(\cdot)^\\vee: \mathfrak{g} \\to  \mathbb{R}^n`.
         """
         raise NotImplementedError()
 
