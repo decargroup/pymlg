@@ -2,7 +2,6 @@ from pylie import SO3 as G
 import numpy as np
 import common
 
-
 def test_wedge_vee():
     common._test_wedge_vee(G)
 

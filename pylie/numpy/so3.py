@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, fast_vector_norm
 import numpy as np
 
 try:
@@ -55,8 +55,16 @@ class SO3(MatrixLieGroup):
         From Section 8.3 of Lie Groups for Computer Vision by Ethan Eade. When
         theta is small, use Taylor series expansion given in Section 11.
         """
-        phi = SO3.vee(Xi)
-        angle = np.linalg.norm(phi)
+        return SO3.Exp(SO3.vee(Xi))
+       
+
+    @staticmethod
+    def Exp(xi):
+        """
+        Maps elements of the vector Lie algebra so(3) to the group.
+        """
+        phi = np.array(xi).ravel()
+        angle = fast_vector_norm(phi)
 
         # Use Taylor series expansion
         if angle < SO3._small_angle_tol:
@@ -72,7 +80,8 @@ class SO3(MatrixLieGroup):
             B = (1.0 - np.cos(angle)) / (angle**2)
 
         # Rodirgues rotation formula (103)
-        return np.eye(3) + A * Xi + B * np.dot(Xi, Xi)
+        Xi = SO3.wedge(phi)
+        return np.eye(3) + A * Xi + B * Xi.dot(Xi)
 
     @staticmethod
     def log(X):
@@ -97,7 +106,7 @@ class SO3(MatrixLieGroup):
         angle is small, use Taylor series expansion given in Section 11.
         """
         xi = np.array(xi).ravel()
-        angle = np.linalg.norm(xi)
+        angle = fast_vector_norm(xi)
 
         if angle < SO3._small_angle_tol:
             t2 = angle**2
@@ -114,7 +123,7 @@ class SO3(MatrixLieGroup):
 
         cross_xi = SO3.cross(xi)
 
-        J_left = np.eye(3) + A * cross_xi + B * np.dot(cross_xi, cross_xi)
+        J_left = np.eye(3) + A * cross_xi + B * cross_xi.dot(cross_xi)
         return J_left
 
     @staticmethod
@@ -125,7 +134,7 @@ class SO3(MatrixLieGroup):
         angle is small, use Taylor series expansion given in Section 11.
         """
         xi = np.array(xi).ravel()
-        angle = np.linalg.norm(xi)
+        angle = fast_vector_norm(xi)
         if angle < SO3._small_angle_tol:
             t2 = angle**2
 
@@ -139,7 +148,7 @@ class SO3(MatrixLieGroup):
             )
 
         cross_xi = SO3.cross(xi)
-        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * np.dot(cross_xi, cross_xi)
+        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * cross_xi.dot(cross_xi)
 
         return J_left_inv
 
@@ -215,7 +224,7 @@ class SO3(MatrixLieGroup):
         """
 
         q = np.array(q).ravel()
-        q = q / np.linalg.norm(q)
+        q = q / fast_vector_norm(q)
 
         if q.size != 4:
             raise ValueError("q must have size 4.")

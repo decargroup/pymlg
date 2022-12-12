@@ -339,3 +339,6 @@ class MatrixLieGroup:
             Identity matrix of the group with shape `(n,n)`.
         """
         raise NotImplementedError()
+
+def fast_vector_norm(x):
+    return np.sqrt(x.dot(x))

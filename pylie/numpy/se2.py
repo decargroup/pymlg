@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, fast_vector_norm
 import numpy as np
 from .so2 import SO2
 

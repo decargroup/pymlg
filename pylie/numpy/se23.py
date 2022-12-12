@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, fast_vector_norm
 import numpy as np
 from .so3 import SO3
 from .se3 import SE3
@@ -167,7 +167,7 @@ class SE23(MatrixLieGroup):
         xi_v = xi[3:6].reshape((-1, 1))
         xi_r = xi[6:9].reshape((-1, 1))
 
-        if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
+        if fast_vector_norm(xi_phi) < SE23._small_angle_tol:
             return np.identity(9)
 
         Q_v = SE3._left_jacobian_Q_matrix(xi_phi, xi_v)
@@ -188,7 +188,7 @@ class SE23(MatrixLieGroup):
         xi_v = xi[3:6].reshape((-1, 1))
         xi_r = xi[6:9].reshape((-1, 1))
 
-        if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
+        if fast_vector_norm(xi_phi) < SE23._small_angle_tol:
             return np.identity(9)
 
         Q_v = SE3._left_jacobian_Q_matrix(xi_phi, xi_v)

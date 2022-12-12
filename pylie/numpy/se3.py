@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, fast_vector_norm
 import numpy as np
 from .so3 import SO3
 
@@ -168,7 +168,7 @@ class SE3(MatrixLieGroup):
         rx = SO3.wedge(rho)
         px = SO3.wedge(phi)
 
-        ph = np.linalg.norm(phi)
+        ph = fast_vector_norm(phi)
 
         ph2 = ph * ph
         ph3 = ph2 * ph
@@ -183,10 +183,14 @@ class SE3(MatrixLieGroup):
         m3 = (0.5 * ph2 + cph - 1.0) / ph4
         m4 = (ph - 1.5 * sph + 0.5 * ph * cph) / ph5
 
+        pxrx = px.dot(rx)
+        rxpx = rx.dot(px)
+        pxrxpx = pxrx.dot(px)
+
         t1 = rx
-        t2 = px.dot(rx) + rx.dot(px) + px.dot(rx).dot(px)
-        t3 = px.dot(px).dot(rx) + rx.dot(px).dot(px) - 3.0 * px.dot(rx).dot(px)
-        t4 = px.dot(rx).dot(px).dot(px) + px.dot(px).dot(rx).dot(px)
+        t2 = pxrx + rxpx + pxrxpx
+        t3 = px.dot(pxrx) + rxpx.dot(px) - 3.0 * pxrxpx
+        t4 = pxrxpx.dot(px) + px.dot(pxrxpx)
 
         return m1 * t1 + m2 * t2 + m3 * t3 + m4 * t4
 
@@ -198,7 +202,7 @@ class SE3(MatrixLieGroup):
         phi = xi[0:3]  # rotation part
         rho = xi[3:6]  # translation part
 
-        if np.linalg.norm(phi) < SE3._small_angle_tol:
+        if fast_vector_norm(phi) < SE3._small_angle_tol:
             return np.identity(6)
 
         else:
@@ -213,7 +217,7 @@ class SE3(MatrixLieGroup):
     def left_jacobian_inv(xi):
         xi = np.array(xi).ravel()
 
-        if np.linalg.norm(xi) < SE3._small_angle_tol:
+        if fast_vector_norm(xi) < SE3._small_angle_tol:
             return np.identity(6)
 
         else:
