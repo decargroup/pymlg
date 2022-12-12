@@ -147,12 +147,10 @@ class SE3(MatrixLieGroup):
     @staticmethod
     def odot(b):
         b = np.array(b).ravel()
-        return np.block(
-            [
-                [SO3.odot(b[0:3]), b[3] * np.identity(3)],
-                [np.zeros((1, 3)), np.zeros((1, 3))],
-            ]
-        )
+        X = np.zeros((4, 6))
+        X[0:3, 0:3] = SO3.odot(b[0:3])
+        X[0:3, 3:6] = b[3] * np.identity(3)
+        return X
 
     @staticmethod
     def adjoint(T):

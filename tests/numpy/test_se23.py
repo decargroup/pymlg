@@ -21,6 +21,8 @@ def test_exp_log_inverse():
 def test_capital_exp_log_inverse():
     common._test_capital_exp_log_inverse(G)
 
+def test_odot_wedge():
+    common._test_odot_wedge(G)
 
 def test_adjoint_identity():
     common._test_adjoint_identity(G)

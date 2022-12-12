@@ -133,6 +133,14 @@ class SE23(MatrixLieGroup):
         return Xi
 
     @staticmethod
+    def odot(b):
+        b = np.array(b).ravel()
+        X = np.zeros((5, 9))
+        X[0:4, 0:6] = SE3.odot(b[0:4])
+        X[0:3, 6:9] = b[4] * np.identity(3)
+        return X
+
+    @staticmethod
     def inverse(X):
         (C, v, r) = SE23.to_components(X)
         C_inv = C.T
