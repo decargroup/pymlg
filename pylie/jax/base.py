@@ -16,6 +16,8 @@ class MatrixLieGroup:
     #:int: Matrix dimension of the group.
     matrix_size = None
 
+    _identity = None
+
     def __init__(self):
         raise RuntimeError(
             """
@@ -340,7 +342,9 @@ class MatrixLieGroup:
         np.ndarray
             Identity matrix of the group with shape `(n,n)`.
         """
-        return np.identity(cls.matrix_size)
+        if cls._identity is None:
+            cls._identity = np.eye(cls.matrix_size)
+        return cls._identity
 
     @classmethod
     def run_everything_once(cls):

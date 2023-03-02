@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup, fast_vector_norm
+from .base import MatrixLieGroup
 import jax.numpy as np
 from jax import random, jit, lax
 from functools import partial
@@ -14,6 +14,7 @@ class SO3(MatrixLieGroup):
     matrix_size = 3
 
     @staticmethod
+    @jit
     def random():
         v = random.uniform(key, (3,), minval=0, maxval=2 * np.pi)
         return SO3.Exp(v)
@@ -125,7 +126,7 @@ class SO3(MatrixLieGroup):
         angle is small, use Taylor series expansion given in Section 11.
         """
         xi = np.array(xi).ravel()
-        angle = fast_vector_norm(xi)
+        angle = np.linalg.norm(xi)
         return lax.cond(
             angle < SO3._small_angle_tol,
             lambda _: SO3._left_jacobian_small_angle(xi, angle),
@@ -166,7 +167,7 @@ class SO3(MatrixLieGroup):
         angle is small, use Taylor series expansion given in Section 11.
         """
         xi = np.array(xi).ravel()
-        angle = fast_vector_norm(xi)
+        angle = np.linalg.norm(xi)
 
         A = lax.cond(
             angle < SO3._small_angle_tol,
