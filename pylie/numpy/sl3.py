@@ -9,6 +9,7 @@ class SL3(MatrixLieGroup):
     """
 
     dof = 8
+    matrix_size = 3
 
     @staticmethod
     def random():
@@ -202,10 +203,3 @@ class SL3(MatrixLieGroup):
             ]
         )
         return ad
-
-    @staticmethod
-    def identity():
-        """
-        Returns the identity element of the group.
-        """
-        return np.eye(3)

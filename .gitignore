@@ -57,3 +57,4 @@ pylie.egg-info/
 .vscode
 .pytest_cache/
 docs/source/_autosummary
+benchmark/
