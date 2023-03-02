@@ -10,3 +10,9 @@ try:
     from . import torch
 except ImportError:
     pass
+
+
+try:
+    from . import jax
+except ImportError:
+    pass

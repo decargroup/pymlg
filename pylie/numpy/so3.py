@@ -37,6 +37,10 @@ class SO3(MatrixLieGroup):
         return X
 
     @staticmethod
+    def inverse(C):
+        return C.T
+
+    @staticmethod
     def cross(xi):
         """
         Alternate name for `SO3.wedge`
