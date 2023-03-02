@@ -48,14 +48,15 @@ class SL3(MatrixLieGroup):
         """
         Computes the Left Jacobian of SL(3) numerically.
         """
+        xi = np.array(xi).reshape((-1,1))
         X = SL3.Exp(xi)
         exp_inv = SL3.inverse(X)
         J_fd = np.zeros((SL3.dof, SL3.dof))
         h = 1e-8
         for i in range(SL3.dof):
-            dx = np.zeros(SL3.dof)
+            dx = np.zeros((SL3.dof, 1))
             dx[i] = h
-            J_fd[:, i] = (SL3.Log(SL3.Exp(xi + dx) @ exp_inv) / h).ravel()
+            J_fd[:, i] = (SL3.Log(np.dot(SL3.Exp(xi + dx), exp_inv)) / h).ravel()
         return J_fd
 
     @staticmethod
@@ -201,3 +202,10 @@ class SL3(MatrixLieGroup):
             ]
         )
         return ad
+
+    @staticmethod
+    def identity():
+        """
+        Returns the identity element of the group.
+        """
+        return np.eye(3)
