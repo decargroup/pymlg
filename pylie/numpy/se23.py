@@ -10,6 +10,7 @@ class SE23(MatrixLieGroup):
     """
 
     dof = 9
+    matrix_size = 5
 
     @staticmethod
     def synthesize(C, v, r):
@@ -163,10 +164,6 @@ class SE23(MatrixLieGroup):
         Ad[6:9, 6:9] = C
 
         return Ad
-
-    @staticmethod
-    def identity():
-        return np.identity(5)
 
     @staticmethod
     def left_jacobian(xi):

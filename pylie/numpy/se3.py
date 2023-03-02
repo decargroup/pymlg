@@ -18,6 +18,7 @@ class SE3(MatrixLieGroup):
     """
 
     dof = 6
+    matrix_size = 4
 
     @staticmethod
     def synthesize(C, r):
@@ -40,8 +41,11 @@ class SE3(MatrixLieGroup):
             C = SO3.Exp(C)
 
         r = np.array(r).reshape((-1, 1))
-
-        return np.block([[C, r], [np.zeros((1, 3)), 1]])
+        T = np.zeros((4, 4))
+        T[0:3, 0:3] = C
+        T[0:3, 3] = r.ravel()
+        T[3, 3] = 1
+        return T
 
     @staticmethod
     def to_components(T):
@@ -106,8 +110,7 @@ class SE3(MatrixLieGroup):
         phi = np.random.uniform(-np.pi, np.pi, (3,))
         r = np.random.normal(0, 1, (3, 1))
         C = SO3.Exp(phi)
-        T = np.block([[C, r], [np.zeros((1, 3)), 1]])
-        return T
+        return SE3.from_components(C, r)
 
     @staticmethod
     def wedge(xi):
@@ -115,7 +118,10 @@ class SE3(MatrixLieGroup):
         phi = xi[0:3]
         xi_r = xi[3:]
         Xi_phi = SO3.wedge(phi)
-        return np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 4))]])
+        Xi = np.zeros((4, 4))
+        Xi[0:3, 0:3] = Xi_phi
+        Xi[0:3, 3] = xi_r
+        return Xi
 
     @staticmethod
     def vee(Xi):
@@ -131,8 +137,7 @@ class SE3(MatrixLieGroup):
         xi_r = Xi[0:3, 3]
         C = SO3.exp(Xi_phi)
         r = np.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
-        T = np.block([[C, r], [np.zeros((1, 3)), 1]])
-        return T
+        return SE3.from_components(C, r)
 
     @staticmethod
     def log(T):
@@ -141,7 +146,9 @@ class SE3(MatrixLieGroup):
         xi_r = np.dot(
             SO3.left_jacobian_inv(SO3.vee(Xi_phi)), r.reshape((-1, 1))
         )
-        Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 4))]])
+        Xi = np.zeros((4, 4))
+        Xi[0:3, 0:3] = Xi_phi
+        Xi[0:3, 3] = xi_r.ravel()
         return Xi
 
     @staticmethod
@@ -156,7 +163,11 @@ class SE3(MatrixLieGroup):
     def adjoint(T):
         C = T[0:3, 0:3]
         r = T[0:3, 3]
-        return np.block([[C, np.zeros((3, 3))], [np.dot(SO3.wedge(r), C), C]])
+        Ad = np.zeros((6, 6))
+        Ad[0:3, 0:3] = C
+        Ad[3:6, 3:6] = C
+        Ad[3:6, 0:3] = np.dot(SO3.wedge(r), C)
+        return Ad
 
     @staticmethod
     def _left_jacobian_Q_matrix(phi, rho):
@@ -209,7 +220,11 @@ class SE3(MatrixLieGroup):
             phi = xi[0:3]  # rotation part
 
             J = SO3.left_jacobian(phi)
-            return np.block([[J, np.zeros((3, 3))], [Q, J]])
+            out = np.zeros((6, 6))
+            out[0:3, 0:3] = J
+            out[3:6, 3:6] = J
+            out[3:6, 0:3] = Q
+            return out
 
     @staticmethod
     def left_jacobian_inv(xi):
@@ -226,13 +241,8 @@ class SE3(MatrixLieGroup):
 
             J_inv = SO3.left_jacobian_inv(phi)
 
-            return np.block(
-                [
-                    [J_inv, np.zeros((3, 3))],
-                    [-np.dot(J_inv, np.dot(Q, J_inv)), J_inv],
-                ]
-            )
-
-    @staticmethod
-    def identity():
-        return np.identity(4)
+            out = np.zeros((6, 6))
+            out[0:3, 0:3] = J_inv
+            out[3:6, 3:6] = J_inv
+            out[3:6, 0:3] = -np.dot(J_inv, np.dot(Q, J_inv))
+            return out

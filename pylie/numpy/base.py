@@ -13,6 +13,9 @@ class MatrixLieGroup:
 
     #:int: The degrees of freedom of the group.
     dof = None
+    
+    #:int: Matrix dimension of the group.
+    matrix_size = None
 
     def __init__(self):
         raise RuntimeError(
@@ -338,7 +341,7 @@ class MatrixLieGroup:
         np.ndarray
             Identity matrix of the group with shape `(n,n)`.
         """
-        raise NotImplementedError()
+        return np.identity(cls.matrix_size)
 
 def fast_vector_norm(x):
     return np.sqrt(x.dot(x))

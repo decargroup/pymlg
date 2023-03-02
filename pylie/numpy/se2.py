@@ -9,14 +9,14 @@ class SE2(MatrixLieGroup):
     """
 
     dof = 3
+    matrix_size = 3
 
     @staticmethod
     def random():
         phi = np.random.uniform(0, 2 * np.pi, (1, 1))
         r = np.random.normal(0, 1, (2, 1))
         C = SO2.Exp(phi)
-        T = np.block([[C, r], [np.zeros((1, 2)), 1]])
-        return T
+        return SE2.from_components(C, r)
 
     @staticmethod
     def from_components(C, r):
@@ -28,7 +28,10 @@ class SE2(MatrixLieGroup):
             C = SO2.Exp(C)
         C = C.reshape((2, 2))
         r = np.array(r).reshape((-1, 1))
-        T = np.block([[C, r], [np.zeros((1, 2)), 1]])
+        T = np.zeros((3, 3))
+        T[0:2, 0:2] = C
+        T[0:2, 2] = r.ravel()
+        T[2, 2] = 1
         return T
 
     @staticmethod
@@ -49,7 +52,7 @@ class SE2(MatrixLieGroup):
         Xi = np.zeros((3, 3))
         Xi[0:2, 0:2] = Xi_phi
         Xi[0:2, 2] = xi_r
-        return Xi  # np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 3))]])
+        return Xi  
 
     @staticmethod
     def vee(Xi):
@@ -65,19 +68,13 @@ class SE2(MatrixLieGroup):
         xi_r = Xi[0:2, 2]
         C = SO2.exp(Xi_phi)
         r = np.dot(SE2.V_matrix(phi), xi_r.reshape((-1, 1)))
-        T = np.zeros((3, 3))
-        T[0:2, 0:2] = C
-        T[0:2, 2] = r.ravel()
-        T[2, 2] = 1
-        # T = np.block([[C, r], [np.zeros((1, 2)), 1]])
-        return T
+        return SE2.from_components(C, r)
 
     @staticmethod
     def log(T):
         Xi_phi = SO2.log(T[0:2, 0:2])
         r = T[0:2, 2]
         xi_r = np.dot(SE2.V_matrix_inv(SO2.vee(Xi_phi)), r.reshape((-1, 1)))
-        # Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 3))]])
         Xi = np.zeros((3, 3))
         Xi[0:2, 0:2] = Xi_phi
         Xi[0:2, 2] = xi_r.ravel()
@@ -157,10 +154,6 @@ class SE2(MatrixLieGroup):
         A[1:, 0] = -np.dot(Om, r).ravel()
         A[1:, 1:] = C
         return A
-
-    @staticmethod
-    def identity():
-        return np.identity(3)
 
     @staticmethod
     def V_matrix(phi):

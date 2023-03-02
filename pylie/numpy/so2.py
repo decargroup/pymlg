@@ -8,6 +8,7 @@ class SO2(MatrixLieGroup):
     """
 
     dof = 1
+    matrix_size = 2
 
     @staticmethod
     def random():
@@ -67,7 +68,3 @@ class SO2(MatrixLieGroup):
     def odot(b):
         b = np.array(b).ravel()
         return np.array([-b[1], b[0]]).reshape((-1, 1))
-
-    @staticmethod
-    def identity():
-        return np.identity(2)

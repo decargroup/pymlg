@@ -17,6 +17,7 @@ class SO3(MatrixLieGroup):
     """
 
     dof = 3
+    matrix_size = 3
 
     @staticmethod
     def random():
@@ -161,37 +162,6 @@ class SO3(MatrixLieGroup):
         return C
 
     @staticmethod
-    def from_euler(angles, order=[3, 2, 1]):
-        """
-        Creates a DCM from a 3-element vector of euler angles with specified
-        order.
-
-        Parameters
-        ----------
-        angles : list[float] or ndarray of size 3
-            euler angle values
-        order : list[int], optional
-            euler angle sequence. For example, the default order=[3,2,1] rotates
-            the third axis, followed by the second, followed by the first.
-
-        Returns
-        -------
-        ndarray with shape (3,3)
-            DCM corresponding to euler angles
-        """
-
-        C = np.identity(3)
-        angles = np.array(angles).ravel()
-
-        for i in range(3):
-            idx = order[i] - 1
-            phi = np.zeros(3)
-            phi[idx] = angles[idx]
-            C = np.dot(SO3.Exp(phi), C)
-
-        return C
-
-    @staticmethod
     def from_quat(q, order="wxyz"):
         """
         Returns the DCM corresponding to the quaternion representation q.
@@ -289,12 +259,45 @@ class SO3(MatrixLieGroup):
         return q
 
     @staticmethod
+    def from_euler(angles, order=[3, 2, 1]):
+        """
+        Creates a DCM from a 3-element vector of euler angles with specified
+        order.
+
+        Parameters
+        ----------
+        angles : list[float] or ndarray of size 3
+            euler angle values
+        order : list[int], optional
+            euler angle sequence. For example, the default order=[3,2,1] rotates
+            the third axis, followed by the second, followed by the first.
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to euler angles
+        """
+
+        C = np.identity(3)
+        angles = np.array(angles).ravel()
+
+        for i in range(3):
+            idx = order[i] - 1
+            phi = np.zeros(3)
+            phi[idx] = angles[idx]
+            C = np.dot(C, SO3.Exp(phi))
+
+        return C
+
+    @staticmethod
     def to_euler(C):
         """
         Convert a rotation matrix to RPY Euler angles
         :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1)
         Euler-angle sequence.
         """
+        # TODO! this probably doesnt correspond with the from_euler function.
+        # check the inverse.
         pitch = np.arctan2(-C[2, 0], np.sqrt(C[0, 0] ** 2 + C[1, 0] ** 2))
 
         if np.isclose(pitch, np.pi / 2.0):
@@ -350,10 +353,3 @@ class SO3(MatrixLieGroup):
         msg.y = q[2]
         msg.z = q[3]
         return msg
-
-    @staticmethod
-    def identity():
-        """
-        Returns the identity DCM.
-        """
-        return np.eye(3)
