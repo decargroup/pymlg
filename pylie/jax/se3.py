@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, tonumpy
 import jax.numpy as jnp
 import numpy as onp
 from jax import jit, lax
@@ -13,21 +13,11 @@ class SE3(MatrixLieGroup):
     matrix_size = 4
 
     @staticmethod
-    @jit
     def random():
         return super(SE3, SE3).random()
 
     @staticmethod
-    @jit
-    def synthesize(C, r):
-        """
-        Deprecated. Use `SE3.from_components(C,r)` instead.
-
-        Construct an SE(3) matrix from a rotation matrix and translation vector.
-        """
-        return SE3.from_components(C, r)
-
-    @staticmethod
+    @tonumpy
     @jit
     def from_components(C, r):
         """
@@ -39,6 +29,7 @@ class SE3(MatrixLieGroup):
         return T
 
     @staticmethod
+    @tonumpy
     @jit
     def to_components(T):
         """
@@ -51,6 +42,7 @@ class SE3(MatrixLieGroup):
    
 
     @staticmethod
+    @tonumpy
     @jit
     def wedge(xi):
         xi = jnp.array(xi).ravel()
@@ -61,6 +53,7 @@ class SE3(MatrixLieGroup):
         return Xi
 
     @staticmethod
+    @tonumpy
     @jit
     def vee(Xi):
         Xi_phi = Xi[0:3, 0:3]
@@ -69,6 +62,7 @@ class SE3(MatrixLieGroup):
         return jnp.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
+    @tonumpy
     @jit
     def exp(Xi):
         Xi_phi = Xi[0:3, 0:3]
@@ -76,18 +70,20 @@ class SE3(MatrixLieGroup):
         xi_r = Xi[0:3, 3]
         C = SO3.exp(Xi_phi)
         r = jnp.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
-        return SE3.from_components(C, r)
+        return jnp.block([[C, r], [jnp.zeros((1, 3)), 1]])
 
     @staticmethod
+    @tonumpy
     @jit
     def Exp(x):
         phi =x[0:3]
         xi_r = x[3:]
         C = SO3.Exp(phi)
         r = jnp.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
-        return SE3.from_components(C, r)
+        return jnp.block([[C, r], [jnp.zeros((1, 3)), 1]])
 
     @staticmethod
+    @tonumpy
     @jit
     def log(T):
         Xi_phi = SO3.log(T[0:3, 0:3])
@@ -99,6 +95,7 @@ class SE3(MatrixLieGroup):
         return Xi
 
     @staticmethod
+    @tonumpy
     @jit
     def Log(T):
         phi = SO3.Log(T[0:3, 0:3])
@@ -109,14 +106,15 @@ class SE3(MatrixLieGroup):
         return jnp.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
+    @tonumpy
     @jit
     def inverse(T):
-        C, r = SE3.to_components(T)
-        C_inv = C.transpose()
-        r_inv = -jnp.dot(C_inv, r)
-        return SE3.from_components(C_inv, r_inv)
+        C_inv = T[0:3,0:3].transpose()
+        r_inv = -jnp.dot(C_inv, T[0:3,3].reshape((-1,1)))
+        return jnp.block([[C_inv, r_inv], [jnp.zeros((1, 3)), 1]])
 
     @staticmethod
+    @tonumpy
     @jit
     def odot(b):
         b = jnp.array(b).ravel()
@@ -127,6 +125,7 @@ class SE3(MatrixLieGroup):
         return X
 
     @staticmethod
+    @tonumpy
     @jit
     def adjoint(T):
         Ad = jnp.zeros((6, 6))
@@ -171,6 +170,7 @@ class SE3(MatrixLieGroup):
         return m1 * t1 + m2 * t2 + m3 * t3 + m4 * t4
 
     @staticmethod
+    @tonumpy
     @jit
     def left_jacobian(xi):
 
@@ -200,6 +200,7 @@ class SE3(MatrixLieGroup):
         return J_left
 
     @staticmethod
+    @tonumpy
     @jit
     def left_jacobian_inv(xi):
         xi = jnp.array(xi).ravel()
@@ -227,11 +228,9 @@ class SE3(MatrixLieGroup):
         return J_left_inv
 
     @staticmethod
-    @jit
     def right_jacobian(xi):
         return SE3.left_jacobian(-xi)
 
     @staticmethod
-    @jit
     def right_jacobian_inv(xi):
         return SE3.left_jacobian_inv(-xi)

@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, tonumpy
 import jax.numpy as np
 from jax import  jit, lax
 from functools import partial
@@ -12,11 +12,13 @@ class SO3(MatrixLieGroup):
     matrix_size = 3
 
     @staticmethod
+    @tonumpy
     @jit
     def random():
         return super(SO3, SO3).random()
 
     @staticmethod
+    @tonumpy
     @jit
     def wedge(xi):
         xi = np.array(xi).ravel()
@@ -30,6 +32,7 @@ class SO3(MatrixLieGroup):
         return X
 
     @staticmethod
+    @tonumpy
     @jit
     def cross(xi):
         """
@@ -38,17 +41,20 @@ class SO3(MatrixLieGroup):
         return SO3.wedge(xi)
 
     @staticmethod
+    @tonumpy
     @jit
     def vee(X):
         return np.array([[-X[1, 2]], [X[0, 2]], [-X[0, 1]]])
 
     @staticmethod
+    @tonumpy
     @jit
     def inverse(C):
         return C.transpose()
 
 
     @staticmethod
+    @tonumpy
     @jit
     def exp(Xi):
         """
@@ -61,6 +67,7 @@ class SO3(MatrixLieGroup):
        
 
     @staticmethod
+    @tonumpy
     @jit
     def Exp(xi):
         """
@@ -90,6 +97,7 @@ class SO3(MatrixLieGroup):
 
 
     @staticmethod
+    @tonumpy
     @jit
     def log(X):
         # The cosine of the rotation angle is related to the trace of C
@@ -106,6 +114,7 @@ class SO3(MatrixLieGroup):
         )
 
     @staticmethod
+    @tonumpy
     @jit
     def Log(C):
         """
@@ -115,6 +124,7 @@ class SO3(MatrixLieGroup):
         return SO3.vee(SO3.log(C))
         
     @staticmethod
+    @tonumpy
     @jit
     def left_jacobian(xi):
         """
@@ -156,6 +166,7 @@ class SO3(MatrixLieGroup):
         return J_left
 
     @staticmethod
+    @tonumpy
     @jit
     def left_jacobian_inv(xi):
         """
@@ -183,6 +194,7 @@ class SO3(MatrixLieGroup):
         return J_left_inv
 
     @staticmethod
+    @tonumpy
     def odot(xi):
         return -SO3.wedge(xi)
 

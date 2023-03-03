@@ -1,5 +1,5 @@
 import jax.numpy as jnp
-from jax import random
+from jax import random, core
 import  numpy as onp
 
 key = random.PRNGKey(0)
@@ -376,3 +376,14 @@ class MatrixLieGroup:
 
 def fast_vector_norm(x):
     return jnp.sqrt(x.dot(x))
+
+def tonumpy(func):
+    def wrapper(*args, **kwargs):
+        out = func(*args, **kwargs)
+        if not isinstance(out, core.Tracer):
+            # Check if we are compiling!
+            out = onp.array(out)
+        return out
+
+    wrapper.__name__ = func.__name__
+    return wrapper
