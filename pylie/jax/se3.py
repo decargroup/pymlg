@@ -1,16 +1,8 @@
-from .base import MatrixLieGroup, fast_vector_norm
-import jax.numpy as np
+from .base import MatrixLieGroup
+import jax.numpy as jnp
+import numpy as onp
 from jax import jit, lax
 from .so3 import SO3
-
-try:
-    # We do not want to make ROS a hard dependency, so we import it only if
-    # available.
-    from geometry_msgs.msg import Pose
-except ImportError:
-    pass  # ROS is not installed
-except:
-    raise
 
 class SE3(MatrixLieGroup):
     """
@@ -42,8 +34,8 @@ class SE3(MatrixLieGroup):
         Construct an SE(3) matrix from a rotation matrix and translation vector.
         """
         # Check if rotation component is a rotation vector or full DCM
-        r = np.array(r).reshape((-1, 1))
-        T = np.block([[C, r], [np.zeros((1, 3)), 1]])
+        r = jnp.array(r).reshape((-1, 1))
+        T = jnp.block([[C, r], [jnp.zeros((1, 3)), 1]])
         return T
 
     @staticmethod
@@ -61,11 +53,11 @@ class SE3(MatrixLieGroup):
     @staticmethod
     @jit
     def wedge(xi):
-        xi = np.array(xi).ravel()
+        xi = jnp.array(xi).ravel()
         phi = xi[0:3]
         xi_r = xi[3:]
         Xi_phi = SO3.wedge(phi)
-        Xi = np.block([[Xi_phi, xi_r.reshape((-1, 1))], [np.zeros((1, 4))]])
+        Xi = jnp.block([[Xi_phi, xi_r.reshape((-1, 1))], [jnp.zeros((1, 4))]])
         return Xi
 
     @staticmethod
@@ -74,7 +66,7 @@ class SE3(MatrixLieGroup):
         Xi_phi = Xi[0:3, 0:3]
         xi_r = Xi[0:3, 3]
         phi = SO3.vee(Xi_phi)
-        return np.vstack((phi, xi_r.reshape((-1, 1))))
+        return jnp.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
     @jit
@@ -83,7 +75,7 @@ class SE3(MatrixLieGroup):
         phi = SO3.vee(Xi_phi)
         xi_r = Xi[0:3, 3]
         C = SO3.exp(Xi_phi)
-        r = np.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
+        r = jnp.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
         return SE3.from_components(C, r)
 
     @staticmethod
@@ -92,7 +84,7 @@ class SE3(MatrixLieGroup):
         phi =x[0:3]
         xi_r = x[3:]
         C = SO3.Exp(phi)
-        r = np.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
+        r = jnp.dot(SO3.left_jacobian(phi), xi_r.reshape((-1, 1)))
         return SE3.from_components(C, r)
 
     @staticmethod
@@ -100,10 +92,10 @@ class SE3(MatrixLieGroup):
     def log(T):
         Xi_phi = SO3.log(T[0:3, 0:3])
         r = T[0:3, 3]
-        xi_r = np.dot(
+        xi_r = jnp.dot(
             SO3.left_jacobian_inv(SO3.vee(Xi_phi)), r.reshape((-1, 1))
         )
-        Xi = np.block([[Xi_phi, xi_r], [np.zeros((1, 4))]])
+        Xi = jnp.block([[Xi_phi, xi_r], [jnp.zeros((1, 4))]])
         return Xi
 
     @staticmethod
@@ -111,52 +103,56 @@ class SE3(MatrixLieGroup):
     def Log(T):
         phi = SO3.Log(T[0:3, 0:3])
         r = T[0:3, 3]
-        xi_r = np.dot(
+        xi_r = jnp.dot(
             SO3.left_jacobian_inv(phi), r.reshape((-1, 1))
         )
-        return np.vstack((phi, xi_r.reshape((-1, 1))))
+        return jnp.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
     @jit
     def inverse(T):
         C, r = SE3.to_components(T)
         C_inv = C.transpose()
-        r_inv = -np.dot(C_inv, r)
+        r_inv = -jnp.dot(C_inv, r)
         return SE3.from_components(C_inv, r_inv)
 
     @staticmethod
     @jit
     def odot(b):
-        b = np.array(b).ravel()
-        X = np.block([[SO3.odot(b[0:3]), b[3:]*np.identity(3)], [np.zeros((1, 6))]])
+        b = jnp.array(b).ravel()
+        X = jnp.zeros((4, 6))
+        X = X.at[0:3, 0:3].set(SO3.odot(b[0:3]))
+        X = X.at[0:3, 3:].set(b[3:]*onp.identity(3))
+        # X = jnp.block([[SO3.odot(b[0:3]), b[3:]*onp.identity(3)], [onp.zeros((1, 6))]])
         return X
 
     @staticmethod
     @jit
     def adjoint(T):
-        C = T[0:3, 0:3]
-        r = T[0:3, 3]
-        Ad = np.block([[C, np.zeros((3,3))],[np.dot(SO3.wedge(r), C), C]])
+        Ad = jnp.zeros((6, 6))
+        Ad = Ad.at[0:3, 0:3].set(T[0:3, 0:3])
+        Ad = Ad.at[3:6, 3:6].set(T[0:3, 0:3])
+        Ad = Ad.at[3:6, 0:3].set(jnp.dot(SO3.wedge(T[0:3, 3]), T[0:3, 0:3]))
         return Ad
 
     @staticmethod
     @jit
     def _left_jacobian_Q_matrix(phi, rho):
-        phi = np.array(phi).ravel()
-        rho = np.array(rho).ravel()
+        phi = jnp.array(phi).ravel()
+        rho = jnp.array(rho).ravel()
 
         rx = SO3.wedge(rho)
         px = SO3.wedge(phi)
 
-        ph = fast_vector_norm(phi)
+        ph = jnp.linalg.norm(phi)
 
         ph2 = ph * ph
         ph3 = ph2 * ph
         ph4 = ph3 * ph
         ph5 = ph4 * ph
 
-        cph = np.cos(ph)
-        sph = np.sin(ph)
+        cph = jnp.cos(ph)
+        sph = jnp.sin(ph)
 
         m1 = 0.5
         m2 = (ph - sph) / ph3
@@ -178,14 +174,14 @@ class SE3(MatrixLieGroup):
     @jit
     def left_jacobian(xi):
 
-        xi = np.array(xi).ravel()
+        xi = jnp.array(xi).ravel()
 
         phi = xi[0:3]  # rotation part
         rho = xi[3:6]  # translation part
 
         return lax.cond(
-            np.linalg.norm(phi) < SE3._small_angle_tol,
-            lambda _: np.identity(6),
+            jnp.linalg.norm(phi) < SE3._small_angle_tol,
+            lambda _: jnp.identity(6),
             lambda _: SE3._left_jacobian_large_angle(phi, rho),
             None
         )
@@ -196,20 +192,24 @@ class SE3(MatrixLieGroup):
         Q = SE3._left_jacobian_Q_matrix(phi, rho)
 
         J = SO3.left_jacobian(phi)
-        out = np.block([[J, np.zeros((3,3))],[Q, J]])
-        return out
+        J_left = jnp.zeros((6,6))
+        J_left = J_left.at[0:3, 0:3].set(J)
+        J_left = J_left.at[3:6, 3:6].set(J)
+        J_left = J_left.at[3:6, 0:3].set(Q)
+        # out = jnp.block([[J, jnp.zeros((3,3))],[Q, J]])
+        return J_left
 
     @staticmethod
     @jit
     def left_jacobian_inv(xi):
-        xi = np.array(xi).ravel()
+        xi = jnp.array(xi).ravel()
 
         phi = xi[0:3]  # rotation part
         rho = xi[3:6]  # translation part
 
         return lax.cond(
-            np.linalg.norm(phi) < SE3._small_angle_tol,
-            lambda _: np.identity(6),
+            jnp.linalg.norm(phi) < SE3._small_angle_tol,
+            lambda _: jnp.identity(6),
             lambda _: SE3._left_jacobian_inv_large_angle(phi, rho),
         None)
 
@@ -219,8 +219,12 @@ class SE3(MatrixLieGroup):
         Q = SE3._left_jacobian_Q_matrix(phi, rho)
 
         J_inv = SO3.left_jacobian_inv(phi)
-        out = np.block([[J_inv, np.zeros((3,3))],[-np.dot(J_inv, np.dot(Q, J_inv)), J_inv]])
-        return out
+        J_left_inv = jnp.zeros((6,6))
+        J_left_inv = J_left_inv.at[0:3, 0:3].set(J_inv)
+        J_left_inv = J_left_inv.at[3:6, 3:6].set(J_inv)
+        J_left_inv = J_left_inv.at[3:6, 0:3].set(-jnp.dot(J_inv, jnp.dot(Q, J_inv)))
+        # out = jnp.block([[J_inv, jnp.zeros((3,3))],[-jnp.dot(J_inv, jnp.dot(Q, J_inv)), J_inv]])
+        return J_left_inv
 
     @staticmethod
     @jit

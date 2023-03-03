@@ -70,7 +70,11 @@ class SE23(MatrixLieGroup):
         xi_v = xi[3:6].reshape((-1, 1))
         xi_r = xi[6:9].reshape((-1, 1))
 
-        Xi = jnp.block([[SO3.wedge(xi_phi), xi_v, xi_r], [onp.zeros((2, 5))]])
+        # Xi = jnp.block([[SO3.wedge(xi_phi), xi_v, xi_r], [onp.zeros((2, 5))]])
+        Xi = jnp.zeros((5, 5))
+        Xi = Xi.at[0:3, 0:3].set(SO3.wedge(xi_phi))
+        Xi = Xi.at[0:3, 3].set(xi_v.ravel())
+        Xi = Xi.at[0:3, 4].set(xi_r.ravel())
 
         return Xi
 
@@ -78,13 +82,17 @@ class SE23(MatrixLieGroup):
     @jit
     def vee(Xi):
 
-        xi = jnp.vstack(
-            (
-                SO3.vee(Xi[0:3, 0:3]),
-                Xi[0:3, 3].reshape((-1, 1)),
-                Xi[0:3, 4].reshape((-1, 1)),
-            )
-        )
+        # xi = jnp.vstack(
+        #     (
+        #         SO3.vee(Xi[0:3, 0:3]),
+        #         Xi[0:3, 3].reshape((-1, 1)),
+        #         Xi[0:3, 4].reshape((-1, 1)),
+        #     )
+        # )
+        xi = jnp.zeros((9, 1))
+        xi = xi.at[0:3].set(SO3.vee(Xi[0:3, 0:3]))
+        xi = xi.at[3:6].set(Xi[0:3, 3].reshape((-1, 1)))
+        xi = xi.at[6:9].set(Xi[0:3, 4].reshape((-1, 1)))
         return xi
 
     @staticmethod

@@ -31,17 +31,6 @@ class MatrixLieGroup:
         )
 
     @staticmethod
-    def random():
-        """
-        Returns
-        -------
-        np.ndarray
-            A random element of the group with shape `(n,n)`.
-
-        """
-        raise NotImplementedError()
-
-    @staticmethod
     def wedge(x):
         """
         Wedge operator :math:`(\cdot)^\\wedge: \mathbb{R}^n \\to \mathfrak{g}`.
