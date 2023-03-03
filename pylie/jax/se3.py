@@ -1,6 +1,6 @@
 from .base import MatrixLieGroup, fast_vector_norm
 import jax.numpy as np
-from jax import random, jit, lax
+from jax import jit, lax
 from .so3 import SO3
 
 try:
@@ -12,7 +12,6 @@ except ImportError:
 except:
     raise
 
-key = random.PRNGKey(0)
 class SE3(MatrixLieGroup):
     """
     An instantiation-free implementation of the SE3 matrix Lie group.
@@ -20,13 +19,11 @@ class SE3(MatrixLieGroup):
 
     dof = 6
     matrix_size = 4
-    _identity = None
 
-    # @staticmethod
-    # def identity():
-    #     if SE3._identity is None:
-    #         SE3._identity = np.eye(4)
-    #     return SE3._identity
+    @staticmethod
+    @jit
+    def random():
+        return super(SE3, SE3).random()
 
     @staticmethod
     @jit
@@ -59,13 +56,7 @@ class SE3(MatrixLieGroup):
         r = T[0:3, 3]
         return C, r
 
-    @staticmethod
-    @jit
-    def random():
-        phi = random.uniform(key, (3,), minval=0, maxval=2 * np.pi)
-        r = random.uniform(key, (3,), minval=3, maxval=3)
-        C = SO3.Exp(phi)
-        return SE3.from_components(C, r)
+   
 
     @staticmethod
     @jit

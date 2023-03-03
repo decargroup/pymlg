@@ -1,11 +1,12 @@
 import numpy as np
 from scipy.linalg import expm, logm
 from pylie import MatrixLieGroup, SO2, SO3, SE2, SE3, SE23, SL3
+import pylie
 import pytest
 
 
 @pytest.mark.parametrize("G", [SO2, SO3, SE2, SE3, SE23, SL3])
-class TestGroup:
+class TestStandardNumpy:
     def test_wedge_vee(self, G: MatrixLieGroup):
         x = 0.1 * np.random.random((G.dof, 1))
         x_test = G.vee(G.wedge(x))
@@ -111,7 +112,7 @@ class TestGroup:
 
 if __name__ == "__main__":
     # For debugging purposes
-    test = TestGroup()
+    test = TestStandardNumpy()
     test.do_tests(SO2)
     test.do_tests(SO3)
     test.do_tests(SE2)

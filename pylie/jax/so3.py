@@ -1,9 +1,7 @@
 from .base import MatrixLieGroup
 import jax.numpy as np
-from jax import random, jit, lax
+from jax import  jit, lax
 from functools import partial
-seed = 0
-key = random.PRNGKey(seed)
 
 class SO3(MatrixLieGroup):
     """
@@ -16,8 +14,7 @@ class SO3(MatrixLieGroup):
     @staticmethod
     @jit
     def random():
-        v = random.uniform(key, (3,), minval=0, maxval=2 * np.pi)
-        return SO3.Exp(v)
+        return super(SO3, SO3).random()
 
     @staticmethod
     @jit
