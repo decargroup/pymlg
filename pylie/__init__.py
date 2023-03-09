@@ -24,6 +24,10 @@ def set_jax_usage(use_jax):
 
     """
 
+    # TODO. currently has no effect. Need to do something clever so that 
+    # all the classes start calling the jax implementation, converting the 
+    # result to numpy arrays.
+
     try:
         from . import jax
 

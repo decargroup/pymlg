@@ -1,5 +1,5 @@
-# Pylie
-An instantiation-free python library for common matrix Lie group operations. Functions in this repo operate entirely on numpy arrays, with the intention of minimizing overhead and keeping the implementation as simple as possible.
+# Pylie - with both JAX and Numpy implementations
+An instantiation-free python package for common matrix Lie group operations implemented as __pure static classes__. Using pure static classes keeps the usage extremely simple while still allowing for abstraction and inheritance. We do not introduce new objects with stateful behavior that must be learnt. Everything operates directly on arrays/tensors. This allows users to implement their own more sophisticated objects using these classes as back-end mathematical implementations.
 
 ## Installation
 Begin by cloning this repo somewhere. To install, go to the clone directory and run
@@ -10,7 +10,7 @@ Begin by cloning this repo somewhere. To install, go to the clone directory and 
 
 Documentation can be found here: https://decargroup.github.io/pylie
 
-## Example 
+## Example
 
 ```python
 from pylie import SE2 
@@ -44,6 +44,15 @@ J_L_inv = SE2.left_jacobian_inv(x)
 J_R_inv = SE2.right_jacobian_inv(x)
 
 ```
+### Using JAX 
+Literally copy the above example, but replace the first line with 
+
+```python 
+from pylie.jax import SE2
+```
+
+Now all return types will be `jax.numpy` arrays. All operations in the jax implementation can be JIT-compiled. 
+
 
 **Note:** functions which output "vectors", such as `SE2.Log(T)` all return a 2D numpy array with dimensions `(n, 1)`.
 
@@ -54,6 +63,4 @@ If you use VS Code, you should be able to enable the VS Code testing feature usi
     pytest tests
 
 ## Credit to UTIAS's STARS group
-We would also like to advertise the [UTIAS STARS Lie group library](https://github.com/utiasSTARS/liegroups), which has very similar functionality and inspired some of the specific function implementations in this repo (such as the SE2 Jacobian functions). It is also definitely a more "mature" work in the sense of better documentation, and probably less bugs. 
-
-We wanted to make our own mainly for abiding by our group's conventions, as well as to enjoy the simplicity of an instantiation-free implementation. That is, all functions in this repo are static methods operating on numpy arrays. 
+Some specific implementations came from the [UTIAS STARS Lie group package.](https://github.com/utiasSTARS/liegroups).
