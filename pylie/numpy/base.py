@@ -17,6 +17,9 @@ class MatrixLieGroup:
     #:int: Matrix dimension of the group.
     matrix_size = None
 
+    #:bool: Flag whether to use Jax's JIT compilation internally.
+    use_jax = False
+
     def __init__(self):
         raise RuntimeError(
             """

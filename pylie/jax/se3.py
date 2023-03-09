@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup, tonumpy
+from .base import MatrixLieGroup
 import jax.numpy as jnp
 import numpy as onp
 from jax import jit, lax
@@ -17,7 +17,6 @@ class SE3(MatrixLieGroup):
         return super(SE3, SE3).random()
 
     @staticmethod
-    @tonumpy
     @jit
     def from_components(C, r):
         """
@@ -29,7 +28,6 @@ class SE3(MatrixLieGroup):
         return T
 
     @staticmethod
-    @tonumpy
     @jit
     def to_components(T):
         """
@@ -42,7 +40,6 @@ class SE3(MatrixLieGroup):
    
 
     @staticmethod
-    @tonumpy
     @jit
     def wedge(xi):
         xi = jnp.array(xi).ravel()
@@ -53,7 +50,6 @@ class SE3(MatrixLieGroup):
         return Xi
 
     @staticmethod
-    @tonumpy
     @jit
     def vee(Xi):
         Xi_phi = Xi[0:3, 0:3]
@@ -62,7 +58,6 @@ class SE3(MatrixLieGroup):
         return jnp.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
-    @tonumpy
     @jit
     def exp(Xi):
         Xi_phi = Xi[0:3, 0:3]
@@ -73,7 +68,6 @@ class SE3(MatrixLieGroup):
         return jnp.block([[C, r], [jnp.zeros((1, 3)), 1]])
 
     @staticmethod
-    @tonumpy
     @jit
     def Exp(x):
         phi =x[0:3]
@@ -83,7 +77,6 @@ class SE3(MatrixLieGroup):
         return jnp.block([[C, r], [jnp.zeros((1, 3)), 1]])
 
     @staticmethod
-    @tonumpy
     @jit
     def log(T):
         Xi_phi = SO3.log(T[0:3, 0:3])
@@ -95,7 +88,6 @@ class SE3(MatrixLieGroup):
         return Xi
 
     @staticmethod
-    @tonumpy
     @jit
     def Log(T):
         phi = SO3.Log(T[0:3, 0:3])
@@ -106,7 +98,6 @@ class SE3(MatrixLieGroup):
         return jnp.vstack((phi, xi_r.reshape((-1, 1))))
 
     @staticmethod
-    @tonumpy
     @jit
     def inverse(T):
         C_inv = T[0:3,0:3].transpose()
@@ -114,7 +105,6 @@ class SE3(MatrixLieGroup):
         return jnp.block([[C_inv, r_inv], [jnp.zeros((1, 3)), 1]])
 
     @staticmethod
-    @tonumpy
     @jit
     def odot(b):
         b = jnp.array(b).ravel()
@@ -125,7 +115,6 @@ class SE3(MatrixLieGroup):
         return X
 
     @staticmethod
-    @tonumpy
     @jit
     def adjoint(T):
         Ad = jnp.zeros((6, 6))
@@ -170,7 +159,6 @@ class SE3(MatrixLieGroup):
         return m1 * t1 + m2 * t2 + m3 * t3 + m4 * t4
 
     @staticmethod
-    @tonumpy
     @jit
     def left_jacobian(xi):
 
@@ -200,7 +188,6 @@ class SE3(MatrixLieGroup):
         return J_left
 
     @staticmethod
-    @tonumpy
     @jit
     def left_jacobian_inv(xi):
         xi = jnp.array(xi).ravel()

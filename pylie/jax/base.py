@@ -22,7 +22,7 @@ class MatrixLieGroup:
 
     def __init__(self):
         raise RuntimeError(
-            """
+        """
         This class is not meant to be instantiated! The methods are all static,
         which means you can call them directly with
 
@@ -372,18 +372,5 @@ class MatrixLieGroup:
         cls.odot(jnp.zeros(cls.matrix_size))
         cls.inverse(cls.Exp(random_vector))
         
-
-
 def fast_vector_norm(x):
     return jnp.sqrt(x.dot(x))
-
-def tonumpy(func):
-    def wrapper(*args, **kwargs):
-        out = func(*args, **kwargs)
-        if not isinstance(out, core.Tracer):
-            # Check if we are compiling!
-            out = onp.array(out)
-        return out
-
-    wrapper.__name__ = func.__name__
-    return wrapper

@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup, tonumpy
+from .base import MatrixLieGroup
 import jax.numpy as jnp
 import numpy as onp
 from jax import jit, lax
@@ -16,13 +16,11 @@ class SE23(MatrixLieGroup):
     _identity = None
     
     @staticmethod
-    @tonumpy
     @jit
     def random():
         return super(SE23, SE23).random()
     
     @staticmethod
-    @tonumpy
     @jit
     def from_components(C, v, r):
         """
@@ -65,7 +63,6 @@ class SE23(MatrixLieGroup):
         return (C, v, r)
 
     @staticmethod
-    @tonumpy
     @jit
     def wedge(xi):
         xi = jnp.array(xi).ravel()
@@ -82,7 +79,6 @@ class SE23(MatrixLieGroup):
         return Xi
 
     @staticmethod
-    @tonumpy
     @jit
     def vee(Xi):
 
@@ -100,7 +96,6 @@ class SE23(MatrixLieGroup):
         return xi
 
     @staticmethod
-    @tonumpy
     @jit
     def exp(Xi):
         Xi_phi = Xi[0:3, 0:3]
@@ -115,7 +110,6 @@ class SE23(MatrixLieGroup):
         return SE23.from_components(C, v, r)
 
     @staticmethod
-    @tonumpy
     @jit
     def log(X):
         (C, v, r) = SE23.to_components(X)
@@ -134,7 +128,6 @@ class SE23(MatrixLieGroup):
         return Xi
 
     @staticmethod
-    @tonumpy
     @jit
     def odot(b):
         b = jnp.array(b).ravel()
@@ -147,7 +140,6 @@ class SE23(MatrixLieGroup):
         return X
     
     @staticmethod
-    @tonumpy
     @jit
     def Exp(x):
         xi_phi = x[0:3]
@@ -161,13 +153,11 @@ class SE23(MatrixLieGroup):
         return SE23.from_components(C, v, r)
     
     @staticmethod
-    @tonumpy
     @jit
     def Log(X):
         return SE23.vee(SE23.log(X))
 
     @staticmethod
-    @tonumpy
     @jit
     def inverse(X):
         C = X[:3, :3]
@@ -181,7 +171,6 @@ class SE23(MatrixLieGroup):
         return X_inv
 
     @staticmethod
-    @tonumpy
     @jit
     def adjoint(X):
         C, v, r = SE23.to_components(X)
@@ -206,7 +195,6 @@ class SE23(MatrixLieGroup):
         return Ad
 
     @staticmethod
-    @tonumpy
     @jit
     def left_jacobian(xi):
         xi = jnp.array(xi).ravel()
@@ -222,7 +210,6 @@ class SE23(MatrixLieGroup):
         )
 
     @staticmethod
-    @tonumpy
     @jit
     def _left_jacobian_large_angle(xi_phi, xi_v, xi_r):
         
@@ -244,7 +231,6 @@ class SE23(MatrixLieGroup):
         return J_left
 
     @staticmethod
-    @tonumpy
     @jit
     def left_jacobian_inv(xi):
         xi = jnp.array(xi).ravel()
@@ -260,7 +246,6 @@ class SE23(MatrixLieGroup):
         )
 
     @staticmethod
-    @tonumpy
     @jit
     def _left_jacobian_inv_large_angle(xi_phi, xi_v, xi_r):
 
