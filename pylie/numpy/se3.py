@@ -152,6 +152,13 @@ class SE3(MatrixLieGroup):
         return Xi
 
     @staticmethod
+    def inverse(T):
+        C, r = SE3.to_components(T)
+        C_inv = C.T
+        r_inv = -np.dot(C_inv, r)
+        return SE3.from_components(C_inv, r_inv)
+
+    @staticmethod
     def odot(b):
         b = np.array(b).ravel()
         X = np.zeros((4, 6))

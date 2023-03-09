@@ -1,11 +1,15 @@
+
+from jax.config import config
+config.update("jax_enable_x64", True)
+
 import numpy as np
 from scipy.linalg import expm, logm
-from pylie import MatrixLieGroup, SO2, SO3, SE2, SE3, SE23, SL3
+from pylie.jax import MatrixLieGroup, SO3, SE3, SE23, SL3, SO2, SE2
 import pytest
 
 
 @pytest.mark.parametrize("G", [SO2, SO3, SE2, SE3, SE23, SL3])
-class TestGroup:
+class TestStandardJax:
     def test_wedge_vee(self, G: MatrixLieGroup):
         x = 0.1 * np.random.random((G.dof, 1))
         x_test = G.vee(G.wedge(x))
@@ -111,10 +115,7 @@ class TestGroup:
 
 if __name__ == "__main__":
     # For debugging purposes
-    test = TestGroup()
-    test.do_tests(SO2)
-    test.do_tests(SO3)
+    test = TestStandardJax()
+    # test.do_tests(SO3)
+    # test.do_tests(SE3)
     test.do_tests(SE2)
-    test.do_tests(SE3)
-    test.do_tests(SE23)
-    test.do_tests(SL3)

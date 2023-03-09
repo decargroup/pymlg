@@ -1,7 +1,8 @@
-from scipy.linalg import expm, logm
-import numpy as np
+import jax.numpy as jnp
+from jax import random, core
+import  numpy as onp
 
-
+key = random.PRNGKey(0)
 class MatrixLieGroup:
     """
     Base class inherited by all groups, providing a few group-general
@@ -17,29 +18,17 @@ class MatrixLieGroup:
     #:int: Matrix dimension of the group.
     matrix_size = None
 
-    #:bool: Flag whether to use Jax's JIT compilation internally.
-    use_jax = False
+    _identity = None
 
     def __init__(self):
         raise RuntimeError(
-            """
+        """
         This class is not meant to be instantiated! The methods are all static,
         which means you can call them directly with
 
         Y = <class_name_without_brackets>.<method_name>(X)
         """
         )
-
-    @staticmethod
-    def random():
-        """
-        Returns
-        -------
-        np.ndarray
-            A random element of the group with shape `(n,n)`.
-
-        """
-        raise NotImplementedError()
 
     @staticmethod
     def wedge(x):
@@ -92,7 +81,7 @@ class MatrixLieGroup:
         np.ndarray
             Element of the group with shape `(n,n)`.
         """
-        return expm(Xi)
+        return NotImplementedError()
 
     @staticmethod
     def log(X):
@@ -112,7 +101,7 @@ class MatrixLieGroup:
         np.ndarray
             Element of the Lie algebra with shape `(n,n)`.
         """
-        return logm(X)
+        return NotImplementedError()
 
     @staticmethod
     def inverse(X):
@@ -129,7 +118,7 @@ class MatrixLieGroup:
         np.ndarray
             Element of the group with shape `(n,n)`.
         """
-        return np.linalg.inv(X)
+        return jnp.linalg.inv(X)
 
     @staticmethod
     def normalize(X):
@@ -244,7 +233,7 @@ class MatrixLieGroup:
         np.ndarray
             The matrix :math:`\mathbf{J}_\ell^{-1}(\mathbf{x})` with shape `(dof,dof)`.
         """
-        return np.linalg.inv(cls.left_jacobian(x))
+        return jnp.linalg.inv(cls.left_jacobian(x))
 
     @classmethod
     def right_jacobian(cls, x):
@@ -344,7 +333,44 @@ class MatrixLieGroup:
         np.ndarray
             Identity matrix of the group with shape `(n,n)`.
         """
-        return np.identity(cls.matrix_size)
+        if cls._identity is None:
+            cls._identity = jnp.identity(cls.matrix_size)
+        return cls._identity
 
+    @classmethod
+    def random(cls): 
+        phi = random.uniform(key, (cls.dof,), minval=-jnp.pi, maxval=jnp.pi)
+        return cls.Exp(phi)
+
+    @classmethod
+    def compile(cls):
+        """
+        Runs all the core functions once to activate compilation.
+        """
+        print("Compiling...")
+        random_element = cls.random()
+        cls._run_everything_once(random_element)
+
+        random_element = onp.array(random_element)
+        cls._run_everything_once(random_element)
+        
+    @classmethod
+    def _run_everything_once(cls, random_element):
+        random_vector = cls.Log(random_element)
+        
+        cls.Exp(random_vector)
+        cls.log(random_element)
+        cls.exp(cls.wedge(random_vector))
+        cls.vee(cls.wedge(random_vector))
+        cls.wedge(cls.vee(cls.wedge(random_vector)))
+        cls.adjoint(random_element)
+        # cls.adjoint_algebra(cls.wedge(random_vector))
+        cls.left_jacobian(random_vector)
+        cls.right_jacobian(random_vector)
+        cls.left_jacobian_inv(random_vector)
+        cls.right_jacobian_inv(random_vector)
+        cls.odot(jnp.zeros(cls.matrix_size))
+        cls.inverse(cls.Exp(random_vector))
+        
 def fast_vector_norm(x):
-    return np.sqrt(x.dot(x))
+    return jnp.sqrt(x.dot(x))
