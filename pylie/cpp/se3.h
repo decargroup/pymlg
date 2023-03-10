@@ -2,6 +2,7 @@
 #define _SE3_H_
 
 #include <Eigen/Dense>
+
 #include "base.h"
 #include "so3.h"
 
@@ -35,8 +36,9 @@ class SE3 : public MatrixLieGroup<4, 6> {
     Vector xi;
     Eigen::Matrix3d R = x.block<3, 3>(0, 0);
     Eigen::Vector3d p = x.block<3, 1>(0, 3);
-    xi.block<3, 1>(0, 0) = SO3::Log(R);
-    xi.block<3, 1>(3, 0) = SO3::leftJacobianInverse(xi.block<3, 1>(0, 0)) * p;
+    Eigen::Vector3d phi{SO3::Log(R)};
+    xi.block<3, 1>(0, 0) = phi;
+    xi.block<3, 1>(3, 0) = SO3::leftJacobianInverse(phi) * p;
     return xi;
   };
 
@@ -69,7 +71,7 @@ class SE3 : public MatrixLieGroup<4, 6> {
   };
 
   static Eigen::Matrix3d leftJacobianQMatrix(const Eigen::Vector3d& phi,
-                                                         const Eigen::Vector3d& xi_r) {
+                                             const Eigen::Vector3d& xi_r) {
     Eigen::Matrix3d rx{SO3::wedge(xi_r)};
     Eigen::Matrix3d px{SO3::wedge(phi)};
 
@@ -101,24 +103,34 @@ class SE3 : public MatrixLieGroup<4, 6> {
   };
 
   static Eigen::Matrix<double, 6, 6> leftJacobian(const Vector& x) {
-    Eigen::Matrix<double, 6, 6> J = Eigen::Matrix<double, 6, 6>::Zero();
-    Eigen::Matrix3d Jso3{SO3::leftJacobian(x.block<3, 1>(0, 0))};
-    J.block<3, 3>(0, 0) = Jso3;
-    J.block<3, 3>(3, 0) = SE3::leftJacobianQMatrix(x.block<3, 1>(0, 0),
-                                                   x.block<3, 1>(3, 0));
-    J.block<3, 3>(3, 3) = Jso3;
-    return J;
+    // Check if rotation component is small
+    if (x.block<3, 1>(0, 0).norm() < SE3::small_angle_tol) {
+      return Eigen::Matrix<double, 6, 6>::Identity();
+    } else {
+      Eigen::Matrix<double, 6, 6> J = Eigen::Matrix<double, 6, 6>::Zero();
+      Eigen::Matrix3d Jso3{SO3::leftJacobian(x.block<3, 1>(0, 0))};
+      J.block<3, 3>(0, 0) = Jso3;
+      J.block<3, 3>(3, 0) =
+          SE3::leftJacobianQMatrix(x.block<3, 1>(0, 0), x.block<3, 1>(3, 0));
+      J.block<3, 3>(3, 3) = Jso3;
+      return J;
+    }
   };
 
-  static Eigen::Matrix<double, 6, 6> leftJacobianInverse(const Vector& x){
-    Eigen::Matrix<double, 6, 6> J = Eigen::Matrix<double, 6, 6>::Zero();
-    Eigen::Matrix3d Jinv{SO3::leftJacobianInverse(x.block<3, 1>(0, 0))};
-    Eigen::Matrix3d Q{SE3::leftJacobianQMatrix(x.block<3, 1>(0, 0),
-                                                   x.block<3, 1>(3, 0))};
-    J.block<3, 3>(0, 0) = Jinv;
-    J.block<3, 3>(3, 0) = -Jinv * Q * Jinv;
-    J.block<3, 3>(3, 3) = Jinv;
-    return J;
+  static Eigen::Matrix<double, 6, 6> leftJacobianInverse(const Vector& x) {
+    // Check if rotation component is small
+    if (x.block<3, 1>(0, 0).norm() < SE3::small_angle_tol) {
+      return Eigen::Matrix<double, 6, 6>::Identity();
+    } else {
+      Eigen::Matrix<double, 6, 6> J = Eigen::Matrix<double, 6, 6>::Zero();
+      Eigen::Matrix3d Jinv{SO3::leftJacobianInverse(x.block<3, 1>(0, 0))};
+      Eigen::Matrix3d Q{
+          SE3::leftJacobianQMatrix(x.block<3, 1>(0, 0), x.block<3, 1>(3, 0))};
+      J.block<3, 3>(0, 0) = Jinv;
+      J.block<3, 3>(3, 0) = -Jinv * Q * Jinv;
+      J.block<3, 3>(3, 3) = Jinv;
+      return J;
+    }
   };
 
   static Eigen::Matrix4d inverse(const Eigen::Matrix4d& x) {
@@ -131,14 +143,22 @@ class SE3 : public MatrixLieGroup<4, 6> {
   };
 
   static Eigen::Matrix<double, 6, 6> adjoint(const Eigen::Matrix4d& T) {
-    Eigen::Matrix<double, 6, 6>  Xadj;
+    Eigen::Matrix<double, 6, 6> Xadj;
     Eigen::Matrix3d R = T.block<3, 3>(0, 0);
     Eigen::Vector3d p = T.block<3, 1>(0, 3);
     Xadj.block<3, 3>(0, 0) = R;
-    Xadj.block<3, 3>(0, 3) = SO3::wedge(p) * R;
-    Xadj.block<3, 3>(3, 0) = Eigen::Matrix3d::Zero();
     Xadj.block<3, 3>(3, 3) = R;
+    Xadj.block<3, 3>(3, 0) = SO3::wedge(p) * R;
+    Xadj.block<3, 3>(0, 3) = Eigen::Matrix3d::Zero();
+    return Xadj;
+  };
 
+  static Eigen::Matrix<double, 4, 6> odot(const Eigen::Vector4d& b) {
+    Eigen::Matrix<double, 4, 6> B;
+    B.block<3, 3>(0, 0) = SO3::odot(b.block<3, 1>(0, 0));
+    B.block<3, 3>(0, 3) = b[3] * Eigen::Matrix3d::Identity();
+    B.block<1, 6>(3, 0) = Eigen::Matrix<double, 1, 6>::Zero();
+    return B;
   };
 };
 #endif

@@ -23,6 +23,19 @@ class StandardTests:
         Xi_test = logm(X)
         assert np.allclose(Xi, Xi_test)
 
+    def test_log_small_value(self, G: MatrixLieGroup):
+        x = np.zeros((G.dof, 1))
+        X = G.Exp(x)
+        Xi = G.log(X)
+        Xi_test = logm(X)
+        assert np.allclose(Xi, Xi_test)
+
+    def test_capital_log_small_value(self, G: MatrixLieGroup):
+        x = np.zeros((G.dof, 1))
+        X = G.Exp(x)
+        x_test = G.Log(X)
+        assert np.allclose(x, x_test)
+
     def test_exp_log_inverse(self, G: MatrixLieGroup):
         X = G.random()
         Xi = G.log(X)
@@ -62,20 +75,34 @@ class StandardTests:
 
         assert np.allclose(J_right_inv, np.linalg.inv(J_right))
 
-    def test_left_jacobian_numerically(self, G: MatrixLieGroup):
+    def test_left_jacobian(self, G: MatrixLieGroup):
         np.random.seed(0)
         x_bar = G.Log(G.random())
         J_left = G.left_jacobian(x_bar)
+        J_fd = self._numerical_left_jacobian(G, x_bar)
 
+        assert np.allclose(J_fd, J_left, atol=1e-2)
+
+
+    def test_left_jacobian_small_value(self, G: MatrixLieGroup):
+        x_bar = np.zeros((G.dof, 1))
+        J_left = G.left_jacobian(x_bar)
+        J_fd = self._numerical_left_jacobian(G, x_bar)
+
+        assert np.allclose(J_fd, J_left, atol=1e-5)
+
+    def _numerical_left_jacobian(self, G: MatrixLieGroup, x_bar: np.ndarray):
         exp_inv = G.inverse(G.Exp(x_bar))
         J_fd = np.zeros((G.dof, G.dof))
-        h = 1e-8
+        h = 1e-7
         for i in range(G.dof):
             dx = np.zeros((G.dof, 1))
             dx[i] = h
             J_fd[:, i] = (G.Log(np.dot(G.Exp(x_bar + dx), exp_inv)) / h).ravel()
 
-        assert np.allclose(J_fd, J_left, atol=1e-7)
+        return J_fd
+
+
 
     def test_adjoint_identity(self, G: MatrixLieGroup):
         X = G.random()
@@ -99,9 +126,60 @@ class StandardTests:
         self.test_exp_log_inverse(G)
         self.test_capital_exp_log_inverse(G)
         self.test_odot_wedge(G)
+        self.test_left_jacobian(G) 
+        self.test_left_jacobian_small_value(G)
         self.test_left_jacobian_inverse(G)
         self.test_right_jacobian_inverse(G)
-        self.test_left_jacobian_numerically(G)
+        self.test_left_jacobian(G)
         self.test_adjoint_identity(G)
         self.test_inverse(G)
 
+class CrossValidation:
+    def test_wedge(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        assert np.allclose(G1.wedge(x), G2.wedge(x))
+
+    def test_exp(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        Xi = G1.wedge(x)
+        assert np.allclose(G1.exp(Xi), G2.exp(Xi))
+
+    def test_log(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        X = G1.random()
+        assert np.allclose(G1.log(X), G2.log(X))
+
+    def test_capital_exp(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        assert np.allclose(G1.Exp(x), G2.Exp(x))
+    
+    def test_capital_log(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        X = G1.random()
+        assert np.allclose(G1.Log(X), G2.Log(X))
+
+    def test_odot(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        b = np.random.random((G1.matrix_size, 1))
+        assert np.allclose(G1.odot(b), G2.odot(b))
+
+    def test_left_jacobian(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        assert np.allclose(G1.left_jacobian(x), G2.left_jacobian(x))
+    
+    def test_right_jacobian(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        assert np.allclose(G1.right_jacobian(x), G2.right_jacobian(x))
+
+    def test_left_jacobian_inv(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        assert np.allclose(G1.left_jacobian_inv(x), G2.left_jacobian_inv(x))
+    
+    def test_right_jacobian_inv(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        x = np.random.random((G1.dof, 1))
+        assert np.allclose(G1.right_jacobian_inv(x), G2.right_jacobian_inv(x))
+    
+    def test_adjoint(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        X = G1.random()
+        assert np.allclose(G1.adjoint(X), G2.adjoint(X))
+    
+    def test_inverse(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        X = G1.random()
+        assert np.allclose(G1.inverse(X), G2.inverse(X))

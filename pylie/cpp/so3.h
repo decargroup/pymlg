@@ -34,7 +34,16 @@ class SO3 : public MatrixLieGroup<3, 3> {
    */
   static Eigen::Vector3d Log(const Eigen::Matrix3d& x) {
     Eigen::Vector3d xi;
-    double theta = acos((x.trace() - 1) / 2);
+    double cos_theta = 0.5*x.trace() - 0.5;
+
+    // Clip cos(angle) to its proper domain to avoid nans from rounding errors
+    if (cos_theta > 1) {
+      cos_theta = 1.0;
+    }
+    else if (cos_theta < -1) {
+      cos_theta = -1.0;
+    }
+    double theta = acos(cos_theta);
     if (theta < SO3::small_angle_tol) {
       // xi = x.block<3, 1>(0, 2);
       xi = SO3::vee(x - Eigen::Matrix3d::Identity());

@@ -50,6 +50,7 @@ void bind_matrix_lie_group(py::module &m, const std::string &name) {
 PYBIND11_MODULE(_impl, m) {
 
     bind_matrix_lie_group<SO3, 3, 3>(m, "SO3");
+    bind_matrix_lie_group<SE3, 3, 3>(m, "SE3");
 
     // py::class_<MatrixLieGroup<3, 3>>(m, "MatrixLieGroup33")
     //     .def("right_jacobian", &MatrixLieGroup<3, 3>::rightJacobian);
