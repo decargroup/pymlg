@@ -59,7 +59,7 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 ext_modules = [
-    Pybind11Extension("pylie.cpp",
+    Pybind11Extension("pylie.cpp._impl",
         ["pylie/cpp/bindings.cpp"],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],

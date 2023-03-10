@@ -47,7 +47,7 @@ void bind_matrix_lie_group(py::module &m, const std::string &name) {
 
 };
 
-PYBIND11_MODULE(cpp, m) {
+PYBIND11_MODULE(_impl, m) {
 
     bind_matrix_lie_group<SO3, 3, 3>(m, "SO3");
 
