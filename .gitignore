@@ -58,3 +58,10 @@ pylie.egg-info/
 .pytest_cache/
 docs/source/_autosummary
 benchmark/
+
+# C++ build files
+build/
+*.so
+
+# Eigen depencency
+eigen-*/
