@@ -13,35 +13,40 @@ Documentation can be found here: https://decargroup.github.io/pylie
 ## Example
 
 ```python
-from pylie import SE2 
+from pylie import SE3 
 import numpy as np
 
 # Random pose
-T = SE2.random()
+T = SE3.random()
 
 # R^n to group directly (using "Capital" notation)
-x = np.array([0.1, 2, 3])
-T = SE2.Exp(x)
+x = np.array([0.1, 0.2, 0.3, 4, 5, 6])
+T = SE3.Exp(x)
 
 # Group to R^n directly
-x = SE2.Log(T)
+x = SE3.Log(T)
 
 # Wedge, vee
-Xi = SE2.wedge(x)
-x = SE2.vee(Xi)
+Xi = SE3.wedge(x)
+x = SE3.vee(Xi)
 
 # Actual exp/log maps 
-T = SE2.exp(Xi)
-Xi = SE2.log(T)
+T = SE3.exp(Xi)
+Xi = SE3.log(T)
 
-# Adjoint representation of group element
-A = SE2.adjoint(T)
+# Adjoint matrix representation of group element
+A = SE3.adjoint(T)
 
-# Group left/right jacobians
-J_L = SE2.left_jacobian(x)
-J_R = SE2.right_jacobian(x)
-J_L_inv = SE2.left_jacobian_inv(x)
-J_R_inv = SE2.right_jacobian_inv(x)
+# Inverse of group element
+T_inv = SE3.inverse(T)
+
+# Group left/right jacobians, and their inverses
+J_L = SE3.left_jacobian(x)
+J_R = SE3.right_jacobian(x)
+J_L_inv = SE3.left_jacobian_inv(x)
+J_R_inv = SE3.right_jacobian_inv(x)
+
+# ... and more.
 
 ```
 ### Using Numpy/C++/Jax
