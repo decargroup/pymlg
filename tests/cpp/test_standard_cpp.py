@@ -1,6 +1,7 @@
-from pylie.cpp import SO3, SE3
+from pylie.cpp import SO3, SE3, SE23
 from pylie.numpy import SO3 as SO3np
 from pylie.numpy import SE3 as SE3np
+from pylie.numpy import SE23 as SE23np
 import pytest
 
 import sys
@@ -11,11 +12,11 @@ from standard_tests import StandardTests
 from standard_tests import CrossValidation
 
 
-@pytest.mark.parametrize("G", [SO3, SE3])
+@pytest.mark.parametrize("G", [SO3, SE3, SE23])
 class TestStandardCpp(StandardTests):
     pass
 
-@pytest.mark.parametrize("G1, G2", [(SO3, SO3np), (SE3, SE3np)])
+@pytest.mark.parametrize("G1, G2", [(SO3, SO3np), (SE3, SE3np), (SE23, SE23np)])
 class TestValidationNumpyCpp(CrossValidation):
     pass
 

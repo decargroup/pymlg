@@ -23,17 +23,26 @@ class StandardTests:
         Xi_test = logm(X)
         assert np.allclose(Xi, Xi_test)
 
-    def test_log_small_value(self, G: MatrixLieGroup):
+    def test_log_zero(self, G: MatrixLieGroup):
         x = np.zeros((G.dof, 1))
         X = G.Exp(x)
         Xi = G.log(X)
         Xi_test = logm(X)
         assert np.allclose(Xi, Xi_test)
 
-    def test_capital_log_small_value(self, G: MatrixLieGroup):
+    def test_capital_log_zero(self, G: MatrixLieGroup):
         x = np.zeros((G.dof, 1))
         X = G.Exp(x)
         x_test = G.Log(X)
+        assert np.allclose(x, x_test)
+
+
+    def test_capital_log_small_value(self, G: MatrixLieGroup):
+        x = np.zeros((G.dof, 1))
+        x[0] = 1e-8
+        X = G.Exp(x)
+        x_test = G.Log(X)
+        assert not np.isnan(x_test).any()
         assert np.allclose(x, x_test)
 
     def test_exp_log_inverse(self, G: MatrixLieGroup):
@@ -67,6 +76,22 @@ class StandardTests:
 
         assert np.allclose(J_left_inv, np.linalg.inv(J_left))
 
+    
+    def test_left_jacobian_inverse_zero(self, G: MatrixLieGroup):
+        xi = np.zeros((G.dof, 1))
+        J_left = G.left_jacobian(xi)
+        J_left_inv = G.left_jacobian_inv(xi)
+        assert not np.isnan(J_left_inv).any()
+        assert np.allclose(J_left_inv, np.linalg.inv(J_left))
+
+    def test_left_jacobian_inverse_small_value(self, G: MatrixLieGroup):
+        xi = np.zeros((G.dof, 1))
+        xi[0] = 1e-8
+        J_left = G.left_jacobian(xi)
+        J_left_inv = G.left_jacobian_inv(xi)
+        assert not np.isnan(J_left_inv).any()
+        assert np.allclose(J_left_inv, np.linalg.inv(J_left))
+
     def test_right_jacobian_inverse(self, G: MatrixLieGroup):
         X = G.random()
         xi = G.Log(X)
@@ -83,9 +108,17 @@ class StandardTests:
 
         assert np.allclose(J_fd, J_left, atol=1e-2)
 
+    def test_left_jacobian_zero(self, G: MatrixLieGroup):
+        x_bar = np.zeros((G.dof, 1))
+        J_left = G.left_jacobian(x_bar)
+        J_fd = self._numerical_left_jacobian(G, x_bar)
 
+        assert np.allclose(J_fd, J_left, atol=1e-5)
+
+    
     def test_left_jacobian_small_value(self, G: MatrixLieGroup):
         x_bar = np.zeros((G.dof, 1))
+        x_bar[0] = 1e-8
         J_left = G.left_jacobian(x_bar)
         J_fd = self._numerical_left_jacobian(G, x_bar)
 
@@ -101,7 +134,6 @@ class StandardTests:
             J_fd[:, i] = (G.Log(np.dot(G.Exp(x_bar + dx), exp_inv)) / h).ravel()
 
         return J_fd
-
 
 
     def test_adjoint_identity(self, G: MatrixLieGroup):
