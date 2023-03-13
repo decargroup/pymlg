@@ -1,4 +1,4 @@
-# Pylie - with both JAX and Numpy implementations
+# Pylie - with Numpy, Jax, and C++ implementations!
 An instantiation-free python package for common matrix Lie group operations implemented as __pure static classes__. Using pure static classes keeps the usage extremely simple while still allowing for abstraction and inheritance. We do not introduce new objects with stateful behavior that must be learnt. Everything operates directly on arrays/tensors. This allows users to implement their own more sophisticated objects using these classes as back-end mathematical implementations.
 
 ## Installation
@@ -44,6 +44,21 @@ J_L_inv = SE2.left_jacobian_inv(x)
 J_R_inv = SE2.right_jacobian_inv(x)
 
 ```
+### Using C++ or Numpy
+To explicitly access pure numpy implementations use 
+
+```python 
+from pylie.numpy import SO2, SO3, SE2, SE3, SE23
+```
+
+To explicitly access classes which internally use C++ use 
+
+```python 
+from pylie.cpp import SO3, SE3, SE23
+```
+Currently, only `SO3`, `SE3`, and `SE23` are implemented in C++. They are also the default internal implementations when simply using `from pylie import SO3, SE3, SE23`. 
+
+
 ### Using JAX 
 Literally copy the above example, but replace the first line with 
 
@@ -52,6 +67,9 @@ from pylie.jax import SE2
 ```
 
 Now all return types will be `jax.numpy` arrays. All operations in the jax implementation can be JIT-compiled. 
+
+
+__For all implementations (jax, numpy, C++), the user API is exactly the same!__
 
 
 **Note:** functions which output "vectors", such as `SE2.Log(T)` all return a 2D numpy array with dimensions `(n, 1)`.
