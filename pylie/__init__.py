@@ -1,8 +1,8 @@
-from .numpy import SO3
-from .numpy import SE3
+from .cpp import SO3
+from .cpp import SE3
 from .numpy import SO2
 from .numpy import SE2
-from .numpy import SE23
+from .cpp import SE23
 from .numpy import SL3
 from .numpy import MatrixLieGroup
 
