@@ -8,7 +8,7 @@ class MatrixLieGroup {
  public:
   inline static const int dof = dof_;
   inline static const int matrix_size = n_;
-  inline static constexpr float small_angle_tol = 1e-8;
+  inline static constexpr float small_angle_tol = 1e-7;
   using Element = Eigen::Matrix<double, n_, n_>;
   using Vector = Eigen::Matrix<double, dof_, 1>;
 
