@@ -2,7 +2,7 @@ from .base import MatrixLieGroup
 import torch
 from .utils import *
 
-# This is a big work in progress.
+# DISCLAIMER: this class is very much so un-tested
 
 def bouter(vec1, vec2):
     """batch outer product"""
@@ -64,6 +64,13 @@ class SO3(MatrixLieGroup):
             ),
             1,
         ).view(dim_batch, 3, 3)
+    
+    @staticmethod
+    def cross(xi):
+        """ 
+        Alternate name for `SO3.wedge`
+        """
+        return SO3.wedge(xi)
 
     @staticmethod
     def vee(X):
@@ -132,6 +139,22 @@ class SO3(MatrixLieGroup):
         return phi
     
     @staticmethod
+    def A_lj(t_norm, small=True):
+        t2 = t_norm**2
+        if small:
+            return (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+        else:
+            return (1 - torch.cos(t_norm)) / (t_norm**2)
+
+    @staticmethod
+    def B_lj(t_norm, small=True):
+        t2 = t_norm**2
+        if small:
+            return (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
+        else:
+            return (t_norm - torch.sin(t_norm)) / (t_norm**3)
+    
+    @staticmethod
     def left_jacobian(xi):
         """
         Computes the Left Jacobian of SO(3).
@@ -153,17 +176,17 @@ class SO3(MatrixLieGroup):
         if small_angle_inds.shape[0] > 0 and small_angle_inds.numel():
             J_left[small_angle_inds] = (
                 torch.eye(3, 3).expand(small_angle_inds.shape[0], 3, 3)
-                + A_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                + SO3.A_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
                 * cross_xi[small_angle_inds]
-                + B_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                + SO3.B_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
                 * torch.bmm(cross_xi[small_angle_inds], cross_xi[small_angle_inds])
             )
         if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
             J_left[large_angle_inds] = (
                 torch.eye(3, 3).expand(large_angle_inds.shape[0], 3, 3)
-                + A_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                + SO3.A_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
                 * cross_xi[large_angle_inds]
-                + B_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                + SO3.B_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
                 * torch.bmm(cross_xi[large_angle_inds], cross_xi[large_angle_inds])
             )
 

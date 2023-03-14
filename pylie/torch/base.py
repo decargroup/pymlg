@@ -66,3 +66,10 @@ class MatrixLieGroup:
         Group left jacobian evaluated at x in R^n
         """
         raise NotImplementedError()
+    
+    @classmethod
+    def left_jacobian_inv(cls, x):
+        """
+        Inverse of group left jacobian evaluated at x in R^n
+        """
+        return torch.linalg.inv(cls.left_jacobian(x))
