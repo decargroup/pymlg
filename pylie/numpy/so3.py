@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroup, fast_vector_norm
 import numpy as np
 
 try:
@@ -10,12 +10,14 @@ except ImportError:
 except:
     raise
 
+
 class SO3(MatrixLieGroup):
     """
     An instantiation-free implementation of the SO3 matrix Lie group.
     """
 
     dof = 3
+    matrix_size = 3
 
     @staticmethod
     def random():
@@ -35,8 +37,12 @@ class SO3(MatrixLieGroup):
         return X
 
     @staticmethod
+    def inverse(C):
+        return C.T
+
+    @staticmethod
     def cross(xi):
-        """ 
+        """
         Alternate name for `SO3.wedge`
         """
         return SO3.wedge(xi)
@@ -54,20 +60,33 @@ class SO3(MatrixLieGroup):
         From Section 8.3 of Lie Groups for Computer Vision by Ethan Eade. When
         theta is small, use Taylor series expansion given in Section 11.
         """
-        phi = SO3.vee(Xi)
-        angle = np.linalg.norm(phi)
+        return SO3.Exp(SO3.vee(Xi))
+       
+
+    @staticmethod
+    def Exp(xi):
+        """
+        Maps elements of the vector Lie algebra so(3) to the group.
+        """
+        phi = np.array(xi).ravel()
+        angle = fast_vector_norm(phi)
 
         # Use Taylor series expansion
         if angle < SO3._small_angle_tol:
             t2 = angle**2
             A = 1.0 - t2 / 6.0 * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0))
-            B = 1.0 / 2.0 * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+            B = (
+                1.0
+                / 2.0
+                * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+            )
         else:
             A = np.sin(angle) / angle
             B = (1.0 - np.cos(angle)) / (angle**2)
 
         # Rodirgues rotation formula (103)
-        return np.eye(3) + A * Xi + B * np.dot(Xi, Xi)
+        Xi = SO3.wedge(phi)
+        return np.eye(3) + A * Xi + B * Xi.dot(Xi)
 
     @staticmethod
     def log(X):
@@ -92,20 +111,24 @@ class SO3(MatrixLieGroup):
         angle is small, use Taylor series expansion given in Section 11.
         """
         xi = np.array(xi).ravel()
-        angle = np.linalg.norm(xi)
+        angle = fast_vector_norm(xi)
 
         if angle < SO3._small_angle_tol:
             t2 = angle**2
             # Taylor series expansion.  See (157), (159).
-            A = (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
-            B = (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
+            A = (1.0 / 2.0) * (
+                1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0))
+            )
+            B = (1.0 / 6.0) * (
+                1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0))
+            )
         else:
             A = (1 - np.cos(angle)) / (angle**2)
             B = (angle - np.sin(angle)) / (angle**3)
 
         cross_xi = SO3.cross(xi)
 
-        J_left = np.eye(3) + A * cross_xi + B * np.dot(cross_xi, cross_xi)
+        J_left = np.eye(3) + A * cross_xi + B * cross_xi.dot(cross_xi)
         return J_left
 
     @staticmethod
@@ -116,19 +139,21 @@ class SO3(MatrixLieGroup):
         angle is small, use Taylor series expansion given in Section 11.
         """
         xi = np.array(xi).ravel()
-        angle = np.linalg.norm(xi)
+        angle = fast_vector_norm(xi)
         if angle < SO3._small_angle_tol:
             t2 = angle**2
 
             # Taylor Series expansion
-            A = (1.0 / 12.0) * (1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0)))
+            A = (1.0 / 12.0) * (
+                1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0))
+            )
         else:
             A = (1.0 / angle**2) * (
                 1.0 - (angle * np.sin(angle) / (2.0 * (1.0 - np.cos(angle))))
             )
 
         cross_xi = SO3.cross(xi)
-        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * np.dot(cross_xi, cross_xi)
+        J_left_inv = np.eye(3) - 0.5 * cross_xi + A * cross_xi.dot(cross_xi)
 
         return J_left_inv
 
@@ -138,37 +163,6 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def adjoint(C):
-        return C
-
-    @staticmethod
-    def from_euler(angles, order=[3, 2, 1]):
-        """
-        Creates a DCM from a 3-element vector of euler angles with specified 
-        order.
-
-        Parameters
-        ----------
-        angles : list[float] or ndarray of size 3
-            euler angle values
-        order : list[int], optional
-            euler angle sequence. For example, the default order=[3,2,1] rotates
-            the third axis, followed by the second, followed by the first.
-
-        Returns
-        -------
-        ndarray with shape (3,3)
-            DCM corresponding to euler angles
-        """
-
-        C = np.identity(3)
-        angles = np.array(angles).ravel()
-
-        for i in range(3):
-            idx = order[i] - 1
-            phi = np.zeros(3)
-            phi[idx] = angles[idx]
-            C = np.dot(SO3.Exp(phi), C)
-
         return C
 
     @staticmethod
@@ -202,9 +196,9 @@ class SO3(MatrixLieGroup):
         ValueError
             if `order` is not "xyzw" or "wxyz"
         """
-        
+
         q = np.array(q).ravel()
-        q = q / np.linalg.norm(q)
+        q = q / fast_vector_norm(q)
 
         if q.size != 4:
             raise ValueError("q must have size 4.")
@@ -255,9 +249,9 @@ class SO3(MatrixLieGroup):
             raise ValueError("C must have shape (3,3).")
 
         eta = 0.5 * (np.trace(C) + 1) ** 0.5
-        eps = -np.array([C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]) / (
-            4 * eta
-        )
+        eps = -np.array(
+            [C[1, 2] - C[2, 1], C[2, 0] - C[0, 2], C[0, 1] - C[1, 0]]
+        ) / (4 * eta)
 
         if order == "wxyz":
             q = np.hstack((eta, eps)).reshape((-1, 1))
@@ -269,12 +263,45 @@ class SO3(MatrixLieGroup):
         return q
 
     @staticmethod
+    def from_euler(angles, order=[3, 2, 1]):
+        """
+        Creates a DCM from a 3-element vector of euler angles with specified
+        order.
+
+        Parameters
+        ----------
+        angles : list[float] or ndarray of size 3
+            euler angle values
+        order : list[int], optional
+            euler angle sequence. For example, the default order=[3,2,1] rotates
+            the third axis, followed by the second, followed by the first.
+
+        Returns
+        -------
+        ndarray with shape (3,3)
+            DCM corresponding to euler angles
+        """
+
+        C = np.identity(3)
+        angles = np.array(angles).ravel()
+
+        for i in range(3):
+            idx = order[i] - 1
+            phi = np.zeros(3)
+            phi[idx] = angles[idx]
+            C = np.dot(C, SO3.Exp(phi))
+
+        return C
+
+    @staticmethod
     def to_euler(C):
         """
-        Convert a rotation matrix to RPY Euler angles 
-        :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1) 
+        Convert a rotation matrix to RPY Euler angles
+        :math:`(\\alpha, \\beta, \\gamma)` corresponding to a (3,2,1)
         Euler-angle sequence.
         """
+        # TODO! this probably doesnt correspond with the from_euler function.
+        # check the inverse.
         pitch = np.arctan2(-C[2, 0], np.sqrt(C[0, 0] ** 2 + C[1, 0] ** 2))
 
         if np.isclose(pitch, np.pi / 2.0):
@@ -308,7 +335,7 @@ class SO3(MatrixLieGroup):
         q = np.array([q.x, q.y, q.z, q.w])
         return SO3.from_quat(q, order="xyzw")
 
-    @staticmethod 
+    @staticmethod
     def to_ros(C):
         """
         Converts a DCM to a ROS quaternion.
@@ -323,17 +350,10 @@ class SO3(MatrixLieGroup):
         geometry_msgs.msg.Quaternion
             ROS quaternion corresponding to `C`
         """
-        q = SO3.to_quat(C, order = "wxyz").ravel()
+        q = SO3.to_quat(C, order="wxyz").ravel()
         msg = Quaternion()
         msg.w = q[0]
         msg.x = q[1]
         msg.y = q[2]
         msg.z = q[3]
         return msg
-
-    @staticmethod
-    def identity():
-        """
-        Returns the identity DCM.
-        """
-        return np.eye(3)

@@ -1,0 +1,11 @@
+﻿SE3
+===
+
+.. currentmodule:: pylie
+
+.. autoclass:: SE3
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                       
+
+   

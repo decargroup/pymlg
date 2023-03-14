@@ -11,14 +11,10 @@ An instantiation-free python library for common matrix Lie group operations. Fun
 **All class methods are static.** This allows for an easy, simple, consistent, instantiation-free use of the library. 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 4
     :caption: Contents:
 
-    so2 
-    so3 
-    se2 
-    se3 
-    se23
+    Introduction <self>
 
 Example
 -------
@@ -55,15 +51,28 @@ Example
     J_L_inv = SE2.left_jacobian_inv(x)
     J_R_inv = SE2.right_jacobian_inv(x)
 
+    # odot operator (defined such that wedge(a) * b = odot(b) * a)
+    b = np.array([1, 2, 3]) 
+    B = SE2.odot(b)
 
+Full Documentation
+------------------
+Click on the table entries below to go to each class' documentation.
 
-Matrix Lie Group Base Class 
----------------------------
-.. autoclass:: pylie.MatrixLieGroup
-    :members:
-    :undoc-members:
+.. autosummary:: 
+    :toctree: _autosummary/
+    :recursive:
+    :template: class.rst
+    :nosignatures:
 
-
+    
+    pylie.SO2
+    pylie.SO3
+    pylie.SE2
+    pylie.SE3
+    pylie.SE23
+    pylie.SL3
+    pylie.MatrixLieGroup
 
 
 

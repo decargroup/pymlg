@@ -13,13 +13,11 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="SO2" href="so2.html" /> 
+    <link rel="next" title="SO2" href="_autosummary/pylie.SO2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,12 +36,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+</ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="so2.html">SO2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.SO2.html">SO2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.SO3.html">SO3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.SE2.html">SE2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.SE3.html">SE3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.SE23.html">SE23</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.SL3.html">SL3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pylie.MatrixLieGroup.html">MatrixLieGroup</a></li>
 </ul>
 
         </div>
@@ -71,21 +74,17 @@
            <div itemprop="articleBody">
              
   <div class="section" id="pylie">
-<h1>PYLIE<a class="headerlink" href="#pylie" title="Permalink to this heading"></a></h1>
+<h1>PYLIE<a class="headerlink" href="#pylie" title="Permalink to this headline"></a></h1>
 <p>An instantiation-free python library for common matrix Lie group operations. Functions in this repo operate entirely on numpy arrays, with the intention of minimizing overhead and keeping the implementation as simple as possible.</p>
 <p><strong>All class methods are static.</strong> This allows for an easy, simple, consistent, instantiation-free use of the library.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="so2.html">SO2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="so3.html">SO3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se2.html">SE2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se3.html">SE3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="se23.html">SE23</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
 </ul>
 </div>
 <div class="section" id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pylie</span> <span class="kn">import</span> <span class="n">SE2</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -115,148 +114,45 @@
 <span class="n">J_R</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">right_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">J_L_inv</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">left_jacobian_inv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">J_R_inv</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">right_jacobian_inv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># odot operator (defined such that wedge(a) * b = odot(b) * a)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">odot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="matrix-lie-group-base-class">
-<h2>Matrix Lie Group Base Class<a class="headerlink" href="#matrix-lie-group-base-class" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pylie.</span></span><span class="sig-name descname"><span class="pre">MatrixLieGroup</span></span><a class="headerlink" href="#pylie.MatrixLieGroup" title="Permalink to this definition"></a></dt>
-<dd><p>Base class inherited by all groups, providing a few group-general
-methods.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.Exp">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.Exp" title="Permalink to this definition"></a></dt>
-<dd><p>Shortcut method: R^n to group directly.</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{Exp}: \mathbb{R}^n \to G\]</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.Log">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.Log" title="Permalink to this definition"></a></dt>
-<dd><p>Shortcut method: group to R^n directly.</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{Log}: G \to \mathbb{R}^n\]</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.adjoint">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.adjoint" title="Permalink to this definition"></a></dt>
-<dd><p>Adjoint representation of <em>group</em> element.</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{Ad}(\mathbf{X})\]</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.adjoint_algebra">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adjoint_algebra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.adjoint_algebra" title="Permalink to this definition"></a></dt>
-<dd><p>Adjoint representation of <em>algebra</em> element.</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{ad}(\mathbf{\Xi})\]</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.dof">
-<span class="sig-name descname"><span class="pre">dof</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pylie.MatrixLieGroup.dof" title="Permalink to this definition"></a></dt>
-<dd><p>The degrees of freedom of the group.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.exp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.exp" title="Permalink to this definition"></a></dt>
-<dd><p>Exponential map from algebra to group.</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{exp}: \mathfrak{g} \to G\]</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.identity">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.identity" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an identity matrix of the group.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.inverse">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.inverse" title="Permalink to this definition"></a></dt>
-<dd><p>Group inverse.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.left_jacobian">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.left_jacobian" title="Permalink to this definition"></a></dt>
-<dd><p>Group left jacobian evaluated at x in R^n</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.left_jacobian_inv">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_jacobian_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.left_jacobian_inv" title="Permalink to this definition"></a></dt>
-<dd><p>Inverse of group left jacobian evaluated at x in R^n</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.log">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.log" title="Permalink to this definition"></a></dt>
-<dd><p>Logarithmic map from algebra to group.</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{log}: G \to \mathfrak{g}\]</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.normalize">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.normalize" title="Permalink to this definition"></a></dt>
-<dd><p>Eliminates rounding errors: ensures matrix is proper group element.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.odot">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">odot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.odot" title="Permalink to this definition"></a></dt>
-<dd><p>odot operator as defined in Barfoot. I.e., an operator on an element of
-R^n such that</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{a}^\wedge \mathbf{b} = \mathbf{b}^\odot \mathbf{a}\]</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.random">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.random" title="Permalink to this definition"></a></dt>
-<dd><p>Return a random element of the group.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.right_jacobian">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">right_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.right_jacobian" title="Permalink to this definition"></a></dt>
-<dd><p>Group right jacobian evaluated at x in R^n. Requires the subclass to
-implement <cite>left_jacobian()</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.right_jacobian_inv">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">right_jacobian_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.right_jacobian_inv" title="Permalink to this definition"></a></dt>
-<dd><p>Inverse of group right jacobian evaluated at x in R^n. Requires the
-subclass to implement <cite>left_jacobian()</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.vee">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.vee" title="Permalink to this definition"></a></dt>
-<dd><p>Vee operator <span class="math notranslate nohighlight">\((\cdot)^\vee: \mathfrak{g} \to  \mathbb{R}^n\)</span>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pylie.MatrixLieGroup.wedge">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wedge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pylie.MatrixLieGroup.wedge" title="Permalink to this definition"></a></dt>
-<dd><p>Wedge operator <span class="math notranslate nohighlight">\((\cdot)^\wedge: \mathbb{R}^n \to \mathfrak{g}\)</span>.</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="full-documentation">
+<h2>Full Documentation<a class="headerlink" href="#full-documentation" title="Permalink to this headline"></a></h2>
+<p>Click on the table entries below to go to each class’ documentation.</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pylie.SO2.html#pylie.SO2" title="pylie.SO2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.SO2</span></code></a></p></td>
+<td><p>An instantiation-free implementation of the SO2 matrix Lie group.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/pylie.SO3.html#pylie.SO3" title="pylie.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.SO3</span></code></a></p></td>
+<td><p>An instantiation-free implementation of the SO3 matrix Lie group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pylie.SE2.html#pylie.SE2" title="pylie.SE2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.SE2</span></code></a></p></td>
+<td><p>An instantiation-free implementation of the SE2 matrix Lie group.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/pylie.SE3.html#pylie.SE3" title="pylie.SE3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.SE3</span></code></a></p></td>
+<td><p>An instantiation-free implementation of the SE3 matrix Lie group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pylie.SE23.html#pylie.SE23" title="pylie.SE23"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.SE23</span></code></a></p></td>
+<td><p>An instantiation-free implementation of the SE_2(3) matrix Lie group.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/pylie.SL3.html#pylie.SL3" title="pylie.SL3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.SL3</span></code></a></p></td>
+<td><p>An instantiation-free implementation of the SL3 matrix Lie group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pylie.MatrixLieGroup.html#pylie.MatrixLieGroup" title="pylie.MatrixLieGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylie.MatrixLieGroup</span></code></a></p></td>
+<td><p>Base class inherited by all groups, providing a few group-general methods.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -264,7 +160,7 @@ subclass to implement <cite>left_jacobian()</cite>.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="so2.html" class="btn btn-neutral float-right" title="SO2" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="_autosummary/pylie.SO2.html" class="btn btn-neutral float-right" title="SO2" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

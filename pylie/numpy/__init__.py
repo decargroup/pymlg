@@ -4,3 +4,4 @@ from .se2 import SE2
 from .se3 import SE3
 from .se23 import SE23
 from .base import MatrixLieGroup
+from .sl3 import SL3

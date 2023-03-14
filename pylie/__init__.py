@@ -1,10 +1,11 @@
-from .numpy.so3 import SO3
-from .numpy.se3 import SE3
-from .numpy.so2 import SO2
-from .numpy.se2 import SE2
-from .numpy.se23 import SE23
-from .numpy.sl3 import SL3
-from .numpy.base import MatrixLieGroup
+from .cpp import SO3
+from .cpp import SE3
+from .numpy import SO2
+from .numpy import SE2
+from .cpp import SE23
+from .numpy import SL3
+from .numpy import MatrixLieGroup
+
 try:
     from . import torch
 except ImportError:

@@ -35,7 +35,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
-    "autodocsumm",
+    "sphinx.ext.intersphinx"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -46,6 +46,12 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
+    'matplotlib': ('https://matplotlib.org/stable/', None),
+}
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -58,9 +64,6 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-html_theme_options = {
-    'navigation_depth': 4,
-}
 
-autodoc_default_flags = ["members"]
+#autodoc_default_flags = ["members"]
 autosummary_generate = True

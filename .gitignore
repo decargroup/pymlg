@@ -56,3 +56,12 @@ pylie.egg-info/
 # VS Code settings 
 .vscode
 .pytest_cache/
+docs/source/_autosummary
+benchmark/
+
+# C++ build files
+build/
+*.so
+
+# Eigen depencency
+eigen-*/
