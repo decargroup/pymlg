@@ -1,8 +1,8 @@
 from .base import MatrixLieGroup
 import torch
+from .utils import *
 
 # This is a big work in progress.
-
 
 def bouter(vec1, vec2):
     """batch outer product"""
@@ -42,6 +42,12 @@ class SO3(MatrixLieGroup):
 
     @staticmethod
     def wedge(phi):
+        # protect against empty tensor
+        if not phi.numel():
+            phi = torch.zeros(1, 3)
+        # remove redundant dimensions
+        elif phi.dim() > 2:
+            phi = torch.squeeze(phi, 2)
         dim_batch = phi.shape[0]
         zero = phi.new_zeros(dim_batch)
         return torch.stack(
@@ -124,3 +130,91 @@ class SO3(MatrixLieGroup):
             * (C[~mask] - C[~mask].transpose(1, 2))
         )
         return phi
+    
+    @staticmethod
+    def left_jacobian(xi):
+        """
+        Computes the Left Jacobian of SO(3).
+        From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade.  When
+        angle is small, use Taylor series expansion given in Section 11.
+        """
+
+        xi_norm = torch.linalg.norm(xi, dim=1)
+
+        small_angle_mask = is_close(torch.linalg.norm(xi, dim=1), 0.0)
+        small_angle_inds = small_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        large_angle_mask = small_angle_mask.logical_not()
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+
+        J_left = torch.empty(xi.shape[0], 3, 3)
+
+        cross_xi = SO3.wedge(xi)
+
+        if small_angle_inds.shape[0] > 0 and small_angle_inds.numel():
+            J_left[small_angle_inds] = (
+                torch.eye(3, 3).expand(small_angle_inds.shape[0], 3, 3)
+                + A_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                * cross_xi[small_angle_inds]
+                + B_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                * torch.bmm(cross_xi[small_angle_inds], cross_xi[small_angle_inds])
+            )
+        if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
+            J_left[large_angle_inds] = (
+                torch.eye(3, 3).expand(large_angle_inds.shape[0], 3, 3)
+                + A_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                * cross_xi[large_angle_inds]
+                + B_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                * torch.bmm(cross_xi[large_angle_inds], cross_xi[large_angle_inds])
+            )
+
+        return J_left
+    
+    @staticmethod
+    def from_quat(quat, ordering="wxyz"):
+        """Form a rotation matrix from a unit length quaternion.
+        Valid orderings are 'xyzw' and 'wxyz'.
+        from https://github.com/utiasSTARS/liegroups/blob/fe1d376b7d33809dec78724b456f01833507c305/liegroups/torch/so3.py#L60
+        """
+        if quat.dim() < 2:
+            quat = quat.unsqueeze(dim=0)
+
+        if not is_close(quat.norm(p=2, dim=1), 1.0):
+            raise ValueError("Quaternions must be unit length")
+
+        if ordering == "xyzw":
+            qx = quat[:, 0]
+            qy = quat[:, 1]
+            qz = quat[:, 2]
+            qw = quat[:, 3]
+        elif ordering == "wxyz":
+            qw = quat[:, 0]
+            qx = quat[:, 1]
+            qy = quat[:, 2]
+            qz = quat[:, 3]
+        else:
+            raise ValueError(
+                "Valid orderings are 'xyzw' and 'wxyz'. Got '{}'.".format(ordering)
+            )
+
+        # Form the matrix
+        mat = quat.new_empty(quat.shape[0], 3, 3)
+
+        qw2 = qw * qw
+        qx2 = qx * qx
+        qy2 = qy * qy
+        qz2 = qz * qz
+
+        mat[:, 0, 0] = 1.0 - 2.0 * (qy2 + qz2)
+        mat[:, 0, 1] = 2.0 * (qx * qy - qw * qz)
+        mat[:, 0, 2] = 2.0 * (qw * qy + qx * qz)
+
+        mat[:, 1, 0] = 2.0 * (qw * qz + qx * qy)
+        mat[:, 1, 1] = 1.0 - 2.0 * (qx2 + qz2)
+        mat[:, 1, 2] = 2.0 * (qy * qz - qw * qx)
+
+        mat[:, 2, 0] = 2.0 * (qx * qz - qw * qy)
+        mat[:, 2, 1] = 2.0 * (qw * qx + qy * qz)
+        mat[:, 2, 2] = 1.0 - 2.0 * (qx2 + qy2)
+
+        return mat
+        

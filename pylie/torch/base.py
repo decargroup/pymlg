@@ -59,3 +59,10 @@ class MatrixLieGroup:
     @staticmethod
     def adjoint(Xi):
         raise NotImplementedError()
+    
+    @staticmethod
+    def left_jacobian(x):
+        """
+        Group left jacobian evaluated at x in R^n
+        """
+        raise NotImplementedError()
