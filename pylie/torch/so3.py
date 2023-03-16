@@ -169,15 +169,15 @@ class SO3(MatrixLieGroup):
         xi_norm = torch.linalg.norm(xi, dim=1)
 
         small_angle_mask = is_close(torch.linalg.norm(xi, dim=1), 0.0)
-        small_angle_inds = small_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        small_angle_inds = small_angle_mask.nonzero(as_tuple=True)[0]
         large_angle_mask = small_angle_mask.logical_not()
-        large_angle_inds = large_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
         J_left = torch.empty(xi.shape[0], 3, 3)
 
         cross_xi = SO3.wedge(xi)
 
-        if small_angle_inds.shape[0] > 0 and small_angle_inds.numel():
+        if small_angle_inds.numel():
             J_left[small_angle_inds] = (
                 torch.eye(3, 3).expand(small_angle_inds.shape[0], 3, 3)
                 + SO3.A_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
@@ -185,7 +185,7 @@ class SO3(MatrixLieGroup):
                 + SO3.B_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
                 * torch.bmm(cross_xi[small_angle_inds], cross_xi[small_angle_inds])
             )
-        if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
+        if large_angle_inds.numel():
             J_left[large_angle_inds] = (
                 torch.eye(3, 3).expand(large_angle_inds.shape[0], 3, 3)
                 + SO3.A_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)

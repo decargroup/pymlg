@@ -5,7 +5,7 @@ def is_close(t1, t2, tol=1e-6):
     Check element-wise if two tensors are close within some tolerance.
     Either tensor can be replaced by a scalar.
     """
-    return torch.all((t1 - t2).abs_().lt(tol))
+    return (t1 - t2).abs_().lt(tol)
 
 def batch_eye(N, n, m):
     """
