@@ -38,10 +38,10 @@ class SE23(MatrixLieGroup):
         """
 
         # firstly, check that batch dimension for all 3 components matches
-        if C.shape[0] == v.shape[0] == r.shape[0]:
+        if not (C.shape[0] == v.shape[0] == r.shape[0]):
             raise ValueError("Batch dimension for SE_2(3) components don't match.")
 
-        X = torch.eye(C.shape[0], 5, 5)
+        X = batch_eye(C.shape[0], 5, 5)
 
         X[:, 0:3, 0:3] = C
         X[:, 0:3, 3] = v
@@ -137,10 +137,10 @@ class SE23(MatrixLieGroup):
         O = torch.zeros(v.shape[0], 3, 3)
 
         # creating block matrix
-        b1 = torch.cat((C, O, O), dim=1)
-        b2 = torch.cat((SO3.wedge(v) @ C, C, O), dim=1)
-        b3 = torch.cat((SO3.wedge(r) @ C, C, O), dim=1)
-        return torch.cat((b1, b2, b3), dim=2)
+        b1 = torch.cat((C, O, O), dim=2)
+        b2 = torch.cat((SO3.wedge(v) @ C, C, O), dim=2)
+        b3 = torch.cat((SO3.wedge(r) @ C, O, C), dim=2)
+        return torch.cat((b1, b2, b3), dim=1)
 
     @staticmethod
     def identity(N):

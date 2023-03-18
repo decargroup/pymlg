@@ -4,6 +4,7 @@ from .utils import *
 
 # DISCLAIMER: this class is very much so un-tested
 
+
 def bouter(vec1, vec2):
     """batch outer product"""
     return torch.einsum("bi, bj -> bij", vec1, vec2)
@@ -64,10 +65,10 @@ class SO3(MatrixLieGroup):
             ),
             1,
         ).view(dim_batch, 3, 3)
-    
+
     @staticmethod
     def cross(xi):
-        """ 
+        """
         Alternate name for `SO3.wedge`
         """
         return SO3.wedge(xi)
@@ -106,9 +107,7 @@ class SO3(MatrixLieGroup):
 
         Rot = phi.new_empty(dim_batch, 3, 3)
         Rot[mask] = Id[mask] + SO3.wedge(phi[mask])
-        Rot[~mask] = (
-            c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
-        )
+        Rot[~mask] = c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
         return Rot
 
     @staticmethod
@@ -128,9 +127,7 @@ class SO3(MatrixLieGroup):
         mask = angle < 1e-14
         if mask.sum() == 0:
             angle = angle.unsqueeze(1).unsqueeze(1)
-            return SO3.vee(
-                (0.5 * angle / angle.sin()) * (C - C.transpose(1, 2))
-            )
+            return SO3.vee((0.5 * angle / angle.sin()) * (C - C.transpose(1, 2)))
         elif mask.sum() == dim_batch:
             # If angle is close to zero, use first-order Taylor expansion
             return SO3.vee(C - Id)
@@ -141,12 +138,14 @@ class SO3(MatrixLieGroup):
             * (C[~mask] - C[~mask].transpose(1, 2))
         )
         return phi
-    
+
     @staticmethod
     def A_lj(t_norm, small=True):
         t2 = t_norm**2
         if small:
-            return (1.0 / 2.0) * (1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0)))
+            return (1.0 / 2.0) * (
+                1.0 - t2 / 12.0 * (1.0 - t2 / 30.0 * (1.0 - t2 / 56.0))
+            )
         else:
             return (1 - torch.cos(t_norm)) / (t_norm**2)
 
@@ -154,10 +153,24 @@ class SO3(MatrixLieGroup):
     def B_lj(t_norm, small=True):
         t2 = t_norm**2
         if small:
-            return (1.0 / 6.0) * (1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0)))
+            return (1.0 / 6.0) * (
+                1.0 - t2 / 20.0 * (1.0 - t2 / 42.0 * (1.0 - t2 / 72.0))
+            )
         else:
             return (t_norm - torch.sin(t_norm)) / (t_norm**3)
-    
+
+    @staticmethod
+    def A_inv_lj(t_norm, small=True):
+        if small:
+            t2 = t_norm**2
+            return (1.0 / 12.0) * (
+                1.0 + t2 / 60.0 * (1.0 + t2 / 42.0 * (1.0 + t2 / 40.0))
+            )
+        else:
+            return (1.0 / t_norm**2) * (
+                1.0 - (t_norm * torch.sin(t_norm) / (2.0 * (1.0 - torch.cos(t_norm))))
+            )
+
     @staticmethod
     def left_jacobian(xi):
         """
@@ -180,22 +193,64 @@ class SO3(MatrixLieGroup):
         if small_angle_inds.numel():
             J_left[small_angle_inds] = (
                 torch.eye(3, 3).expand(small_angle_inds.shape[0], 3, 3)
-                + SO3.A_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                + SO3.A_lj(xi_norm[small_angle_inds], small=True)
+                .reshape(-1, 1)
+                .unsqueeze(2)
                 * cross_xi[small_angle_inds]
-                + SO3.B_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                + SO3.B_lj(xi_norm[small_angle_inds], small=True)
+                .reshape(-1, 1)
+                .unsqueeze(2)
                 * torch.bmm(cross_xi[small_angle_inds], cross_xi[small_angle_inds])
             )
         if large_angle_inds.numel():
             J_left[large_angle_inds] = (
                 torch.eye(3, 3).expand(large_angle_inds.shape[0], 3, 3)
-                + SO3.A_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                + SO3.A_lj(xi_norm[large_angle_inds], small=False)
+                .reshape(-1, 1)
                 * cross_xi[large_angle_inds]
-                + SO3.B_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                + SO3.B_lj(xi_norm[large_angle_inds], small=False)
+                .reshape(-1, 1)
                 * torch.bmm(cross_xi[large_angle_inds], cross_xi[large_angle_inds])
             )
 
         return J_left
-    
+
+    @staticmethod
+    def left_jacobian_inv(xi):
+        """
+        Computes the inverse of the left Jacobian of SO(3).
+        From Section 9.3 of Lie Groups for Computer Vision by Ethan Eade. When
+        angle is small, use Taylor series expansion given in Section 11.
+        """
+
+        xi_norm = torch.linalg.norm(xi, dim=1)
+
+        small_angle_mask = is_close(torch.linalg.norm(xi, dim=1), 0.0)
+        small_angle_inds = small_angle_mask.nonzero(as_tuple=True)[0]
+        large_angle_mask = small_angle_mask.logical_not()
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
+
+        J_left = torch.empty(xi.shape[0], 3, 3)
+
+        cross_xi = SO3.wedge(xi)
+
+        if small_angle_inds.numel():
+            J_left[small_angle_inds] = (
+                batch_eye(small_angle_inds.shape[0], 3, 3)
+                - 0.5 * cross_xi[small_angle_inds]
+                + SO3.A_inv_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                * torch.bmm(cross_xi[small_angle_inds], cross_xi[small_angle_inds])
+            )
+        if large_angle_inds.numel():
+            J_left[large_angle_inds] = (
+                batch_eye(large_angle_inds.shape[0], 3, 3)
+                - 0.5 * cross_xi[large_angle_inds]
+                + SO3.A_inv_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                * torch.bmm(cross_xi[large_angle_inds], cross_xi[large_angle_inds])
+            )
+
+        return J_left
+
     @staticmethod
     def from_quat(quat, ordering="wxyz"):
         """Form a rotation matrix from a unit length quaternion.
@@ -244,4 +299,3 @@ class SO3(MatrixLieGroup):
         mat[:, 2, 2] = 1.0 - 2.0 * (qx2 + qy2)
 
         return mat
-        
