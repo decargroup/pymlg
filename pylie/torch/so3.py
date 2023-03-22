@@ -181,7 +181,7 @@ class SO3(MatrixLieGroup):
 
         xi_norm = torch.linalg.norm(xi, dim=1)
 
-        small_angle_mask = is_close(torch.linalg.norm(xi, dim=1), 0.0)
+        small_angle_mask = is_close(xi_norm, 0.0)
         small_angle_inds = small_angle_mask.nonzero(as_tuple=True)[0]
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
@@ -225,7 +225,7 @@ class SO3(MatrixLieGroup):
 
         xi_norm = torch.linalg.norm(xi, dim=1)
 
-        small_angle_mask = is_close(torch.linalg.norm(xi, dim=1), 0.0)
+        small_angle_mask = is_close(xi_norm, 0.0, tol=SO3._small_angle_tol)
         small_angle_inds = small_angle_mask.nonzero(as_tuple=True)[0]
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
@@ -260,7 +260,7 @@ class SO3(MatrixLieGroup):
         if quat.dim() < 2:
             quat = quat.unsqueeze(dim=0)
 
-        if not is_close(quat.norm(p=2, dim=1), 1.0):
+        if not torch.all(is_close(quat.norm(p=2, dim=1), 1.0)):
             raise ValueError("Quaternions must be unit length")
 
         if ordering == "xyzw":

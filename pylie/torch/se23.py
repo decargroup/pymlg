@@ -59,6 +59,34 @@ class SE23(MatrixLieGroup):
         r = X[:, 0:3, 4]
 
         return (C, v, r)
+    
+    @staticmethod
+    def to_component_vector(X : torch.Tensor):
+        """
+        extract rotation, velocity, and position components from SE_2(3) batch and return as [N, 9] batched parameterization
+        """
+
+        C = X[:, 0:3, 0:3]
+        v = X[:, 0:3, 3]
+        r = X[:, 0:3, 4]
+
+        phi = SO3.Log(C)
+
+        vec = torch.cat((phi, v, r), dim=1)
+
+        return vec
+    
+    @staticmethod
+    def from_component_vector(X : torch.Tensor):
+        """
+        extract rotation, velocity, and position components from parameterized batch of shape [N, 9] and return as [N, 5, 5] batched SE_2(3)
+        """
+
+        phi = X[:, 0:3]
+        v = X[:, 3:6]
+        r = X[:, 6:9]
+
+        return SE23.from_components(SO3.Exp(phi), v, r)
 
     @staticmethod
     def wedge(xi: torch.Tensor):
