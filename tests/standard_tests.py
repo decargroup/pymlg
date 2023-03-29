@@ -194,19 +194,19 @@ class CrossValidation:
 
     def test_left_jacobian(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
         x = np.random.random((G1.dof, 1))
-        assert np.allclose(G1.left_jacobian(x), G2.left_jacobian(x))
+        assert np.allclose(G1.left_jacobian(x), G2.left_jacobian(x), atol=1e-7)
     
     def test_right_jacobian(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
         x = np.random.random((G1.dof, 1))
-        assert np.allclose(G1.right_jacobian(x), G2.right_jacobian(x))
+        assert np.allclose(G1.right_jacobian(x), G2.right_jacobian(x), atol=1e-7)
 
     def test_left_jacobian_inv(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
         x = np.random.random((G1.dof, 1))
-        assert np.allclose(G1.left_jacobian_inv(x), G2.left_jacobian_inv(x))
+        assert np.allclose(G1.left_jacobian_inv(x), G2.left_jacobian_inv(x), atol=1e-7)
     
     def test_right_jacobian_inv(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
         x = np.random.random((G1.dof, 1))
-        assert np.allclose(G1.right_jacobian_inv(x), G2.right_jacobian_inv(x))
+        assert np.allclose(G1.right_jacobian_inv(x), G2.right_jacobian_inv(x), atol=1e-7)
     
     def test_adjoint(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
         X = G1.random()

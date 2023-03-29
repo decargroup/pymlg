@@ -121,7 +121,7 @@ class SL3 : public MatrixLieGroup<3, 8> {
     return Adj;
    };
 
-  static Eigen::Matrix<double,3,8> odot(const Vector& x) { 
+  static Eigen::Matrix<double,3,8> odot(const Eigen::Vector3d& x) { 
     Eigen::Matrix<double,3,8> p;
     p <<        x(2), 0, -x(1), x(0), x(0), x(1), 0, 0,
                 0, x(2), x(0), x(1), -x(1), x(0), 0, 0,
