@@ -2,9 +2,11 @@ from pylie.numpy import MatrixLieGroup
 from pylie.numpy import SO3 as SO3np
 from pylie.numpy import SE3 as SE3np
 from pylie.numpy import SE23 as SE23np
+from pylie.numpy import SL3 as SL3np
 from ._impl import SO3 as SO3cpp
 from ._impl import SE3 as SE3cpp
 from ._impl import SE23 as SE23cpp
+from ._impl import SL3 as SL3cpp
 from typing import Type
 
 class SO3(SO3np):
@@ -174,3 +176,59 @@ class SE23(SE23np):
     @staticmethod
     def inverse(x):
         return SE23cpp.inverse(x)
+    
+class SL3(SL3np):
+    dof = SL3cpp.dof
+    matrix_size = SL3cpp.matrix_size
+    _small_angle_tol = SL3cpp.small_angle_tol
+    @staticmethod
+    def Exp(x):
+        return SL3cpp.Exp(x)
+    
+    @staticmethod
+    def Log(x):
+        return SL3cpp.Log(x).reshape((SL3cpp.dof,1))
+    
+    @staticmethod
+    def exp(x):
+        return SL3cpp.exp(x)
+    
+    @staticmethod
+    def log(x):
+        return SL3cpp.log(x)
+    
+    @staticmethod
+    def adjoint(x):
+        return SL3cpp.adjoint(x)
+    
+    @staticmethod
+    def left_jacobian(x):
+        return SL3cpp.left_jacobian(x)
+    
+    @staticmethod
+    def left_jacobian_inv(x):
+        return SL3cpp.left_jacobian_inv(x)
+    
+    @staticmethod
+    def odot(x):
+        return SL3cpp.odot(x)
+    
+    @staticmethod
+    def wedge(x):
+        return SL3cpp.wedge(x)
+    
+    @staticmethod
+    def random():
+        return SL3cpp.random()
+    
+    @staticmethod
+    def identity():
+        return SL3cpp.identity()
+    
+    @staticmethod
+    def vee(x):
+        return SL3cpp.vee(x).reshape((SL3cpp.dof,1))
+    
+    @staticmethod
+    def inverse(x):
+        return SL3cpp.inverse(x)
