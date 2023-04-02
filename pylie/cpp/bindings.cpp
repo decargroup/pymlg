@@ -35,7 +35,8 @@ PYBIND11_MODULE(_impl, m) {
     bind_matrix_lie_group<SO3, 3, 3>(m, "SO3");
     bind_matrix_lie_group<SE3, 3, 3>(m, "SE3");
     bind_matrix_lie_group<SE23, 3, 3>(m, "SE23");
-
+    bind_matrix_lie_group<SL3, 3, 3>(m, "SL3");
+    
 #ifdef VERSION_INFO
     m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
 #else
