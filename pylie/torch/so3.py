@@ -7,7 +7,7 @@ from .utils import *
 
 def bouter(vec1, vec2):
     """batch outer product"""
-    return torch.einsum("bi, bj -> bij", vec1, vec2)
+    return torch.einsum("bik, bjk -> bij", vec1, vec2)
 
 
 def batchtrace(mat):
@@ -78,26 +78,29 @@ class SO3(MatrixLieGroup):
         return torch.stack((X[:, 2, 1], X[:, 0, 2], X[:, 1, 0]), dim=1)
 
     @staticmethod
-    def Exp(phi):
+    def Exp(phi : torch.Tensor):
         """
         Exponential map of SO3. This function accepts a batch of rotation vectors
-        in R^n of dimension [N x 3] and returns a batch of rotation matrices
+        in R^n of dimension [N x 3 x 1] and returns a batch of rotation matrices
         of dimension [N x 3 x 3].
         """
         if phi.shape == (3, 1):
-            phi = phi.ravel().unsqueeze(0)
-        elif len(phi.shape) == 1:
             phi = phi.unsqueeze(0)
+        elif len(phi.shape) == 1:
+            phi = phi.view(1, 3, 1)
         elif len(phi.shape) == 2 and phi.shape[1] == 3:
-            # acceptable.
-            pass
-        elif len(phi.shape) == 3 and (phi.shape[1] == 1 or phi.shape[2] == 1):
-            phi = phi.squeeze()
+            phi = phi.unsqueeze(2)
+        elif len(phi.shape) == 3 and (phi.shape[1] == 3):
+            pass # acceptable
         else:
             raise RuntimeError("Argument is not of acceptable dimensions.")
+        
+        # catch all fall-through errors
+        if (phi.shape != (1, 3, 1)):
+            raise RuntimeError("phi argument in SO3 Exponential is not of acceptable dimension.")
 
         angle = phi.norm(dim=1, keepdim=True)
-        mask = angle[:, 0] < 1e-7
+        mask = angle[:, 0, 0] < 1e-7
         dim_batch = phi.shape[0]
         Id = torch.eye(3, device=phi.device).expand(dim_batch, 3, 3)
 
@@ -115,7 +118,7 @@ class SO3(MatrixLieGroup):
         """
         Logarithmic map of SO3. This function
         maps a batch of rotation matrices C [N x 3 x 3] to their corresponding
-        elements in R^n. Output dimensions are [N x 3]
+        elements in R^n. Output dimensions are [N x 3 x 1]
         """
         dim_batch = C.shape[0]
         Id = torch.eye(3, device=C.device).expand(dim_batch, 3, 3)
@@ -137,7 +140,7 @@ class SO3(MatrixLieGroup):
             (0.5 * angle[~mask] / angle[~mask].sin()).unsqueeze(1).unsqueeze(2)
             * (C[~mask] - C[~mask].transpose(1, 2))
         )
-        return phi
+        return phi.unsqueeze(2)
 
     @staticmethod
     def A_lj(t_norm, small=True):

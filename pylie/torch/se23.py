@@ -63,12 +63,12 @@ class SE23(MatrixLieGroup):
     @staticmethod
     def to_component_vector(X : torch.Tensor):
         """
-        extract rotation, velocity, and position components from SE_2(3) batch and return as [N, 9] batched parameterization
+        extract rotation, velocity, and position components from SE_2(3) batch of [N, 5, 5] tensors and return as [N, 9, 1] batched parameterization
         """
 
         C = X[:, 0:3, 0:3]
-        v = X[:, 0:3, 3]
-        r = X[:, 0:3, 4]
+        v = X[:, 0:3, 3].unsqueeze(2)
+        r = X[:, 0:3, 4].unsqueeze(2)
 
         phi = SO3.Log(C)
 
@@ -79,13 +79,14 @@ class SE23(MatrixLieGroup):
     @staticmethod
     def from_component_vector(X : torch.Tensor):
         """
-        extract rotation, velocity, and position components from parameterized batch of shape [N, 9] and return as [N, 5, 5] batched SE_2(3)
+        extract rotation, velocity, and position components from parameterized batch of shape [N, 9, 1] and return as batched tensor of SE_2(3) tensors
+        of shape [N, 5, 5]
         """
 
-        phi = X[:, 0:3]
-        v = X[:, 3:6]
-        r = X[:, 6:9]
-
+        phi = X[:, 0:3, :]
+        v = X[:, 3:6, :]
+        r = X[:, 6:9, :]
+        
         return SE23.from_components(SO3.Exp(phi), v, r)
 
     @staticmethod
