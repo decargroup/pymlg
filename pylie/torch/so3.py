@@ -130,10 +130,10 @@ class SO3(MatrixLieGroup):
         mask = angle < 1e-14
         if mask.sum() == 0:
             angle = angle.unsqueeze(1).unsqueeze(1)
-            return SO3.vee((0.5 * angle / angle.sin()) * (C - C.transpose(1, 2)))
+            return SO3.vee((0.5 * angle / angle.sin()) * (C - C.transpose(1, 2))).unsqueeze(2)
         elif mask.sum() == dim_batch:
             # If angle is close to zero, use first-order Taylor expansion
-            return SO3.vee(C - Id)
+            return SO3.vee(C - Id).unsqueeze(2)
         phi = SO3.vee(C - Id)
         angle = angle
         phi[~mask] = SO3.vee(

@@ -44,8 +44,8 @@ class SE23(MatrixLieGroup):
         X = batch_eye(C.shape[0], 5, 5)
 
         X[:, 0:3, 0:3] = C
-        X[:, 0:3, 3] = v
-        X[:, 0:3, 4] = r
+        X[:, 0:3, 3] = v.squeeze(2)
+        X[:, 0:3, 4] = r.squeeze(2)
 
         return X
 
