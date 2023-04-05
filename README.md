@@ -1,4 +1,4 @@
-# Pylie - with Numpy, Jax, and C++ implementations!
+# Pylie - Lie groups with Numpy, Jax, and C++ implementations!
 An instantiation-free python package for common matrix Lie group operations implemented as __pure static classes__. Using pure static classes keeps the usage extremely simple while still allowing for abstraction and inheritance. We do not introduce new objects with stateful behavior that must be learnt. Everything operates directly on arrays/tensors. This allows users to implement their own more sophisticated objects using these classes as back-end mathematical implementations.
 
 ## Installation
