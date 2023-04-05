@@ -14,12 +14,14 @@ class StandardTests:
         x = np.random.random((G.dof, 1))
         Xi = G.wedge(x)
         X = G.exp(Xi)
+        Xi = np.array(Xi).copy()
         X_test = expm(Xi)
         assert np.allclose(X, X_test)
 
     def test_log(self, G: MatrixLieGroup):
         X = G.random()
         Xi = G.log(X)
+        X = np.array(X).copy()
         Xi_test = logm(X)
         assert np.allclose(Xi, Xi_test)
 
@@ -27,6 +29,7 @@ class StandardTests:
         x = np.zeros((G.dof, 1))
         X = G.Exp(x)
         Xi = G.log(X)
+        X = np.array(X).copy()
         Xi_test = logm(X)
         assert np.allclose(Xi, Xi_test)
 
