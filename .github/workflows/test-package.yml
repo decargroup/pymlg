@@ -23,4 +23,4 @@ jobs:
         python -m pip install .[test]
     - name: Test with pytest
       run: |
-        pytest --exitfirst --remote
+        pytest tests
