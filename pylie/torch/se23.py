@@ -58,7 +58,8 @@ class SE23(MatrixLieGroup):
         v = X[:, 0:3, 3]
         r = X[:, 0:3, 4]
 
-        return (C, v, r)
+        # enforce dimensionality
+        return (C, v.unsqueeze(2), r.unsqueeze(2))
     
     @staticmethod
     def to_component_vector(X : torch.Tensor):

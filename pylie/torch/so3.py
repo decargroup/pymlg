@@ -7,7 +7,8 @@ from .utils import *
 
 def bouter(vec1, vec2):
     """batch outer product"""
-    return torch.einsum("bik, bjk -> bij", vec1, vec2)
+    a = torch.einsum("bik, bjk -> bij", vec1, vec2)
+    return a
 
 
 def batchtrace(mat):
@@ -96,7 +97,7 @@ class SO3(MatrixLieGroup):
             raise RuntimeError("Argument is not of acceptable dimensions.")
         
         # catch all fall-through errors
-        if (phi.shape != (1, 3, 1)):
+        if ((phi.shape[1] != 3) and ((phi.shape[2] != 1))):
             raise RuntimeError("phi argument in SO3 Exponential is not of acceptable dimension.")
 
         angle = phi.norm(dim=1, keepdim=True)
@@ -105,12 +106,13 @@ class SO3(MatrixLieGroup):
         Id = torch.eye(3, device=phi.device).expand(dim_batch, 3, 3)
 
         axis = phi[~mask] / angle[~mask]
-        c = angle[~mask].cos().unsqueeze(2)
-        s = angle[~mask].sin().unsqueeze(2)
+        c = angle[~mask].cos()
+        s = angle[~mask].sin()
 
         Rot = phi.new_empty(dim_batch, 3, 3)
         Rot[mask] = Id[mask] + SO3.wedge(phi[mask])
         Rot[~mask] = c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
+
         return Rot
 
     @staticmethod
