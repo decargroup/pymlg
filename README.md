@@ -85,4 +85,4 @@ If you use VS Code, you should be able to enable the VS Code testing feature usi
     pytest tests
 
 ## Credit to UTIAS's STARS group
-Some specific implementations came from the [UTIAS STARS Lie group package.](https://github.com/utiasSTARS/liegroups).
+Some specific implementations came from the [UTIAS STARS Lie group package.](https://github.com/utiasSTARS/liegroups). We wanted a different API and variable ordering, which led to us making our own package. Eventually, this repo evolved to contain more groups, as well as Jax and C++ implementations.
