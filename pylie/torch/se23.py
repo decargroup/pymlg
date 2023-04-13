@@ -60,35 +60,6 @@ class SE23(MatrixLieGroup):
 
         # enforce dimensionality
         return (C, v.unsqueeze(2), r.unsqueeze(2))
-    
-    @staticmethod
-    def to_component_vector(X : torch.Tensor):
-        """
-        extract rotation, velocity, and position components from SE_2(3) batch of [N, 5, 5] tensors and return as [N, 9, 1] batched parameterization
-        """
-
-        C = X[:, 0:3, 0:3]
-        v = X[:, 0:3, 3].unsqueeze(2)
-        r = X[:, 0:3, 4].unsqueeze(2)
-
-        phi = SO3.Log(C)
-
-        vec = torch.cat((phi, v, r), dim=1)
-
-        return vec
-    
-    @staticmethod
-    def from_component_vector(X : torch.Tensor):
-        """
-        extract rotation, velocity, and position components from parameterized batch of shape [N, 9, 1] and return as batched tensor of SE_2(3) tensors
-        of shape [N, 5, 5]
-        """
-
-        phi = X[:, 0:3, :]
-        v = X[:, 3:6, :]
-        r = X[:, 6:9, :]
-        
-        return SE23.from_components(SO3.Exp(phi), v, r)
 
     @staticmethod
     def wedge(xi: torch.Tensor):
@@ -125,8 +96,8 @@ class SE23(MatrixLieGroup):
         Xi_phi = Xi[:, 0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
 
-        xi_v = Xi[:, 0:3, 3]
-        xi_r = Xi[:, 0:3, 4]
+        xi_v = Xi[:, 0:3, 3].unsqueeze(2)
+        xi_r = Xi[:, 0:3, 4].unsqueeze(2)
 
         return torch.cat((xi_phi, xi_v, xi_r), dim=1)
 
@@ -134,8 +105,8 @@ class SE23(MatrixLieGroup):
     def exp(Xi):
         Xi_phi = Xi[:, 0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
-        xi_v = Xi[:, 0:3, 3]
-        xi_r = Xi[:, 0:3, 4]
+        xi_v = Xi[:, 0:3, 3].unsqueeze(2)
+        xi_r = Xi[:, 0:3, 4].unsqueeze(2)
         C = SO3.exp(Xi_phi)
 
         J_left = SO3.left_jacobian(xi_phi)
@@ -157,7 +128,7 @@ class SE23(MatrixLieGroup):
         Xi = torch.cat(
             (SO3.cross(phi), v, r), dim=2
         )  # this yields a (N, 3, 5) matrix that must now be blocked with a (2, 5) batched matrix
-        block = torch.cat((torch.zeros(50, 2, 3), batch_eye(phi.shape[0], 2, 2)), dim=2)
+        block = torch.cat((torch.zeros(phi.shape[0], 2, 3), batch_eye(phi.shape[0], 2, 2)), dim=2)
 
         return torch.cat((Xi, block), dim=1)
 
