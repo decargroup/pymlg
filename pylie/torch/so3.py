@@ -1,5 +1,6 @@
 from .base import MatrixLieGroup
 import torch
+import numpy as np
 from .utils import *
 
 # DISCLAIMER: this class is very much so un-tested
@@ -46,12 +47,12 @@ class SO3(MatrixLieGroup):
     def wedge(phi):
         # protect against empty tensor
         if not phi.numel():
-            phi = torch.zeros(1, 3)
+            phi = torch.zeros(1, 3, device=phi.device)
         # remove redundant dimensions
         elif phi.dim() > 2:
             phi = torch.squeeze(phi, 2)
         dim_batch = phi.shape[0]
-        zero = phi.new_zeros(dim_batch)
+        zero = phi.new_zeros(dim_batch, device=phi.device)
         return torch.stack(
             (
                 zero,
@@ -79,7 +80,7 @@ class SO3(MatrixLieGroup):
         return torch.stack((X[:, 2, 1], X[:, 0, 2], X[:, 1, 0]), dim=1).unsqueeze(2)
 
     @staticmethod
-    def Exp(phi : torch.Tensor):
+    def Exp(phi: torch.Tensor):
         """
         Exponential map of SO3. This function accepts a batch of rotation vectors
         in R^n of dimension [N x 3 x 1] and returns a batch of rotation matrices
@@ -92,16 +93,19 @@ class SO3(MatrixLieGroup):
         elif len(phi.shape) == 2 and phi.shape[1] == 3:
             phi = phi.unsqueeze(2)
         elif len(phi.shape) == 3 and (phi.shape[1] == 3):
-            pass # acceptable
+            pass  # acceptable
         else:
             raise RuntimeError("Argument is not of acceptable dimensions.")
-        
+
         # catch all fall-through errors
-        if ((phi.shape[1] != 3) and ((phi.shape[2] != 1))):
-            raise RuntimeError("phi argument in SO3 Exponential is not of acceptable dimension.")
+        if (phi.shape[1] != 3) and ((phi.shape[2] != 1)):
+            raise RuntimeError(
+                "phi argument in SO3 Exponential is not of acceptable dimension."
+            )
 
         angle = phi.norm(dim=1, keepdim=True)
         mask = angle[:, 0, 0] < 1e-7
+        mask = mask.to(phi.device)
         dim_batch = phi.shape[0]
         Id = torch.eye(3, device=phi.device).expand(dim_batch, 3, 3)
 
@@ -116,6 +120,69 @@ class SO3(MatrixLieGroup):
         return Rot
 
     @staticmethod
+    def to_euler(C, order="123"):
+        """
+        Convert a batch of rotation matrices to a batch of (1, 2, 3) euler angles
+        """
+
+        # if C.shape[0] != 1:
+        #     raise ValueError(
+        #         "Only batch size 1 is supported, currently - I will eventually make a mask for near gimbal-lock angles."
+        #     )
+
+        if order == "123":
+            theta_1 = torch.arcsin(C[:, 2, 0])
+            yaw_1 = torch.empty(C.shape[0], device=C.device)
+            roll_1 = torch.empty(C.shape[0], device=C.device)
+
+            gimbal_lock_mask = torch.logical_or(
+                torch.isclose(theta_1, torch.Tensor([torch.pi / 2])),
+                torch.isclose(theta_1, torch.Tensor([-torch.pi / 2])),
+            )
+
+            non_gimbal_lock_mask = torch.logical_not(gimbal_lock_mask)
+
+            yaw_1[gimbal_lock_mask] = torch.zeros(1, device=C.device)
+            roll_1[gimbal_lock_mask] = torch.arctan2(
+                C[gimbal_lock_mask, 1, 2], C[gimbal_lock_mask, 1, 1]
+            )
+
+            roll_1[non_gimbal_lock_mask] = torch.arctan2(
+                -C[non_gimbal_lock_mask, 2, 1]
+                / torch.cos(theta_1[non_gimbal_lock_mask]),
+                C[non_gimbal_lock_mask, 2, 2]
+                / torch.cos(theta_1[non_gimbal_lock_mask]),
+            )
+
+            yaw_1[non_gimbal_lock_mask] = torch.arctan2(
+                -C[non_gimbal_lock_mask, 1, 0]
+                / torch.cos(theta_1[non_gimbal_lock_mask]),
+                C[non_gimbal_lock_mask, 0, 0]
+                / torch.cos(theta_1[non_gimbal_lock_mask]),
+            )
+
+            # if (torch.isclose(theta_1, torch.Tensor([torch.pi / 2]))) or (
+            #     torch.isclose(theta_1, torch.Tensor([-torch.pi / 2]))
+            # ):
+            #     yaw_1 = torch.zeros(1, device=C.device)
+            #     roll_1 = torch.arctan2(C[:, 1, 2], C[:, 1, 1])
+            # else:
+            #     roll_1 = torch.arctan2(
+            #         -C[:, 2, 1] / torch.cos(theta_1), C[:, 2, 2] / torch.cos(theta_1)
+            #     )
+            #     yaw_1 = torch.arctan2(
+            #         -C[:, 1, 0] / torch.cos(theta_1), C[:, 0, 0] / torch.cos(theta_1)
+            #     )
+
+            euler_1 = torch.cat(
+                (roll_1.unsqueeze(1), theta_1.unsqueeze(1), yaw_1.unsqueeze(1)), dim=1
+            )
+
+            return euler_1
+        else:
+            raise NotImplementedError("Only 123 euler angle order is supported.")
+
+    @staticmethod
     def Log(C):
         """
         Logarithmic map of SO3. This function
@@ -125,11 +192,30 @@ class SO3(MatrixLieGroup):
         dim_batch = C.shape[0]
         Id = torch.eye(3, device=C.device).expand(dim_batch, 3, 3)
 
-        cos_angle = (0.5 * batchtrace(C) - 0.5).clamp(-1.0 + 1e-7, 1.0 - 1e-7)
+        cos_angle = (0.5 * batchtrace(C) - 0.5).clamp(-1.0 + 1e-10, 1.0 - 1e-10)
+
+        # assert non-nan angle
+        assert not torch.isnan(cos_angle).any(), "NaN angle detected in SO3.Log"
+        
         # Clip cos(angle) to its proper domain to avoid NaNs from rounding
         # errors
         angle = cos_angle.acos()
+
         mask = angle < 1e-14
+
+        # firstly, check if batch is singular element (pi approxiation currently only implemented for batch size 1)
+        if C.shape[0] == 1:
+
+            # check if angle is close to pi
+            if np.isclose(angle.__float__(), np.pi, atol=1e-9):
+
+                # if so, return a manually generated rotation vector that protects
+                # against formulaic failure around pi
+                phi_constructed = torch.Tensor([C[:, 0, 2], C[:, 1, 2], 1 + C[:, 2, 2]])
+                rho = 1 / torch.sqrt(2 * (1 + C[0, 2, 2]))
+                phi_constructed = rho * phi_constructed
+                return (torch.pi * phi_constructed).reshape(1, 3, 1)
+
         if mask.sum() == 0:
             angle = angle.unsqueeze(1).unsqueeze(1)
             return SO3.vee((0.5 * angle / angle.sin()) * (C - C.transpose(1, 2)))
@@ -212,9 +298,11 @@ class SO3(MatrixLieGroup):
                 torch.eye(3, 3).expand(large_angle_inds.shape[0], 3, 3)
                 + SO3.A_lj(xi_norm[large_angle_inds], small=False)
                 .reshape(-1, 1)
+                .unsqueeze(2)
                 * cross_xi[large_angle_inds]
                 + SO3.B_lj(xi_norm[large_angle_inds], small=False)
                 .reshape(-1, 1)
+                .unsqueeze(2)
                 * torch.bmm(cross_xi[large_angle_inds], cross_xi[large_angle_inds])
             )
 
@@ -243,14 +331,18 @@ class SO3(MatrixLieGroup):
             J_left[small_angle_inds] = (
                 batch_eye(small_angle_inds.shape[0], 3, 3)
                 - 0.5 * cross_xi[small_angle_inds]
-                + SO3.A_inv_lj(xi_norm[small_angle_inds], small=True).reshape(-1, 1).unsqueeze(2)
+                + SO3.A_inv_lj(xi_norm[small_angle_inds], small=True)
+                .reshape(-1, 1)
+                .unsqueeze(2)
                 * torch.bmm(cross_xi[small_angle_inds], cross_xi[small_angle_inds])
             )
         if large_angle_inds.numel():
             J_left[large_angle_inds] = (
                 batch_eye(large_angle_inds.shape[0], 3, 3)
                 - 0.5 * cross_xi[large_angle_inds]
-                + SO3.A_inv_lj(xi_norm[large_angle_inds], small=False).reshape(-1, 1).unsqueeze(2)
+                + SO3.A_inv_lj(xi_norm[large_angle_inds], small=False)
+                .reshape(-1, 1)
+                .unsqueeze(2)
                 * torch.bmm(cross_xi[large_angle_inds], cross_xi[large_angle_inds])
             )
 

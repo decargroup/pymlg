@@ -26,9 +26,9 @@ class SE23(MatrixLieGroup):
         ----------
         C : torch.Tensor with shape (N, 3, 3)
             batch of rotation matricies/DCMs
-        v : torch.Tensor with size (N, 3)
+        v : torch.Tensor with size (N, 3, 1)
             batch of velocity vectors
-        r : torch.Tensor with size (N, 3)
+        r : torch.Tensor with size (N, 3, 1)
             batch of position vectors
 
         Returns
@@ -133,7 +133,7 @@ class SE23(MatrixLieGroup):
         return torch.cat((Xi, block), dim=1)
 
     @staticmethod
-    def adjoint(X):
+    def Adjoint(X):
         C, v, r = SE23.to_components(X)
         O = torch.zeros(v.shape[0], 3, 3)
 
@@ -184,6 +184,17 @@ class SE23(MatrixLieGroup):
             J_left[large_angle_inds, 6:9, 0:3] = Q_r
 
         return J_left
+    
+    @staticmethod
+    def inverse(X):
+        C, v, r = SE23.to_components(X)
+        C_inv = C.transpose(1, 2)
+        v_inv = -C_inv @ v
+        r_inv = -C_inv @ r
+
+        X_inv = SE23.from_components(C_inv, v_inv, r_inv)
+
+        return X_inv
 
     @staticmethod
     def left_jacobian_inv(xi):
