@@ -59,8 +59,8 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 ext_modules = [
-    Pybind11Extension("pylie.cpp._impl",
-        ["pylie/cpp/bindings.cpp"],
+    Pybind11Extension("pymlg.cpp._impl",
+        ["pymlg/cpp/bindings.cpp"],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
         include_dirs=[
@@ -72,11 +72,11 @@ ext_modules = [
 ]
 
 setup(
-    name="pylie",
+    name="pymlg",
     version=__version__,
     author="Charles C. Cossette",
     author_email="charles.cossette@mail.mcgill.ca",
-    url="https://github.com/decargroup/pylie",
+    url="https://github.com/decargroup/pymlg",
     description="Lie group functions for python.",
     long_description="",
     ext_modules=ext_modules,

@@ -1,4 +1,4 @@
-from pylie.numpy import  SO2, SO3, SE2, SE3, SE23, SL3
+from pymlg.numpy import  SO2, SO3, SE2, SE3, SE23, SL3
 import pytest
 
 import sys

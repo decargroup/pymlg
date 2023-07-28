@@ -48,7 +48,7 @@ Thumbs.db
 *.mov
 *.wmv
 
-pylie.egg-info/
+pymlg.egg-info/
 
 # Virtual environement 
 *.venv

@@ -1,4 +1,4 @@
-from pylie import SE2 
+from pymlg import SE2 
 import numpy as np
 
 # Random pose
