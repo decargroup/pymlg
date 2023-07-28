@@ -91,4 +91,14 @@ setup(
         "numpy>=1.20.0",
         "scipy>=1.7.1",
         ],
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+    ],
+    project_urls={
+        "Source": "https://github.com/decargroup/pymlg",
+        "Tracker": "https://github.com/decargroup/pymlg/issues",
+        "Documentation": "https://decargroup.github.io/pymlg/"
+    },
 )
