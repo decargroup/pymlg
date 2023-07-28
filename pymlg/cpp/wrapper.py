@@ -1,8 +1,8 @@
-from pylie.numpy import MatrixLieGroup
-from pylie.numpy import SO3 as SO3np
-from pylie.numpy import SE3 as SE3np
-from pylie.numpy import SE23 as SE23np
-from pylie.numpy import SL3 as SL3np
+from pymlg.numpy import MatrixLieGroup
+from pymlg.numpy import SO3 as SO3np
+from pymlg.numpy import SE3 as SE3np
+from pymlg.numpy import SE23 as SE23np
+from pymlg.numpy import SL3 as SL3np
 from ._impl import SO3 as SO3cpp
 from ._impl import SE3 as SE3cpp
 from ._impl import SE23 as SE23cpp

@@ -1,5 +1,5 @@
-from pylie.cpp import SO3
-from pylie import SO3 as SO3np 
+from pymlg.cpp import SO3
+from pymlg import SO3 as SO3np 
 import timeit 
 import numpy as np 
 

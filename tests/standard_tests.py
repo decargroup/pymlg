@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.linalg import expm, logm
-from pylie import MatrixLieGroup
+from pymlg import MatrixLieGroup
 
 class StandardTests:
     def test_wedge_vee(self, G: MatrixLieGroup):

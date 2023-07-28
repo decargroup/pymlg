@@ -1,5 +1,5 @@
-# Pylie - Lie groups with Numpy, Jax, and C++ implementations!
-![test package](https://github.com/decargroup/pylie/actions/workflows/test-package.yml/badge.svg)
+# PyMLG - Matrix Lie groups with Numpy, Jax, and C++ implementations!
+![test package](https://github.com/decargroup/pymlg/actions/workflows/test-package.yml/badge.svg)
 
 An instantiation-free python package for common matrix Lie group operations implemented as __pure static classes__. Using pure static classes keeps the usage extremely simple while still allowing for abstraction and inheritance. We do not introduce new objects with stateful behavior that must be learnt. Everything operates directly on arrays/tensors. This allows users to implement their own more sophisticated objects using these classes as back-end mathematical implementations.
 
@@ -10,12 +10,12 @@ Begin by cloning this repo somewhere. To install, go to the clone directory and 
 
 ## Documentation
 
-Documentation can be found here: https://decargroup.github.io/pylie
+Documentation can be found here: https://decargroup.github.io/pymlg
 
 ## Example
 
 ```python
-from pylie import SE3 
+from pymlg import SE3 
 import numpy as np
 
 # Random pose
@@ -55,22 +55,22 @@ J_R_inv = SE3.right_jacobian_inv(x)
 To explicitly access pure numpy implementations use 
 
 ```python 
-from pylie.numpy import SO2, SO3, SE2, SE3, SE23
+from pymlg.numpy import SO2, SO3, SE2, SE3, SE23
 ```
 
 To explicitly access classes which internally use C++ use 
 
 ```python 
-from pylie.cpp import SO3, SE3, SE23
+from pymlg.cpp import SO3, SE3, SE23
 ```
 
 To explicitly access Jax implementations use
 
 ```python 
-from pylie.jax import SE2
+from pymlg.jax import SE2
 ```
 
-Currently, only `SO3`, `SE3`, and `SE23` are implemented in C++, with the functions accepting and returning numpy arrays. They are also the default internal implementations when simply using `from pylie import SO3, SE3, SE23`. For the JAX implementation, the return types will be `jax.numpy` arrays. All operations in the jax implementation can be JIT-compiled. 
+Currently, only `SO3`, `SE3`, and `SE23` are implemented in C++, with the functions accepting and returning numpy arrays. They are also the default internal implementations when simply using `from pymlg import SO3, SE3, SE23`. For the JAX implementation, the return types will be `jax.numpy` arrays. All operations in the jax implementation can be JIT-compiled. 
 
 
 __For all implementations (jax, numpy, C++), the user API is exactly the same! This means that by changing the import statement the example still works.__

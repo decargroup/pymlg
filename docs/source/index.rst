@@ -1,9 +1,9 @@
-.. pylie documentation master file, created by
+.. pymlg documentation master file, created by
    sphinx-quickstart on Mon Aug 22 21:49:01 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-PYLIE
+pymlg
 =================================
 
 An instantiation-free python library for common matrix Lie group operations. Functions in this repo operate entirely on numpy arrays, with the intention of minimizing overhead and keeping the implementation as simple as possible.
@@ -21,7 +21,7 @@ Example
 
 .. code-block:: python 
 
-    from pylie import SE2 
+    from pymlg import SE2 
     import numpy as np
 
     # Random pose
@@ -66,13 +66,13 @@ Click on the table entries below to go to each class' documentation.
     :nosignatures:
 
     
-    pylie.SO2
-    pylie.SO3
-    pylie.SE2
-    pylie.SE3
-    pylie.SE23
-    pylie.SL3
-    pylie.MatrixLieGroup
+    pymlg.SO2
+    pymlg.SO3
+    pymlg.SE2
+    pymlg.SE3
+    pymlg.SE23
+    pymlg.SL3
+    pymlg.MatrixLieGroup
 
 
 

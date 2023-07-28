@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "pylie"
+project = "pymlg"
 copyright = "2022, Charles C. Cossette, Mitchell Cohen, Arturo Del Castillo"
 author = "Charles C. Cossette, Mitchell Cohen, Arturo Del Castillo"
 
