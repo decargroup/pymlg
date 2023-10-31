@@ -166,6 +166,10 @@ class SO3(MatrixLieGroup):
         return C
 
     @staticmethod
+    def adjoint_algebra(Xi):
+        return Xi
+
+    @staticmethod
     def from_quat(q, order="wxyz"):
         """
         Returns the DCM corresponding to the quaternion representation q.

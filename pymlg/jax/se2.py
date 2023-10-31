@@ -193,6 +193,15 @@ class SE2(MatrixLieGroup):
 
     @staticmethod
     @jit
+    def adjoint_algebra(Xi):
+        A = jnp.zeros((3, 3))
+        A = A.at[1, 0].set(Xi[1, 2])
+        A = A.at[2, 0].set(-Xi[0, 2])
+        A = A.at[1:, 1:].set(Xi[:2, :2])
+        return A
+
+    @staticmethod
+    @jit
     def V_matrix(phi):
         # Near phi==0, use first order Taylor expansion
         phi = jnp.array(phi).reshape((1,))[0]

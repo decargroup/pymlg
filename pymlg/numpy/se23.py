@@ -166,6 +166,16 @@ class SE23(MatrixLieGroup):
         return Ad
 
     @staticmethod
+    def adjoint_algebra(Xi):
+        A = np.zeros((9, 9))
+        A[0:3, 0:3] = Xi[0:3, 0:3]
+        A[3:6, 0:3] = SO3.wedge(Xi[0:3, 3])
+        A[3:6, 3:6] = Xi[0:3, 0:3]
+        A[6:9, 0:3] = SO3.wedge(Xi[0:3, 4])
+        A[6:9, 6:9] = Xi[0:3, 0:3]
+        return A
+
+    @staticmethod
     def left_jacobian(xi):
         xi = np.array(xi).ravel()
         xi_phi = xi[0:3]

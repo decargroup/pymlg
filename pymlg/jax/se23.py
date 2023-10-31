@@ -196,6 +196,17 @@ class SE23(MatrixLieGroup):
 
     @staticmethod
     @jit
+    def adjoint_algebra(Xi):
+        A = jnp.zeros((9, 9))
+        A = A.at[0:3, 0:3].set(Xi[0:3, 0:3])
+        A = A.at[3:6, 0:3].set(SO3.wedge(Xi[0:3, 3]))
+        A = A.at[3:6, 3:6].set(Xi[0:3, 0:3])
+        A = A.at[6:9, 0:3].set(SO3.wedge(Xi[0:3, 4]))
+        A = A.at[6:9, 6:9].set(Xi[0:3, 0:3])
+        return A
+
+    @staticmethod
+    @jit
     def left_jacobian(xi):
         xi = jnp.array(xi).ravel()
         xi_phi = xi[0:3]

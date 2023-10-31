@@ -65,6 +65,10 @@ class SO2(MatrixLieGroup):
         return np.array([[1]])
 
     @staticmethod
+    def adjoint_algebra(Xi):
+        return np.array([[0]])
+
+    @staticmethod
     def odot(b):
         b = np.array(b).ravel()
         return np.array([-b[1], b[0]]).reshape((-1, 1))

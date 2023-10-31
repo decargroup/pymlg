@@ -156,6 +156,14 @@ class SE2(MatrixLieGroup):
         return A
 
     @staticmethod
+    def adjoint_algebra(Xi):
+        A = np.zeros((3, 3))
+        A[1, 0] = Xi[1, 2]
+        A[2, 0] = -Xi[0, 2]
+        A[1:, 1:] = Xi[:2, :2]
+        return A
+
+    @staticmethod
     def V_matrix(phi):
         # Near phi==0, use first order Taylor expansion
         if np.abs(phi) < SO2._small_angle_tol:

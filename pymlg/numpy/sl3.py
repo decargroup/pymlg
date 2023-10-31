@@ -121,11 +121,11 @@ class SL3(MatrixLieGroup):
         return Adj
 
     @staticmethod
-    def adjoint_algebra(xi):
+    def adjoint_algebra(Xi):
         """
         Adjoint representation of ALGEBRA element.
         """
-        xi = xi.ravel()
+        xi = SL3.vee(Xi).ravel()
 
         ad = np.array(
             [

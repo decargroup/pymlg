@@ -146,6 +146,19 @@ class SE23 : public MatrixLieGroup<5, 9> {
     return Xadj;
   };
 
+  static Eigen::Matrix<double, 9, 9> adjoint_algebra(const Element& T) {
+    Eigen::Matrix<double, 9, 9> adj{Eigen::Matrix<double, 9, 9>::Zero()};
+    Eigen::Matrix3d xi_phi_cross = T.block<3, 3>(0, 0);
+    Eigen::Vector3d xi_v = T.block<3, 1>(0, 3);
+    Eigen::Vector3d xi_r = T.block<3, 1>(0, 4);
+    adj.block<3, 3>(0, 0) = xi_phi_cross;
+    adj.block<3, 3>(3, 3) = xi_phi_cross;
+    adj.block<3, 3>(6, 6) = xi_phi_cross;
+    adj.block<3, 3>(3, 0) = SO3::wedge(xi_v);
+    adj.block<3, 3>(6, 0) = SO3::wedge(xi_r);
+    return adj;
+  }
+
   static Eigen::Matrix<double, 5, 9> odot(const Eigen::Matrix<double, 5, 1>& b) {
     Eigen::Matrix<double, 5, 9> B{ Eigen::Matrix<double, 5, 9>::Zero() };
     B.block<4, 6>(0, 0) = SE3::odot(b.block<4, 1>(0, 0));

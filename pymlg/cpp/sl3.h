@@ -71,8 +71,9 @@ class SL3 : public MatrixLieGroup<3, 8> {
 
   static Element inverse(const Element& x) { return x.inverse(); };
 
-  static Eigen::Matrix<double,8,8> adjoint_algebra(const Vector& xi) { 
+  static Eigen::Matrix<double,8,8> adjoint_algebra(const Element& Xi) {
 
+    Vector xi = SL3::vee(Xi);
     Eigen::Matrix<double,8,8> adj;
     adj <<      3.0 * xi(3) + xi(4), -(xi(2) - xi(5)),xi(1),-3.0 * xi(0),-xi(0),-xi(1),0,0,
                 xi(2) + xi(5),3.0 * xi(3) - xi(4),-xi(0),-3.0 * xi(1),xi(1),-xi(0),0,0,

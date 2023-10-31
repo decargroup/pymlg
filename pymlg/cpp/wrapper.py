@@ -34,6 +34,10 @@ class SO3(SO3np):
         return SO3cpp.adjoint(x)
     
     @staticmethod
+    def adjoint_algebra(x):
+        return SO3cpp.adjoint_algebra(x)
+
+    @staticmethod
     def left_jacobian(x):
         return SO3cpp.left_jacobian(x)
     
@@ -89,6 +93,10 @@ class SE3(SE3np):
     def adjoint(x):
         return SE3cpp.adjoint(x)
     
+    @staticmethod
+    def adjoint_algebra(x):
+        return SE3cpp.adjoint_algebra(x)
+
     @staticmethod
     def left_jacobian(x):
         return SE3cpp.left_jacobian(x)
@@ -146,6 +154,10 @@ class SE23(SE23np):
         return SE23cpp.adjoint(x)
     
     @staticmethod
+    def adjoint_algebra(x):
+        return SE23cpp.adjoint_algebra(x)
+
+    @staticmethod
     def left_jacobian(x):
         return SE23cpp.left_jacobian(x)
     
@@ -201,6 +213,10 @@ class SL3(SL3np):
     def adjoint(x):
         return SL3cpp.adjoint(x)
     
+    @staticmethod
+    def adjoint_algebra(x):
+        return SL3cpp.adjoint_algebra(x)
+
     @staticmethod
     def left_jacobian(x):
         return SL3cpp.left_jacobian(x)
