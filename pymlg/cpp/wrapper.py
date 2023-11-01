@@ -10,6 +10,9 @@ from ._impl import SL3 as SL3cpp
 from typing import Type
 
 class SO3(SO3np):
+    """
+    Special Orthogonal Group in 3D.
+    """
     dof = SO3cpp.dof
     matrix_size = SO3cpp.matrix_size
     _small_angle_tol = SO3cpp.small_angle_tol
@@ -70,6 +73,10 @@ class SO3(SO3np):
         return SO3cpp.inverse(x)
 
 class SE3(SE3np):
+    """ 
+    Special Euclidean Group in 3D.
+    """
+
     dof = SE3cpp.dof
     matrix_size = SE3cpp.matrix_size
     _small_angle_tol = SE3cpp.small_angle_tol
@@ -130,6 +137,9 @@ class SE3(SE3np):
         return SE3cpp.inverse(x)
 
 class SE23(SE23np):
+    """
+    "Extended" Special Euclidean Group in 3D.
+    """
     dof = SE23cpp.dof
     matrix_size = SE23cpp.matrix_size
     _small_angle_tol = SE23cpp.small_angle_tol
@@ -190,6 +200,9 @@ class SE23(SE23np):
         return SE23cpp.inverse(x)
     
 class SL3(SL3np):
+    """ 
+    Special Linear Group in 3D.
+    """
     dof = SL3cpp.dof
     matrix_size = SL3cpp.matrix_size
     _small_angle_tol = SL3cpp.small_angle_tol

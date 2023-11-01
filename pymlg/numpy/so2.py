@@ -4,7 +4,7 @@ import numpy as np
 
 class SO2(MatrixLieGroup):
     """
-    An instantiation-free implementation of the SO2 matrix Lie group.
+    Special Orthogonal Group in 2D.
     """
 
     dof = 1

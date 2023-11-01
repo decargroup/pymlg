@@ -1,11 +1,11 @@
-from .base import MatrixLieGroup, fast_vector_norm
+from .base import MatrixLieGroup
 import numpy as np
 from .so2 import SO2
 
 
 class SE2(MatrixLieGroup):
     """
-    An instantiation-free implementation of the SE2 matrix Lie group.
+    Special Euclidean Group in 2D.
     """
 
     dof = 3

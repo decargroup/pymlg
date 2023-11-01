@@ -39,6 +39,9 @@ Xi = SE3.log(T)
 # Adjoint matrix representation of group element
 A = SE3.adjoint(T)
 
+# Adjoint representation of algebra element
+ad = SE3.adjoint_algebra(Xi)
+
 # Inverse of group element
 T_inv = SE3.inverse(T)
 
