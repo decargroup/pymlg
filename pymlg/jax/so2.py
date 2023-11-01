@@ -78,6 +78,11 @@ class SO2(MatrixLieGroup):
 
     @staticmethod
     @jit
+    def adjoint_algebra(Xi):
+        return jnp.array([[0]])
+
+    @staticmethod
+    @jit
     def odot(b):
         b = jnp.array(b).ravel()
         return jnp.array([-b[1], b[0]]).reshape((-1, 1))

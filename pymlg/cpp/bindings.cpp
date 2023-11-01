@@ -19,6 +19,7 @@ void bind_matrix_lie_group(py::module &m, const std::string &name) {
         .def_static("vee", &T::vee)
         .def_static("inverse", &T::inverse)
         .def_static("adjoint", &T::adjoint)
+        .def_static("adjoint_algebra", &T::adjoint_algebra)
         .def_static("odot", &T::odot)
         .def_static("left_jacobian", &T::leftJacobian)
         .def_static("left_jacobian_inv", &T::leftJacobianInverse)

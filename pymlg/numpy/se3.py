@@ -177,6 +177,14 @@ class SE3(MatrixLieGroup):
         return Ad
 
     @staticmethod
+    def adjoint_algebra(Xi):
+        A = np.zeros((6, 6))
+        A[0:3, 0:3] = Xi[0:3, 0:3]
+        A[3:6, 0:3] = SO3.wedge(Xi[0:3, 3])
+        A[3:6, 3:6] = Xi[0:3, 0:3]
+        return A
+
+    @staticmethod
     def _left_jacobian_Q_matrix(phi, rho):
         phi = np.array(phi).ravel()
         rho = np.array(rho).ravel()

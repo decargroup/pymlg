@@ -105,6 +105,8 @@ class SO3 : public MatrixLieGroup<3, 3> {
 
   static Eigen::Matrix3d adjoint(const Eigen::Matrix3d& x) { return x; };
 
+  static Eigen::Matrix3d adjoint_algebra(const Eigen::Matrix3d& x) { return x; };
+
   static Eigen::Matrix3d odot(const Eigen::Vector3d& x) { return -wedge(x); };
 
 };

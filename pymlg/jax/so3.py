@@ -191,6 +191,10 @@ class SO3(MatrixLieGroup):
         return C
 
     @staticmethod
+    def adjoint_algebra(Xi):
+        return Xi
+
+    @staticmethod
     @jit
     def identity():
         return np.identity(3)

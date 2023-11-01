@@ -147,6 +147,14 @@ class StandardTests:
         side2 = np.dot(X, np.dot(G.wedge(xi), G.inverse(X)))
         assert np.allclose(side1, side2)
 
+    def test_adjoint_algebra_identity(self, G: MatrixLieGroup):
+        Xi1 = G.log(G.random())
+        Xi2 = G.log(G.random())
+        xi1 = np.atleast_2d(G.vee(Xi1))
+        xi2 = np.atleast_2d(G.vee(Xi2))
+
+        assert np.allclose(G.adjoint_algebra(Xi1) @ xi2, -G.adjoint_algebra(Xi2) @ xi1)
+
     def test_inverse(self, G: MatrixLieGroup):
         X = G.random()
         assert np.allclose(G.inverse(G.inverse(X)), X)
@@ -167,6 +175,7 @@ class StandardTests:
         self.test_right_jacobian_inverse(G)
         self.test_left_jacobian(G)
         self.test_adjoint_identity(G)
+        self.test_adjoint_algebra_identity(G)
         self.test_inverse(G)
 
 class CrossValidation:
@@ -215,6 +224,11 @@ class CrossValidation:
         X = G1.random()
         assert np.allclose(G1.adjoint(X), G2.adjoint(X))
     
+    def test_adjoint_algebra(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
+        X = G1.random()
+        Xi = G1.log(X)
+        assert np.allclose(G1.adjoint_algebra(Xi), G2.adjoint_algebra(Xi))
+
     def test_inverse(self, G1: MatrixLieGroup, G2: MatrixLieGroup):
         X = G1.random()
         assert np.allclose(G1.inverse(X), G2.inverse(X))

@@ -125,6 +125,15 @@ class SE3(MatrixLieGroup):
 
     @staticmethod
     @jit
+    def adjoint_algebra(Xi):
+        A = jnp.zeros((6, 6))
+        A = A.at[0:3, 0:3].set(Xi[0:3, 0:3])
+        A = A.at[3:6, 3:6].set(Xi[0:3, 0:3])
+        A = A.at[3:6, 0:3].set(SO3.wedge(Xi[0:3, 3]))
+        return A
+
+    @staticmethod
+    @jit
     def _left_jacobian_Q_matrix(phi, rho):
         phi = jnp.array(phi).ravel()
         rho = jnp.array(rho).ravel()
