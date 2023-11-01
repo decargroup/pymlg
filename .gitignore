@@ -66,3 +66,5 @@ build/
 # Eigen depencency
 eigen-*/
 eigen3.zip
+
+docs/build/
