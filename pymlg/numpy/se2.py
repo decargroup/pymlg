@@ -24,7 +24,7 @@ class SE2(MatrixLieGroup):
         Construct an SE(2) matrix from a rotation matrix and translation vector.
         """
         C = np.array(C)
-        if C.size == 3:
+        if C.size == 1:
             C = SO2.Exp(C)
         C = C.reshape((2, 2))
         r = np.array(r).reshape((-1, 1))
