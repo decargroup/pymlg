@@ -2,7 +2,7 @@
 from jax.config import config
 config.update("jax_enable_x64", True)
 
-from pylie.jax import  SO3, SE3, SE23, SL3, SO2, SE2
+from pymlg.jax import  SO3, SE3, SE23, SL3, SO2, SE2
 import pytest
 
 import sys

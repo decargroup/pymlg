@@ -12,5 +12,5 @@ include(GoogleTest)
 
 add_executable(test_liegroups test_so3.cpp test_se3.cpp)
 target_link_libraries(test_liegroups PRIVATE GTest::gtest_main Eigen3::Eigen)
-target_include_directories(test_liegroups PRIVATE ${CMAKE_SOURCE_DIR}/pylie/cpp )
+target_include_directories(test_liegroups PRIVATE ${CMAKE_SOURCE_DIR}/pymlg/cpp )
 gtest_discover_tests(test_liegroups)

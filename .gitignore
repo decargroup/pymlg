@@ -48,7 +48,7 @@ Thumbs.db
 *.mov
 *.wmv
 
-pylie.egg-info/
+pymlg.egg-info/
 
 # Virtual environement 
 *.venv
@@ -65,3 +65,6 @@ build/
 
 # Eigen depencency
 eigen-*/
+eigen3.zip
+
+docs/build/

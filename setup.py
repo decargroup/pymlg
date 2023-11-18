@@ -59,8 +59,8 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 ext_modules = [
-    Pybind11Extension("pylie.cpp._impl",
-        ["pylie/cpp/bindings.cpp"],
+    Pybind11Extension("pymlg.cpp._impl",
+        ["pymlg/cpp/bindings.cpp"],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
         include_dirs=[
@@ -72,15 +72,15 @@ ext_modules = [
 ]
 
 setup(
-    name="pylie",
+    name="pymlg",
     version=__version__,
     author="Charles C. Cossette",
     author_email="charles.cossette@mail.mcgill.ca",
-    url="https://github.com/decargroup/pylie",
+    url="https://github.com/decargroup/pymlg",
     description="Lie group functions for python.",
     long_description="",
     ext_modules=ext_modules,
-    extras_require={"test": "pytest"},
+    extras_require={"test":["pytest", "jax", "jaxlib"]},
     # Currently, build_ext only provides an optional "highest supported C++
     # level" feature, but in the future it may provide more features.
     cmdclass={"build_ext": build_ext},
@@ -90,6 +90,15 @@ setup(
     install_requires=[
         "numpy>=1.20.0",
         "scipy>=1.7.1",
-        "jax>=0.4.4",
         ],
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+    ],
+    project_urls={
+        "Source": "https://github.com/decargroup/pymlg",
+        "Tracker": "https://github.com/decargroup/pymlg/issues",
+        "Documentation": "https://decargroup.github.io/pymlg/"
+    },
 )
