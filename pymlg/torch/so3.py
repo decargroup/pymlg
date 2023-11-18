@@ -208,7 +208,6 @@ class SO3(MatrixLieGroup):
 
             # check if angle is close to pi
             if np.isclose(angle.__float__(), np.pi, atol=1e-9):
-
                 # if so, return a manually generated rotation vector that protects
                 # against formulaic failure around pi
                 phi_constructed = torch.Tensor([C[:, 0, 2], C[:, 1, 2], 1 + C[:, 2, 2]])
@@ -228,7 +227,7 @@ class SO3(MatrixLieGroup):
             (0.5 * angle[~mask] / angle[~mask].sin()).unsqueeze(1).unsqueeze(2)
             * (C[~mask] - C[~mask].transpose(1, 2))
         )
-        return phi.unsqueeze(2)
+        return phi #.unsqueeze(2)
 
     @staticmethod
     def A_lj(t_norm, small=True):

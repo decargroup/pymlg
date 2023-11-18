@@ -17,6 +17,30 @@ class SE23(MatrixLieGroup):
     dof = 9
 
     @staticmethod
+    def random(N=1):
+        """
+        Generates a random batch of SE_2(3) matricies.
+
+        Parameters
+        ----------
+        N : int, optional
+            batch size, by default 1
+
+        Returns
+        -------
+        torch.Tensor with shape (N, 5, 5)
+            batch of random :math:`SE_2(3)` matricies
+        """
+        
+        phi = torch.rand(N, 3, 1)
+        v = torch.rand(N, 3, 1)
+        r = torch.rand(N, 3, 1)
+
+        C = SO3.Exp(phi)
+
+        return SE23.from_components(C, v, r)
+
+    @staticmethod
     def from_components(C: torch.Tensor, v: torch.Tensor, r: torch.Tensor):
         """
         Construct a batch of :math:`SE_2(3)` matricies from attitude, velocity, position
