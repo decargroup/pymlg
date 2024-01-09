@@ -13,6 +13,7 @@ class SE3(MatrixLieGroup):
     """
 
     dof = 6
+    matrix_size = 4
     
     @staticmethod
     def _left_jacobian_Q_matrix(xi_phi, xi_rho):
@@ -145,7 +146,7 @@ class SE3(MatrixLieGroup):
         return torch.cat((Xi, block), dim=1)
 
     @staticmethod
-    def vee(Xi):
+    def vee(Xi : torch.Tensor):
         Xi_phi = Xi[:, 0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
 
@@ -154,7 +155,7 @@ class SE3(MatrixLieGroup):
         return torch.cat((xi_phi, xi_r), dim=1)
 
     @staticmethod
-    def exp(Xi):
+    def exp(Xi : torch.Tensor):
         Xi_phi = Xi[:, 0:3, 0:3]
         xi_phi = SO3.vee(Xi_phi)
         xi_r = Xi[:, 0:3, 3].unsqueeze(2)
@@ -168,7 +169,7 @@ class SE3(MatrixLieGroup):
         return X
 
     @staticmethod
-    def log(X):
+    def log(X : torch.Tensor):
         (C, r) = SE3.to_components(X)
         phi = SO3.Log(C)
         J_left_inv = SO3.left_jacobian_inv(phi)
@@ -184,6 +185,12 @@ class SE3(MatrixLieGroup):
 
         return torch.cat((Xi, block), dim=1)
     
+    @staticmethod
+    def odot(xi : torch.Tensor):
+        X = torch.zeros(xi.shape[0], 4, 6)
+        X[0:3, 0:3] = SO3.odot(xi[0:3])
+        X[0:3, 3:6] = xi[:, 3] * batch_eye(xi.shape[0], 3, 3)
+        return X
 
     @staticmethod
     def Adjoint(X):
@@ -194,6 +201,14 @@ class SE3(MatrixLieGroup):
         b1 = torch.cat((C, O), dim=2)
         b3 = torch.cat((SO3.wedge(r) @ C, C), dim=2)
         return torch.cat((b1, b3), dim=1)
+    
+    @staticmethod
+    def adjoint_algebra(Xi):
+        A = torch.zeros(Xi.shape[0], 6, 6)
+        A[:, 0:3, 0:3] = Xi[:, 0:3, 0:3]
+        A[:, 3:6, 0:3] = SO3.wedge(Xi[:, 0:3, 3])
+        A[:, 3:6, 3:6] = Xi[:, 0:3, 0:3]
+        return A
 
     @staticmethod
     def identity(N):

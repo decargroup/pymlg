@@ -37,6 +37,7 @@ class SO3(MatrixLieGroup):
     """
 
     dof = 3
+    matrix_size = 3
 
     @staticmethod
     def random(N=1):
@@ -118,6 +119,10 @@ class SO3(MatrixLieGroup):
         Rot[~mask] = c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
 
         return Rot
+    
+    @staticmethod
+    def odot(phi):
+        return -SO3.wedge(phi)
 
     @staticmethod
     def to_euler(C, order="123"):
@@ -346,6 +351,14 @@ class SO3(MatrixLieGroup):
             )
 
         return J_left
+    
+    @staticmethod
+    def adjoint(C):
+        return C
+
+    @staticmethod
+    def adjoint_algebra(Xi):
+        return Xi
 
     @staticmethod
     def from_quat(quat, ordering="wxyz"):

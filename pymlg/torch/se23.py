@@ -15,6 +15,7 @@ class SE23(MatrixLieGroup):
     """
 
     dof = 9
+    matrix_size = 5
 
     @staticmethod
     def random(N=1):
@@ -166,10 +167,27 @@ class SE23(MatrixLieGroup):
         b2 = torch.cat((SO3.wedge(v) @ C, C, O), dim=2)
         b3 = torch.cat((SO3.wedge(r) @ C, O, C), dim=2)
         return torch.cat((b1, b2, b3), dim=1)
+    
+    @staticmethod
+    def adjoint_algebra(Xi):
+        A = torch.zeros(Xi.shape[0], 9, 9)
+        A[:, 0:3, 0:3] = Xi[:, 0:3, 0:3]
+        A[:, 3:6, 0:3] = SO3.wedge(Xi[:, 0:3, 3])
+        A[:, 3:6, 3:6] = Xi[:, 0:3, 0:3]
+        A[:, 6:9, 0:3] = SO3.wedge(Xi[:, 0:3, 4])
+        A[:, 6:9, 6:9] = Xi[:, 0:3, 0:3]
+        return A
 
     @staticmethod
     def identity(N):
         return batch_eye(N, 5, 5)
+    
+    @staticmethod
+    def odot(xi : torch.Tensor):
+        X = torch.zeros(xi.shape[0], 5, 9)
+        X[0:4, 0:6] = SE3.odot(xi[:, 0:4])
+        X[0:3, 6:9] = xi[:, 4] * batch_eye(xi.shape[0], 3, 3)
+        return X
 
     @staticmethod
     def left_jacobian(xi):
