@@ -47,7 +47,7 @@ class SO3 : public MatrixLieGroup<3, 3> {
     if (theta < SO3::small_angle_tol) {
       // xi = x.block<3, 1>(0, 2);
       xi = SO3::vee(x - Eigen::Matrix3d::Identity());
-    } else if (abs(M_PI - theta) < SO3::small_angle_tol) {
+    } else if (abs(PI - theta) < SO3::small_angle_tol) {
       xi = theta * SO3::vee(x - x.transpose()) / SO3::vee(x - x.transpose()).norm();
     }
     else {

@@ -3,6 +3,10 @@
 #include <Eigen/Dense>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 template <int n_, int dof_>
 class MatrixLieGroup {
  public:
