@@ -127,7 +127,7 @@ class StandardTestsTorch:
 
         assert np.allclose(J_fd, J_left, atol=1e-5)
 
-    def _numerical_left_jacobian(self, G: MatrixLieGroup, x_bar: np.ndarray):
+    def _numerical_left_jacobian(self, G: MatrixLieGroup, x_bar: torch.Tensor):
         exp_inv = G.inverse(G.Exp(x_bar))
         J_fd = torch.zeros(x_bar.shape[0], G.dof, G.dof) #np.zeros((G.dof, G.dof))
         h = 1e-7

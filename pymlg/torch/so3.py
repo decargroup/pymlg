@@ -359,6 +359,88 @@ class SO3(MatrixLieGroup):
     @staticmethod
     def adjoint_algebra(Xi):
         return Xi
+    
+    @staticmethod
+    def to_quaternion(C, ordering='wxyz'):
+        """Convert a rotation matrix to a unit length quaternion.
+
+            Valid orderings are 'xyzw' and 'wxyz'.
+        """
+        if C.dim() < 3:
+            C = C.unsqueeze(dim=0)
+
+        qw = 0.5 * torch.sqrt(1. + C[:, 0, 0] + C[:, 1, 1] + C[:, 2, 2])
+        qx = qw.new_empty(qw.shape)
+        qy = qw.new_empty(qw.shape)
+        qz = qw.new_empty(qw.shape)
+
+        near_zero_mask = (qw).abs_().lt(1e-6)
+
+        if sum(near_zero_mask) > 0:
+            cond1_mask = near_zero_mask & \
+                (C[:, 0, 0] > C[:, 1, 1]).squeeze_() & \
+                (C[:, 0, 0] > C[:, 2, 2]).squeeze_()
+            cond1_inds = cond1_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+
+            if len(cond1_inds) > 0:
+                R_cond1 = C[cond1_inds]
+                d = 2. * np.sqrt(1. + R_cond1[:, 0, 0] -
+                                    R_cond1[:, 1, 1] - R_cond1[:, 2, 2])
+                qw[cond1_inds] = (R_cond1[:, 2, 1] - R_cond1[:, 1, 2]) / d
+                qx[cond1_inds] = 0.25 * d
+                qy[cond1_inds] = (R_cond1[:, 1, 0] + R_cond1[:, 0, 1]) / d
+                qz[cond1_inds] = (R_cond1[:, 0, 2] + R_cond1[:, 2, 0]) / d
+
+            cond2_mask = near_zero_mask & (C[:, 1, 1] > C[:, 2, 2]).squeeze_()
+            cond2_inds = cond2_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+
+            if len(cond2_inds) > 0:
+                R_cond2 = C[cond2_inds]
+                d = 2. * np.sqrt(1. + R_cond2[:, 1, 1] -
+                                    R_cond2[:, 0, 0] - R_cond2[:, 2, 2])
+                qw[cond2_inds] = (R_cond2[:, 0, 2] - R_cond2[:, 2, 0]) / d
+                qx[cond2_inds] = (R_cond2[:, 1, 0] + R_cond2[:, 0, 1]) / d
+                qy[cond2_inds] = 0.25 * d
+                qz[cond2_inds] = (R_cond2[:, 2, 1] + R_cond2[:, 1, 2]) / d
+
+            cond3_mask = near_zero_mask & cond1_mask.logical_not() & cond2_mask.logical_not()
+            cond3_inds = cond3_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+
+            if len(cond3_inds) > 0:
+                R_cond3 = C[cond3_inds]
+                d = 2. * \
+                    np.sqrt(1. + R_cond3[:, 2, 2] -
+                            R_cond3[:, 0, 0] - R_cond3[:, 1, 1])
+                qw[cond3_inds] = (R_cond3[:, 1, 0] - R_cond3[:, 0, 1]) / d
+                qx[cond3_inds] = (R_cond3[:, 0, 2] + R_cond3[:, 2, 0]) / d
+                qy[cond3_inds] = (R_cond3[:, 2, 1] + R_cond3[:, 1, 2]) / d
+                qz[cond3_inds] = 0.25 * d
+
+        far_zero_mask = near_zero_mask.logical_not()
+        far_zero_inds = far_zero_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        if len(far_zero_inds) > 0:
+            R_fz = C[far_zero_inds]
+            d = 4. * qw[far_zero_inds]
+            qx[far_zero_inds] = (R_fz[:, 2, 1] - R_fz[:, 1, 2]) / d
+            qy[far_zero_inds] = (R_fz[:, 0, 2] - R_fz[:, 2, 0]) / d
+            qz[far_zero_inds] = (R_fz[:, 1, 0] - R_fz[:, 0, 1]) / d
+
+        # Check ordering last
+        if ordering == 'xyzw':
+            quat = torch.cat([qx.unsqueeze_(dim=1),
+                                qy.unsqueeze_(dim=1),
+                                qz.unsqueeze_(dim=1),
+                                qw.unsqueeze_(dim=1)], dim=1).squeeze_()
+        elif ordering == 'wxyz':
+            quat = torch.cat([qw.unsqueeze_(dim=1),
+                                qx.unsqueeze_(dim=1),
+                                qy.unsqueeze_(dim=1),
+                                qz.unsqueeze_(dim=1)], dim=1).squeeze_()
+        else:
+            raise ValueError(
+                "Valid orderings are 'xyzw' and 'wxyz'. Got '{}'.".format(ordering))
+
+        return quat
 
     @staticmethod
     def from_quat(quat, ordering="wxyz"):
