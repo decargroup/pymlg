@@ -51,10 +51,6 @@ class MatrixLieGroup:
         Shortcut method.
         """
         return cls.vee(cls.log(x))
-
-    @staticmethod
-    def Adjoint(X):
-        raise NotImplementedError()
     
     @staticmethod
     def adjoint_algebra(Xi):

@@ -6,14 +6,14 @@ from pymlg.torch import MatrixLieGroup
 
 class StandardTestsTorch:
     def test_wedge_vee(self, G: MatrixLieGroup):
-        x = torch.rand(randrange(10), G.dof, 1)
+        x = torch.rand(randrange(1, 10), G.dof, 1)
         x_test = G.vee(G.wedge(x))
         if G.dof > 1:
             assert x_test.shape == (x.shape[0], G.dof, 1)
         assert np.allclose(x, x_test, 1e-15)
 
     def test_exp(self, G: MatrixLieGroup):
-        x = torch.rand(randrange(10), G.dof, 1)
+        x = torch.rand(randrange(1, 10), G.dof, 1)
         Xi = G.wedge(x)
         X = G.exp(Xi)
         Xi = np.array(Xi).copy()
@@ -24,11 +24,13 @@ class StandardTestsTorch:
         X = G.random()
         Xi = G.log(X)
         X = np.array(X).copy()
-        Xi_test = logm(X)
+        
+        # note. logm is not currently batched as per (https://github.com/scipy/scipy/issues/12838#issuecomment-1539746877), but the G.random() call for all classes is single-batch. So by definition, should be safe to squeeze the batch dimension and test with unbatched logm().
+        Xi_test = logm(X.squeeze(0))
         assert np.allclose(Xi, Xi_test)
 
     def test_log_zero(self, G: MatrixLieGroup):
-        x = torch.zeros(randrange(10), G.dof, 1)
+        x = torch.zeros(randrange(1, 10), G.dof, 1)
         X = G.Exp(x)
         Xi = G.log(X)
         X = np.array(X).copy()
@@ -36,13 +38,13 @@ class StandardTestsTorch:
         assert np.allclose(Xi, Xi_test)
 
     def test_capital_log_zero(self, G: MatrixLieGroup):
-        x = torch.zeros(randrange(10), G.dof, 1)
+        x = torch.zeros(randrange(1, 10), G.dof, 1)
         X = G.Exp(x)
         x_test = G.Log(X)
         assert np.allclose(x, x_test)
 
     def test_capital_log_small_value(self, G: MatrixLieGroup):
-        x = torch.zeros(randrange(10), G.dof, 1)
+        x = torch.zeros(randrange(1, 10), G.dof, 1)
         x[0] = 1e-8
         X = G.Exp(x)
         x_test = G.Log(X)
@@ -78,18 +80,18 @@ class StandardTestsTorch:
         J_left = G.left_jacobian(xi)
         J_left_inv = G.left_jacobian_inv(xi)
 
-        assert np.allclose(J_left_inv, np.linalg.inv(J_left))
+        assert np.allclose(J_left_inv, torch.linalg.inv(J_left))
 
     
     def test_left_jacobian_inverse_zero(self, G: MatrixLieGroup):
-        xi = torch.zeros(randrange(10), G.dof, 1)
+        xi = torch.zeros(randrange(1, 10), G.dof, 1)
         J_left = G.left_jacobian(xi)
         J_left_inv = G.left_jacobian_inv(xi)
         assert not np.isnan(J_left_inv).any()
         assert np.allclose(J_left_inv, np.linalg.inv(J_left))
 
     def test_left_jacobian_inverse_small_value(self, G: MatrixLieGroup):
-        xi = torch.zeros(randrange(10), G.dof, 1)
+        xi = torch.zeros(randrange(1, 10), G.dof, 1)
         xi[0] = 1e-8
         J_left = G.left_jacobian(xi)
         J_left_inv = G.left_jacobian_inv(xi)
@@ -112,7 +114,7 @@ class StandardTestsTorch:
         assert np.allclose(J_fd, J_left, atol=1e-2)
 
     def test_left_jacobian_zero(self, G: MatrixLieGroup):
-        x_bar = torch.zeros(randrange(10), G.dof, 1)
+        x_bar = torch.zeros(randrange(1, 10), G.dof, 1)
         J_left = G.left_jacobian(x_bar)
         J_fd = self._numerical_left_jacobian(G, x_bar)
 
@@ -120,7 +122,7 @@ class StandardTestsTorch:
 
     
     def test_left_jacobian_small_value(self, G: MatrixLieGroup):
-        x_bar = torch.zeros(randrange(10), G.dof, 1)
+        x_bar = torch.zeros(randrange(1, 10), G.dof, 1)
         x_bar[0] = 1e-8
         J_left = G.left_jacobian(x_bar)
         J_fd = self._numerical_left_jacobian(G, x_bar)
@@ -133,8 +135,8 @@ class StandardTestsTorch:
         h = 1e-7
         for i in range(G.dof):
             dx = torch.zeros(x_bar.shape[0], G.dof, 1)
-            dx[:, i] = h
-            J_fd[:, i] = (G.Log(G.exp(x_bar + dx) @ exp_inv) / h)
+            dx[:, i, :] = h
+            J_fd[:, :, i] = (G.Log(G.Exp(x_bar + dx) @ exp_inv) / h).squeeze(2)
 
         return J_fd
 

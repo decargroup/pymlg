@@ -112,8 +112,7 @@ class SE23(MatrixLieGroup):
         Xi = torch.cat(
             (SO3.cross(xi_phi), xi_v, xi_r), dim=2
         )  # this yields a (N, 3, 5) matrix that must now be blocked with a (2, 5) batched matrix
-        block = torch.cat((torch.zeros(xi.shape[0], 2, 3), batch_eye(xi.shape[0], 2, 2)), dim=2)
-
+        block = torch.zeros(xi_phi.shape[0], 2, 5)
         return torch.cat((Xi, block), dim=1)
 
     @staticmethod
@@ -153,12 +152,11 @@ class SE23(MatrixLieGroup):
         Xi = torch.cat(
             (SO3.cross(phi), v, r), dim=2
         )  # this yields a (N, 3, 5) matrix that must now be blocked with a (2, 5) batched matrix
-        block = torch.cat((torch.zeros(phi.shape[0], 2, 3), batch_eye(phi.shape[0], 2, 2)), dim=2)
-
+        block = torch.zeros(X.shape[0], 2, 5)
         return torch.cat((Xi, block), dim=1)
 
     @staticmethod
-    def Adjoint(X):
+    def adjoint(X):
         C, v, r = SE23.to_components(X)
         O = torch.zeros(v.shape[0], 3, 3)
 
@@ -179,14 +177,14 @@ class SE23(MatrixLieGroup):
         return A
 
     @staticmethod
-    def identity(N):
+    def identity(N=1):
         return batch_eye(N, 5, 5)
     
     @staticmethod
     def odot(xi : torch.Tensor):
         X = torch.zeros(xi.shape[0], 5, 9)
-        X[0:4, 0:6] = SE3.odot(xi[:, 0:4])
-        X[0:3, 6:9] = xi[:, 4] * batch_eye(xi.shape[0], 3, 3)
+        X[:, 0:4, 0:6] = SE3.odot(xi[:, 0:4])
+        X[:, 0:3, 6:9] = xi[:, 4] * batch_eye(xi.shape[0], 3, 3)
         return X
 
     @staticmethod
@@ -202,7 +200,7 @@ class SE23(MatrixLieGroup):
         )
         # small_angle_inds = small_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
         large_angle_mask = small_angle_mask.logical_not()
-        large_angle_inds = large_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
         # if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
         #     return np.identity(9)
@@ -210,7 +208,7 @@ class SE23(MatrixLieGroup):
         # if small_angle_inds.shape[0] > 0 and small_angle_inds.numel():
         #     J_left[small_angle_inds] = batch_eye(small_angle_inds.shape[0], 9, 9)
 
-        if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
+        if large_angle_inds.numel():
             # filter only the "large" angle references
             xi_phi = xi_phi[large_angle_inds]
             xi_v = xi_v[large_angle_inds]
@@ -251,7 +249,7 @@ class SE23(MatrixLieGroup):
         )
         # small_angle_inds = small_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
         large_angle_mask = small_angle_mask.logical_not()
-        large_angle_inds = large_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
         # if np.linalg.norm(xi_phi) < SE23._small_angle_tol:
         #     return np.identity(9)
@@ -259,7 +257,7 @@ class SE23(MatrixLieGroup):
         # if small_angle_inds.shape[0] > 0 and small_angle_inds.numel():
         #     J_left[small_angle_inds] = batch_eye(small_angle_inds.shape[0], 9, 9)
 
-        if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
+        if large_angle_inds.numel():
             # filter only the "large" angle references
             xi_phi = xi_phi[large_angle_inds]
             xi_v = xi_v[large_angle_inds]
@@ -274,4 +272,4 @@ class SE23(MatrixLieGroup):
             J_left[large_angle_inds, 3:6, 0:3] = -J @ Q_v @ J
             J_left[large_angle_inds, 6:9, 0:3] = -J @ Q_r @ J
 
-        return J
+        return J_left

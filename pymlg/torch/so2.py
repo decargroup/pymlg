@@ -26,20 +26,26 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def wedge(phi):
 
+        # enforce dimensionality
+        if phi.nelement() != phi.shape[0]:
+            raise ValueError("SO2 phi must be collapsable to 1D tensor")
+        
+        phi = phi.view(-1)
+
         X = torch.zeros(phi.shape[0], 2, 2, device=phi.device)
-        X[:, 0, 1] = -phi
-        X[:, 1, 0] = phi
+        X[:, 0, 1] = -phi.view(-1)
+        X[:, 1, 0] = phi.view(-1)
 
         return X
     
     @staticmethod
     def vee(X):
         phi = X[:, 1, 0]
-        return phi
+        return phi.view(-1, 1, 1)
     
     @staticmethod
     def exp(Xi):
-        phi = SO2.vee(Xi)
+        phi = SO2.vee(Xi).view(-1)
         X = torch.zeros(Xi.shape[0], 2, 2, device=Xi.device)
         X[:, 0, 0] = torch.cos(phi)
         X[:, 0, 1] = -torch.sin(phi)
@@ -79,6 +85,6 @@ class SO2(MatrixLieGroup):
     @staticmethod
     def odot(xi):
         X = torch.zeros(xi.shape[0], 2, 1, device=xi.device)
-        X[:, 0] = xi[:, 1]
+        X[:, 0] = -xi[:, 1]
         X[:, 1] = xi[:, 0]
         return X

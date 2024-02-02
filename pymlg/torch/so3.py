@@ -188,11 +188,10 @@ class SO3(MatrixLieGroup):
             raise NotImplementedError("Only 123 euler angle order is supported.")
 
     @staticmethod
-    def Log(C):
+    def log(C):
         """
         Logarithmic map of SO3. This function
-        maps a batch of rotation matrices C [N x 3 x 3] to their corresponding
-        elements in R^n. Output dimensions are [N x 3 x 1]
+        maps a batch of rotation matrices C [N x 3 x 3] to their corresponding lie algebra elements in R^(3x3) [N x 3 x 3].
         """
         dim_batch = C.shape[0]
         Id = torch.eye(3, device=C.device).expand(dim_batch, 3, 3)
@@ -218,21 +217,21 @@ class SO3(MatrixLieGroup):
                 phi_constructed = torch.Tensor([C[:, 0, 2], C[:, 1, 2], 1 + C[:, 2, 2]])
                 rho = 1 / torch.sqrt(2 * (1 + C[0, 2, 2]))
                 phi_constructed = rho * phi_constructed
-                return (torch.pi * phi_constructed).reshape(1, 3, 1)
+                return SO3.wedge((torch.pi * phi_constructed).reshape(1, 3, 1))
 
         if mask.sum() == 0:
             angle = angle.unsqueeze(1).unsqueeze(1)
-            return SO3.vee((0.5 * angle / angle.sin()) * (C - C.transpose(1, 2)))
+            return (0.5 * angle / angle.sin()) * (C - C.transpose(1, 2))
         elif mask.sum() == dim_batch:
             # If angle is close to zero, use first-order Taylor expansion
-            return SO3.vee(C - Id)
+            return (C - Id)
         phi = SO3.vee(C - Id)
         angle = angle
         phi[~mask] = SO3.vee(
             (0.5 * angle[~mask] / angle[~mask].sin()).unsqueeze(1).unsqueeze(2)
             * (C[~mask] - C[~mask].transpose(1, 2))
         )
-        return phi #.unsqueeze(2)
+        return SO3.wedge(phi)
 
     @staticmethod
     def A_lj(t_norm, small=True):
@@ -361,10 +360,10 @@ class SO3(MatrixLieGroup):
         return Xi
     
     @staticmethod
-    def to_quaternion(C, ordering='wxyz'):
+    def to_quat(C, order='wxyz'):
         """Convert a rotation matrix to a unit length quaternion.
 
-            Valid orderings are 'xyzw' and 'wxyz'.
+            Valid orders are 'xyzw' and 'wxyz'.
         """
         if C.dim() < 3:
             C = C.unsqueeze(dim=0)
@@ -425,27 +424,27 @@ class SO3(MatrixLieGroup):
             qy[far_zero_inds] = (R_fz[:, 0, 2] - R_fz[:, 2, 0]) / d
             qz[far_zero_inds] = (R_fz[:, 1, 0] - R_fz[:, 0, 1]) / d
 
-        # Check ordering last
-        if ordering == 'xyzw':
+        # Check order last
+        if order == 'xyzw':
             quat = torch.cat([qx.unsqueeze_(dim=1),
                                 qy.unsqueeze_(dim=1),
                                 qz.unsqueeze_(dim=1),
                                 qw.unsqueeze_(dim=1)], dim=1).squeeze_()
-        elif ordering == 'wxyz':
+        elif order == 'wxyz':
             quat = torch.cat([qw.unsqueeze_(dim=1),
                                 qx.unsqueeze_(dim=1),
                                 qy.unsqueeze_(dim=1),
                                 qz.unsqueeze_(dim=1)], dim=1).squeeze_()
         else:
             raise ValueError(
-                "Valid orderings are 'xyzw' and 'wxyz'. Got '{}'.".format(ordering))
+                "Valid orders are 'xyzw' and 'wxyz'. Got '{}'.".format(order))
 
         return quat
 
     @staticmethod
-    def from_quat(quat, ordering="wxyz"):
+    def from_quat(quat, order="wxyz"):
         """Form a rotation matrix from a unit length quaternion.
-        Valid orderings are 'xyzw' and 'wxyz'.
+        Valid orders are 'xyzw' and 'wxyz'.
         from https://github.com/utiasSTARS/liegroups/blob/fe1d376b7d33809dec78724b456f01833507c305/liegroups/torch/so3.py#L60
         """
         if quat.dim() < 2:
@@ -454,19 +453,19 @@ class SO3(MatrixLieGroup):
         if not torch.all(is_close(quat.norm(p=2, dim=1), 1.0)):
             raise ValueError("Quaternions must be unit length")
 
-        if ordering == "xyzw":
+        if order == "xyzw":
             qx = quat[:, 0]
             qy = quat[:, 1]
             qz = quat[:, 2]
             qw = quat[:, 3]
-        elif ordering == "wxyz":
+        elif order == "wxyz":
             qw = quat[:, 0]
             qx = quat[:, 1]
             qy = quat[:, 2]
             qz = quat[:, 3]
         else:
             raise ValueError(
-                "Valid orderings are 'xyzw' and 'wxyz'. Got '{}'.".format(ordering)
+                "Valid orders are 'xyzw' and 'wxyz'. Got '{}'.".format(order)
             )
 
         # Form the matrix

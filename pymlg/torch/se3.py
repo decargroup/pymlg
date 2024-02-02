@@ -22,7 +22,7 @@ class SE3(MatrixLieGroup):
 
         px = SO3.wedge(xi_phi)
 
-        ph = xi_phi.norm(p=2, dim=1)
+        ph = xi_phi.norm(p=2, dim=1).view(-1)
         ph2 = ph * ph
         ph3 = ph2 * ph
         ph4 = ph3 * ph
@@ -140,7 +140,7 @@ class SE3(MatrixLieGroup):
         )  # this yields a (N, 3, 4) matrix that must now be blocked with a (1, 4) batched matrix
 
         # generating a (N, 1, 4) batched matrix to append
-        b1 = torch.tensor([0, 0, 0, 1]).reshape(1, 1, 4)
+        b1 = torch.tensor([0, 0, 0, 0]).reshape(1, 1, 4)
         block = b1.repeat(Xi.shape[0], 1, 1)
 
         return torch.cat((Xi, block), dim=1)
@@ -180,20 +180,20 @@ class SE3(MatrixLieGroup):
         )  # this yields a (N, 3, 4) matrix that must now be blocked with a (1, 4) batched matrix
 
         # generating a (N, 1, 4) batched matrix to append
-        b1 = torch.tensor([0, 0, 0, 1]).reshape(1, 1, 4)
+        b1 = torch.tensor([0, 0, 0, 0]).reshape(1, 1, 4)
         block = b1.repeat(Xi.shape[0], 1, 1)
 
         return torch.cat((Xi, block), dim=1)
     
     @staticmethod
-    def odot(xi : torch.Tensor):
-        X = torch.zeros(xi.shape[0], 4, 6)
-        X[0:3, 0:3] = SO3.odot(xi[0:3])
-        X[0:3, 3:6] = xi[:, 3] * batch_eye(xi.shape[0], 3, 3)
+    def odot(b : torch.Tensor):
+        X = torch.zeros(b.shape[0], 4, 6)
+        X[:, 0:3, 0:3] = SO3.odot(b[0:3])
+        X[:, 0:3, 3:6] = b[:, 3] * batch_eye(b.shape[0], 3, 3)
         return X
 
     @staticmethod
-    def Adjoint(X):
+    def adjoint(X):
         C, r = SE3.to_components(X)
         O = torch.zeros(r.shape[0], 3, 3)
 
@@ -211,7 +211,7 @@ class SE3(MatrixLieGroup):
         return A
 
     @staticmethod
-    def identity(N):
+    def identity(N=1):
         return batch_eye(N, 4, 4)
 
     @staticmethod
@@ -226,9 +226,9 @@ class SE3(MatrixLieGroup):
         )
         # small_angle_inds = small_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
         large_angle_mask = small_angle_mask.logical_not()
-        large_angle_inds = large_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
+        if large_angle_inds.numel():
             # filter only the "large" angle references
             xi_phi = xi_phi[large_angle_inds]
             xi_r = xi_r[large_angle_inds]
@@ -263,7 +263,7 @@ class SE3(MatrixLieGroup):
         )
         # small_angle_inds = small_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
         large_angle_mask = small_angle_mask.logical_not()
-        large_angle_inds = large_angle_mask.nonzero(as_tuple=False).squeeze_(dim=1)
+        large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
         if large_angle_inds.shape[0] > 0 and large_angle_inds.numel():
             # filter only the "large" angle references
@@ -276,4 +276,4 @@ class SE3(MatrixLieGroup):
             J_left[large_angle_inds, 3:6, 3:6] = J
             J_left[large_angle_inds, 3:6, 0:3] = -J @ Q_r @ J
 
-        return J
+        return J_left
