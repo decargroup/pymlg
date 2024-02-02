@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroupTorch
 import torch
 from .utils import *
 from .so3 import SO3
@@ -7,7 +7,7 @@ from .se3 import SE3
 # DISCLAIMER: this class is very much so un-tested
 
 
-class SE23(MatrixLieGroup):
+class SE23(MatrixLieGroupTorch):
     """
     An torch instantiation-free implementation of the SE_2(3) matrix Lie group.
 

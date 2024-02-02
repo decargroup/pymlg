@@ -1,8 +1,8 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroupTorch
 import torch
 from .utils import *
 
-class SO2(MatrixLieGroup):
+class SO2(MatrixLieGroupTorch):
     """
     Special Orthogonal Group in 2D
     """

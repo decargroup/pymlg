@@ -1,7 +1,6 @@
 import torch
 
-
-class MatrixLieGroup:
+class MatrixLieGroupTorch:
 
     _small_angle_tol = 1e-7
 

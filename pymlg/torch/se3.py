@@ -1,11 +1,11 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroupTorch
 import torch
 from .utils import *
 from .so3 import SO3
 
 # DISCLAIMER: this class is very much so un-tested
 
-class SE3(MatrixLieGroup):
+class SE3(MatrixLieGroupTorch):
     """
     An torch instantiation-free implementation of the SE3 matrix Lie group.
 

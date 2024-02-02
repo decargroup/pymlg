@@ -1,9 +1,9 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroupTorch
 import torch
 from .utils import *
 from .so2 import SO2
 
-class SE2(MatrixLieGroup):
+class SE2(MatrixLieGroupTorch):
     """
     Special Euclidean Group in 2D.
     """

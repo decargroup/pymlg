@@ -1,4 +1,4 @@
-from .base import MatrixLieGroup
+from .base import MatrixLieGroupTorch
 import torch
 import numpy as np
 from .utils import *
@@ -29,7 +29,7 @@ def batchtrace(mat):
     return tr.view(mat.shape[0])
 
 
-class SO3(MatrixLieGroup):
+class SO3(MatrixLieGroupTorch):
     """
     An torch instantiation-free implementation of the SO3 matrix Lie group.
 
