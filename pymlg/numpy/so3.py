@@ -323,18 +323,21 @@ class SO3(MatrixLieGroup):
 
             return np.array([roll, pitch, yaw]).ravel()
         elif (order == "123"):
-            pitch = np.arcsin(C[2, 0])
+            pitch = np.arctan2(C[0, 2], np.sqrt(C[0, 0] ** 2 + C[0, 1] ** 2))
 
-            if np.isclose(pitch, np.pi / 2.0) or np.isclose(pitch, -np.pi / 2.0):
+            if np.isclose(pitch, np.pi / 2.0):
                 yaw = 0.0
-                roll = np.arctan2(C[1, 2], C[1, 1])
+                roll = np.arctan2(C[1, 0], C[2, 0])
+            if np.isclose(pitch, -np.pi / 2.0):
+                yaw = 0.0
+                roll = -np.arctan2(-C[1, 0], C[2, 0])
             else:
-                yaw = np.arctan2(-C[1, 0] / np.cos(pitch), C[0, 0] / np.cos(pitch))
-                roll = np.arctan2(-C[2, 1] / np.cos(pitch), C[2, 2] / np.cos(pitch))
+                yaw = np.arctan2(-C[0, 1] / np.cos(pitch), C[0, 0] / np.cos(pitch))
+                roll = np.arctan2(-C[1, 2] / np.cos(pitch), C[2, 2] / np.cos(pitch))
 
             return np.array([roll, pitch, yaw]).ravel()
         else:
-            raise ValueError("order must be '321' or '123'.")
+            raise ValueError("Unsupported 'to_euler' ordering, order must be '321' or '123'.")
 
     @staticmethod
     def from_ros(q):
