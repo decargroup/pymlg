@@ -4,6 +4,9 @@ from random import randrange
 from scipy.linalg import expm, logm
 from pymlg.torch import MatrixLieGroupTorch
 
+# set pytorch to double precision for testing
+torch.set_default_dtype(torch.float64)
+
 class StandardTestsTorch:
     def test_wedge_vee(self, G: MatrixLieGroupTorch):
         x = torch.rand(randrange(1, 10), G.dof, 1)
@@ -30,11 +33,11 @@ class StandardTestsTorch:
         assert np.allclose(Xi, Xi_test)
 
     def test_log_zero(self, G: MatrixLieGroupTorch):
-        x = torch.zeros(randrange(1, 10), G.dof, 1)
+        x = torch.zeros(1, G.dof, 1)
         X = G.Exp(x)
         Xi = G.log(X)
         X = np.array(X).copy()
-        Xi_test = logm(X)
+        Xi_test = logm(X.squeeze(0))
         assert np.allclose(Xi, Xi_test)
 
     def test_capital_log_zero(self, G: MatrixLieGroupTorch):

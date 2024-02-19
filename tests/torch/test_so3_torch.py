@@ -6,6 +6,9 @@ from pymlg.torch import SO3 as G
 import torch
 from random import randrange
 
+# set pytorch to double precision for testing
+torch.set_default_dtype(torch.float64)
+
 def test_quaternion():
     q = torch.Tensor([1, 2, 3, 4]).reshape((1, -1)).repeat(randrange(1, 10), 1)
     q = q / torch.linalg.norm(q, dim=1).unsqueeze(1)
