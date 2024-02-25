@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pymlg &#8212; pymlg 0.0.1 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/css/blank.css?v=c4c5097c" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=8df938ec"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SO2" href="_autosummary/pymlg.SO2.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="#">
+<p class="title">pymlg</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  Introduction
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.SO2.html">
+  SO2
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.SO3.html">
+  SO3
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.SE2.html">
+  SE2
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.SE3.html">
+  SE3
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.SE23.html">
+  SE23
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.SL3.html">
+  SL3
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="_autosummary/pymlg.MatrixLieGroup.html">
+  MatrixLieGroup
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example">
+   Example
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#full-documentation">
+   Full Documentation
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="pymlg">
+<h1>pymlg<a class="headerlink" href="#pymlg" title="Permalink to this heading">¶</a></h1>
+<p>An instantiation-free python library for common matrix Lie group operations. Functions in this repo operate entirely on numpy arrays, with the intention of minimizing overhead and keeping the implementation as simple as possible.</p>
+<p><strong>All class methods are static.</strong> This allows for an easy, simple, consistent, instantiation-free use of the library.</p>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+</ul>
+</div>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pymlg</span> <span class="kn">import</span> <span class="n">SE2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># Random pose</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+
+<span class="c1"># R^n to group directly (using &quot;Capital&quot; notation)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Group to R^n directly</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+<span class="c1"># Wedge, vee</span>
+<span class="n">Xi</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">wedge</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">vee</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span>
+
+<span class="c1"># Actual exp/log maps</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span>
+<span class="n">Xi</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+<span class="c1"># Adjoint representation of group element</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">adjoint</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+<span class="c1"># Group left/right jacobians</span>
+<span class="n">J_L</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">left_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">J_R</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">right_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">J_L_inv</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">left_jacobian_inv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">J_R_inv</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">right_jacobian_inv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># odot operator (defined such that wedge(a) * b = odot(b) * a)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">SE2</span><span class="o">.</span><span class="n">odot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="full-documentation">
+<h2>Full Documentation<a class="headerlink" href="#full-documentation" title="Permalink to this heading">¶</a></h2>
+<p>Click on the table entries below to go to each class’ documentation.</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pymlg.SO2.html#pymlg.SO2" title="pymlg.SO2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.SO2</span></code></a></p></td>
+<td><p>Special Orthogonal Group in 2D.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/pymlg.SO3.html#pymlg.SO3" title="pymlg.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.SO3</span></code></a></p></td>
+<td><p>Special Orthogonal Group in 3D.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pymlg.SE2.html#pymlg.SE2" title="pymlg.SE2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.SE2</span></code></a></p></td>
+<td><p>Special Euclidean Group in 2D.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/pymlg.SE3.html#pymlg.SE3" title="pymlg.SE3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.SE3</span></code></a></p></td>
+<td><p>Special Euclidean Group in 3D.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pymlg.SE23.html#pymlg.SE23" title="pymlg.SE23"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.SE23</span></code></a></p></td>
+<td><p>&quot;Extended&quot; Special Euclidean Group in 3D.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/pymlg.SL3.html#pymlg.SL3" title="pymlg.SL3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.SL3</span></code></a></p></td>
+<td><p>Special Linear Group in 3D.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/pymlg.MatrixLieGroup.html#pymlg.MatrixLieGroup" title="pymlg.MatrixLieGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pymlg.MatrixLieGroup</span></code></a></p></td>
+<td><p>Base class inherited by all groups, providing a few group-general methods.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='right-next' id="next-link" href="_autosummary/pymlg.SO2.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">SO2</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, Charles C. Cossette, Mitchell Cohen, Arturo Del Castillo.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.1.2.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
