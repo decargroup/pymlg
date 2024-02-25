@@ -80,7 +80,7 @@ setup(
     description="Lie group functions for python.",
     long_description="",
     ext_modules=ext_modules,
-    extras_require={"test":["pytest", "jax", "jaxlib"]},
+    extras_require={"test":["pytest", "jax", "jaxlib", "torch"]},
     # Currently, build_ext only provides an optional "highest supported C++
     # level" feature, but in the future it may provide more features.
     cmdclass={"build_ext": build_ext},
