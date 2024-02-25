@@ -12,9 +12,9 @@ class SE2(MatrixLieGroupTorch):
     matrix_size = 3
 
     @staticmethod
-    def random():
-        phi = torch.rand(1, 1) * 2 * torch.pi
-        r = torch.randn(2, 1)
+    def random(N=1):
+        phi = torch.rand(N, 1, 1) * 2 * torch.pi
+        r = torch.randn(N, 2, 1)
         C = SO2.Exp(phi)
         return SE2.from_components(C, r)    
     
