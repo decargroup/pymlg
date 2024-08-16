@@ -1,6 +1,7 @@
 
-from jax.config import config
-config.update("jax_enable_x64", True)
+#from jax.config import config
+from jax import config 
+config.config.update("jax_enable_x64", True)
 
 from pymlg.jax import  SO3, SE3, SE23, SL3, SO2, SE2
 import pytest

@@ -1,4 +1,5 @@
 import jax.numpy as jnp
+from jax import numpy as jnp
 from jax import random, core
 import  numpy as onp
 
