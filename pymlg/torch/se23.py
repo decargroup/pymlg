@@ -66,7 +66,7 @@ class SE23(MatrixLieGroupTorch):
         if not (C.shape[0] == v.shape[0] == r.shape[0]):
             raise ValueError("Batch dimension for SE_2(3) components don't match.")
 
-        X = batch_eye(C.shape[0], 5, 5)
+        X = batch_eye(C.shape[0], 5, 5, dtype=C.dtype)
 
         X[:, 0:3, 0:3] = C
         X[:, 0:3, 3] = v.squeeze(2)
@@ -193,7 +193,7 @@ class SE23(MatrixLieGroupTorch):
         xi_v = xi[:, 3:6]
         xi_r = xi[:, 6:9]
 
-        J_left = batch_eye(xi.shape[0], 9, 9)
+        J_left = batch_eye(xi.shape[0], 9, 9, dtype=xi.dtype)
 
         small_angle_mask = is_close(
             torch.linalg.norm(xi_phi, dim=1), 0.0, SE23._small_angle_tol
@@ -242,7 +242,7 @@ class SE23(MatrixLieGroupTorch):
         xi_v = xi[:, 3:6]
         xi_r = xi[:, 6:9]
 
-        J_left = batch_eye(xi.shape[0], 9, 9)
+        J_left = batch_eye(xi.shape[0], 9, 9, dtype=xi.dtype)
 
         small_angle_mask = is_close(
             torch.linalg.norm(xi_phi, dim=1), 0.0, SE23._small_angle_tol

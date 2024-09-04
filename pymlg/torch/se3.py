@@ -95,7 +95,7 @@ class SE3(MatrixLieGroupTorch):
         if not (C.shape[0] == r.shape[0]):
             raise ValueError("Batch dimension for SE(3) components don't match.")
 
-        X = batch_eye(C.shape[0], 4, 4)
+        X = batch_eye(C.shape[0], 4, 4, dtype = C.dtype)
 
         X[:, 0:3, 0:3] = C
         X[:, 0:3, 3] = r.squeeze(2)
@@ -140,7 +140,7 @@ class SE3(MatrixLieGroupTorch):
         )  # this yields a (N, 3, 4) matrix that must now be blocked with a (1, 4) batched matrix
 
         # generating a (N, 1, 4) batched matrix to append
-        b1 = torch.tensor([0, 0, 0, 0]).reshape(1, 1, 4)
+        b1 = torch.tensor([0, 0, 0, 0], dtype = xi.dtype).reshape(1, 1, 4)
         block = b1.repeat(Xi.shape[0], 1, 1)
 
         return torch.cat((Xi, block), dim=1)
@@ -187,9 +187,9 @@ class SE3(MatrixLieGroupTorch):
     
     @staticmethod
     def odot(b : torch.Tensor):
-        X = torch.zeros(b.shape[0], 4, 6)
+        X = torch.zeros(b.shape[0], 4, 6, dtype=b.dtype)
         X[:, 0:3, 0:3] = SO3.odot(b[0:3])
-        X[:, 0:3, 3:6] = b[:, 3] * batch_eye(b.shape[0], 3, 3)
+        X[:, 0:3, 3:6] = b[:, 3] * batch_eye(b.shape[0], 3, 3, dtype=b.dtype)
         return X
 
     @staticmethod
@@ -204,22 +204,22 @@ class SE3(MatrixLieGroupTorch):
     
     @staticmethod
     def adjoint_algebra(Xi):
-        A = torch.zeros(Xi.shape[0], 6, 6)
+        A = torch.zeros(Xi.shape[0], 6, 6, dtype=Xi.dtype)
         A[:, 0:3, 0:3] = Xi[:, 0:3, 0:3]
         A[:, 3:6, 0:3] = SO3.wedge(Xi[:, 0:3, 3])
         A[:, 3:6, 3:6] = Xi[:, 0:3, 0:3]
         return A
 
     @staticmethod
-    def identity(N=1):
-        return batch_eye(N, 4, 4)
+    def identity(N=1, dtype=torch.float32):
+        return batch_eye(N, 4, 4, dtype=dtype)
 
     @staticmethod
     def left_jacobian(xi):
         xi_phi = xi[:, 0:3]
         xi_r = xi[:, 3:6]
 
-        J_left = batch_eye(xi.shape[0], 6, 6)
+        J_left = batch_eye(xi.shape[0], 6, 6, dtype=xi.dtype)
 
         small_angle_mask = is_close(
             torch.linalg.norm(xi_phi, dim=1), 0.0, SE3._small_angle_tol
@@ -256,7 +256,7 @@ class SE3(MatrixLieGroupTorch):
         xi_phi = xi[:, 0:3]
         xi_r = xi[:, 3:6]
 
-        J_left = batch_eye(xi.shape[0], 6, 6)
+        J_left = batch_eye(xi.shape[0], 6, 6, dtype=xi.dtype)
 
         small_angle_mask = is_close(
             torch.linalg.norm(xi_phi, dim=1), 0.0, SE3._small_angle_tol

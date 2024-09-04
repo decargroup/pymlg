@@ -280,7 +280,7 @@ class SO3(MatrixLieGroupTorch):
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        J_left = torch.empty(xi.shape[0], 3, 3)
+        J_left = torch.empty(xi.shape[0], 3, 3, dtype=xi.dtype)
 
         cross_xi = SO3.wedge(xi)
 
@@ -326,7 +326,7 @@ class SO3(MatrixLieGroupTorch):
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        J_left = torch.empty(xi.shape[0], 3, 3)
+        J_left = torch.empty(xi.shape[0], 3, 3, dtype=xi.dtype)
 
         cross_xi = SO3.wedge(xi)
 
