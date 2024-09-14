@@ -73,7 +73,7 @@ To explicitly access Jax implementations use
 from pymlg.jax import SE2
 ```
 
-Currently, only `SO3`, `SE3`, and `SE23` are implemented in C++, with the functions accepting and returning numpy arrays. They are also the default internal implementations when simply using `from pymlg import SO3, SE3, SE23`. For the JAX implementation, the return types will be `jax.numpy` arrays. All operations in the jax implementation can be JIT-compiled. 
+Currently, only `SO3`, `SE3`,`SL3` and `SE23` are implemented in C++, with the functions accepting and returning numpy arrays. They are also the default internal implementations when simply using `from pymlg import SO3, SE3, SE23`. For the JAX implementation, the return types will be `jax.numpy` arrays. All operations in the jax implementation can be JIT-compiled. 
 
 
 __For all implementations (jax, numpy, C++), the user API is exactly the same! This means that by changing the import statement the example still works.__
