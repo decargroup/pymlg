@@ -8,6 +8,10 @@ from .utils import *
 
 def bouter(vec1, vec2):
     """batch outer product"""
+
+    # before doing anything, ensure vec1 and vec2 are on the same device
+    if vec1.device != vec2.device:
+        raise ValueError("vec1 and vec2 must be on the same device for batch outer product")
     a = torch.einsum("bik, bjk -> bij", vec1, vec2)
     return a
 
@@ -40,9 +44,13 @@ class SO3(MatrixLieGroupTorch):
     matrix_size = 3
 
     @staticmethod
-    def random(N=1):
+    def random(N=1, device='cpu'):
         v = torch.rand((N, SO3.dof))
-        return SO3.Exp(v)
+        return SO3.Exp(v).to(device)
+
+    @staticmethod
+    def identity(device, N=1, dtype=torch.float64):
+        return batch_eye(N, 3, 3, device=device, dtype=dtype)
 
     @staticmethod
     def wedge(phi):
@@ -108,13 +116,13 @@ class SO3(MatrixLieGroupTorch):
         mask = angle[:, 0, 0] < 1e-7
         mask = mask.to(phi.device)
         dim_batch = phi.shape[0]
-        Id = torch.eye(3, device=phi.device).expand(dim_batch, 3, 3)
+        Id = torch.eye(3, device=phi.device, dtype=phi.dtype).expand(dim_batch, 3, 3)
 
         axis = phi[~mask] / angle[~mask]
         c = angle[~mask].cos()
         s = angle[~mask].sin()
 
-        Rot = phi.new_empty(dim_batch, 3, 3)
+        Rot = phi.new_empty(dim_batch, 3, 3, device=phi.device, dtype=phi.dtype)
         Rot[mask] = Id[mask] + SO3.wedge(phi[mask])
         Rot[~mask] = c * Id[~mask] + (1 - c) * bouter(axis, axis) + s * SO3.wedge(axis)
 
@@ -214,7 +222,7 @@ class SO3(MatrixLieGroupTorch):
             if np.isclose(angle.__float__(), np.pi, atol=1e-9):
                 # if so, return a manually generated rotation vector that protects
                 # against formulaic failure around pi
-                phi_constructed = torch.Tensor([C[:, 0, 2], C[:, 1, 2], 1 + C[:, 2, 2]])
+                phi_constructed = torch.Tensor([C[:, 0, 2], C[:, 1, 2], 1 + C[:, 2, 2]], device=C.device)
                 rho = 1 / torch.sqrt(2 * (1 + C[0, 2, 2]))
                 phi_constructed = rho * phi_constructed
                 return SO3.wedge((torch.pi * phi_constructed).reshape(1, 3, 1))
@@ -277,16 +285,20 @@ class SO3(MatrixLieGroupTorch):
 
         small_angle_mask = is_close(xi_norm, 0.0)
         small_angle_inds = small_angle_mask.nonzero(as_tuple=True)[0]
+
+        # move small_angle_inds to relevant device
+        small_angle_inds = small_angle_inds.to(xi.device)
+
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        J_left = torch.empty(xi.shape[0], 3, 3, dtype=xi.dtype)
+        J_left = torch.empty(xi.shape[0], 3, 3, dtype=xi.dtype, device=xi.device)
 
         cross_xi = SO3.wedge(xi)
 
         if small_angle_inds.numel():
             J_left[small_angle_inds] = (
-                torch.eye(3, 3).expand(small_angle_inds.shape[0], 3, 3)
+                torch.eye(3, 3, device=xi.device, dtype=xi.dtype).expand(small_angle_inds.shape[0], 3, 3)
                 + SO3.A_lj(xi_norm[small_angle_inds], small=True)
                 .reshape(-1, 1)
                 .unsqueeze(2)
@@ -298,7 +310,7 @@ class SO3(MatrixLieGroupTorch):
             )
         if large_angle_inds.numel():
             J_left[large_angle_inds] = (
-                torch.eye(3, 3).expand(large_angle_inds.shape[0], 3, 3)
+                torch.eye(3, 3, device=xi.device, dtype=xi.dtype).expand(large_angle_inds.shape[0], 3, 3)
                 + SO3.A_lj(xi_norm[large_angle_inds], small=False)
                 .reshape(-1, 1)
                 .unsqueeze(2)
@@ -323,16 +335,20 @@ class SO3(MatrixLieGroupTorch):
 
         small_angle_mask = is_close(xi_norm, 0.0, tol=SO3._small_angle_tol)
         small_angle_inds = small_angle_mask.nonzero(as_tuple=True)[0]
+
+        # move small_angle_inds to relevant device
+        small_angle_inds = small_angle_inds.to(xi.device)
+
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        J_left = torch.empty(xi.shape[0], 3, 3, dtype=xi.dtype)
+        J_left = torch.empty(xi.shape[0], 3, 3, dtype=xi.dtype, device=xi.device)
 
         cross_xi = SO3.wedge(xi)
 
         if small_angle_inds.numel():
             J_left[small_angle_inds] = (
-                batch_eye(small_angle_inds.shape[0], 3, 3)
+                batch_eye(small_angle_inds.shape[0], 3, 3, device=xi.device, dtype=xi.dtype)
                 - 0.5 * cross_xi[small_angle_inds]
                 + SO3.A_inv_lj(xi_norm[small_angle_inds], small=True)
                 .reshape(-1, 1)
@@ -341,7 +357,7 @@ class SO3(MatrixLieGroupTorch):
             )
         if large_angle_inds.numel():
             J_left[large_angle_inds] = (
-                batch_eye(large_angle_inds.shape[0], 3, 3)
+                batch_eye(large_angle_inds.shape[0], 3, 3, device=xi.device, dtype=xi.dtype)
                 - 0.5 * cross_xi[large_angle_inds]
                 + SO3.A_inv_lj(xi_norm[large_angle_inds], small=False)
                 .reshape(-1, 1)
@@ -369,9 +385,9 @@ class SO3(MatrixLieGroupTorch):
             C = C.unsqueeze(dim=0)
 
         qw = 0.5 * torch.sqrt(1. + C[:, 0, 0] + C[:, 1, 1] + C[:, 2, 2])
-        qx = qw.new_empty(qw.shape)
-        qy = qw.new_empty(qw.shape)
-        qz = qw.new_empty(qw.shape)
+        qx = qw.new_empty(qw.shape, device=C.device, dtype=C.dtype)
+        qy = qw.new_empty(qw.shape, device=C.device, dtype=C.dtype)
+        qz = qw.new_empty(qw.shape, device=C.device, dtype=C.dtype)
 
         near_zero_mask = (qw).abs_().lt(1e-6)
 
@@ -469,7 +485,7 @@ class SO3(MatrixLieGroupTorch):
             )
 
         # Form the matrix
-        mat = quat.new_empty(quat.shape[0], 3, 3)
+        mat = quat.new_empty(quat.shape[0], 3, 3, device=quat.device, dtype=quat.dtype)
 
         qw2 = qw * qw
         qx2 = qx * qx

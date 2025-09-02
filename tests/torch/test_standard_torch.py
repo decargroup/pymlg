@@ -9,6 +9,7 @@ sys.path.append(Path(__file__).parent.parent.__str__())
 from standard_tests_torch import StandardTestsTorch
 
 @pytest.mark.parametrize("G", [SO3, SE3, SE23])
+@pytest.mark.parametrize("device", ['cpu', 'cuda'])
 class TestStandardTorch(StandardTestsTorch):
     pass
 
@@ -19,8 +20,8 @@ if __name__ == "__main__":
 
     # For debugging purposes
     test = TestStandardTorch()
-    test.do_tests(SO3)
-    test.do_tests(SE3)
-    test.do_tests(SE23)
-    test.do_tests(SO2)
-    test.do_tests(SE2)
+    test.do_tests(SO3, device='cuda')
+    test.do_tests(SE3, device='cuda')
+    test.do_tests(SE23, device='cuda')
+    test.do_tests(SO2, device='cuda')
+    test.do_tests(SE2, device='cuda')

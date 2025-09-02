@@ -14,11 +14,11 @@ def batch_vector(N, v : torch.Tensor):
 
     return v.repeat(N, 1, 1)
 
-def batch_eye(N, n, m, dtype = torch.float32):
+def batch_eye(N, n, m, device, dtype = torch.float32):
     """
     Generate a batched set of identity matricies by using torch.repeat()
     """
 
-    b = torch.eye(n, m, dtype=dtype)
+    b = torch.eye(n, m, dtype=dtype, device=device).unsqueeze(0)
 
     return b.repeat(N, 1, 1)
