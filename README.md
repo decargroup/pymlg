@@ -4,9 +4,16 @@
 An instantiation-free python package for common matrix Lie group operations implemented as __pure static classes__. Using pure static classes keeps the usage extremely simple while still allowing for abstraction and inheritance. We do not introduce new objects with stateful behavior that must be learnt. Everything operates directly on arrays/tensors. This allows users to implement their own more sophisticated objects using these classes as back-end mathematical implementations.
 
 ## Installation
-Begin by cloning this repo somewhere. To install, go to the clone directory and run
+Install the package by running
+```bash
+pip install git+https://github.com/decargroup/pymlg
+```
 
+Alternatively, to build an editable build, clone this repo somewhere, then go to the
+directory and run
+```bash
     pip install -e .
+```
 
 ## Documentation
 
