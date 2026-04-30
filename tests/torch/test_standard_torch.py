@@ -9,7 +9,11 @@ sys.path.append(Path(__file__).parent.parent.__str__())
 from standard_tests_torch import StandardTestsTorch
 
 @pytest.mark.parametrize("G", [SO3, SE3, SE23])
-@pytest.mark.parametrize("device", ['cpu', 'cuda'])
+# @pytest.mark.parametrize("device", ['cpu', 'cuda'])
+@pytest.mark.parametrize('device', [
+'cpu',
+pytest.param('cuda', marks=pytest.mark.skipif(not torch.cuda.is_available(), reason='no CUDA'))
+])
 class TestStandardTorch(StandardTestsTorch):
     pass
 
