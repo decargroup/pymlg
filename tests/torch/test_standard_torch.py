@@ -18,10 +18,18 @@ if __name__ == "__main__":
     # set pytorch to double precision for testing
     torch.set_default_dtype(torch.float64)
 
-    # For debugging purposes
+    # Perform tests on CPU
     test = TestStandardTorch()
-    test.do_tests(SO3, device='cuda')
-    test.do_tests(SE3, device='cuda')
-    test.do_tests(SE23, device='cuda')
-    test.do_tests(SO2, device='cuda')
-    test.do_tests(SE2, device='cuda')
+    test.do_tests(SO3, device='cpu')
+    test.do_tests(SE3, device='cpu')
+    test.do_tests(SE23, device='cpu')
+    test.do_tests(SO2, device='cpu')
+    test.do_tests(SE2, device='cpu')
+
+    # if CUDA is available, perform tests on GPU
+    if torch.cuda.is_available():
+        test.do_tests(SO3, device='cuda')
+        test.do_tests(SE3, device='cuda')
+        test.do_tests(SE23, device='cuda')
+        test.do_tests(SO2, device='cuda')
+        test.do_tests(SE2, device='cuda')
