@@ -165,6 +165,14 @@ class SE3(MatrixLieGroup):
         X[0:3, 0:3] = SO3.odot(b[0:3])
         X[0:3, 3:6] = b[3] * np.identity(3)
         return X
+    
+    @staticmethod
+    def ocircle(b):
+        b = np.array(b).ravel()
+        X = np.zeros((6, 4))
+        X[3:6, -1] = b[0:3]
+        X[0:3, :3] = SO3.odot(b[0:3])
+        return X
 
     @staticmethod
     def adjoint(T):
