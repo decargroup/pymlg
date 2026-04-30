@@ -20,7 +20,5 @@ def test_ocircle():
     assert np.allclose(p.T @ G.wedge(x), x.T @ X)
 
 if __name__ == "__main__":
-    # test_euler()
-    # test_quaternion()
     test_odot()
     test_ocircle()
