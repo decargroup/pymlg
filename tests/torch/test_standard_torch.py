@@ -27,7 +27,7 @@ if __name__ == "__main__":
     test.do_tests(SE2, device='cpu')
 
     # if CUDA is available, perform tests on GPU
-    if torch.cuda.is_available():
+    if torch.cuda.is_available() and torch.cuda.device_count() > 0:
         test.do_tests(SO3, device='cuda')
         test.do_tests(SE3, device='cuda')
         test.do_tests(SE23, device='cuda')
