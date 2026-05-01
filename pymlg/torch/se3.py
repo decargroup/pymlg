@@ -50,7 +50,7 @@ class SE3(MatrixLieGroupTorch):
         return Q.squeeze_()
     
     @staticmethod
-    def random(N=1):
+    def random(N=1, device='cpu'):
         """
         Generates a random batch of SE_(3) matricies.
 
@@ -70,7 +70,7 @@ class SE3(MatrixLieGroupTorch):
 
         C = SO3.Exp(phi)
 
-        return SE3.from_components(C, r)
+        return SE3.from_components(C, r).to(device)
 
     @staticmethod
     def from_components(C: torch.Tensor, r: torch.Tensor):
@@ -94,8 +94,11 @@ class SE3(MatrixLieGroupTorch):
         # firstly, check that batch dimension for all 3 components matches
         if not (C.shape[0] == r.shape[0]):
             raise ValueError("Batch dimension for SE(3) components don't match.")
+        
+        # then, check that both components are on the same device
+        assert C.device == r.device, "Components must be on the same device for SE3.from_components."
 
-        X = batch_eye(C.shape[0], 4, 4, dtype = C.dtype)
+        X = batch_eye(C.shape[0], 4, 4, device=C.device, dtype = C.dtype)
 
         X[:, 0:3, 0:3] = C
         X[:, 0:3, 3] = r.squeeze(2)
@@ -140,7 +143,7 @@ class SE3(MatrixLieGroupTorch):
         )  # this yields a (N, 3, 4) matrix that must now be blocked with a (1, 4) batched matrix
 
         # generating a (N, 1, 4) batched matrix to append
-        b1 = torch.tensor([0, 0, 0, 0], dtype = xi.dtype).reshape(1, 1, 4)
+        b1 = torch.tensor([0, 0, 0, 0], dtype = xi.dtype, device=xi.device).reshape(1, 1, 4)
         block = b1.repeat(Xi.shape[0], 1, 1)
 
         return torch.cat((Xi, block), dim=1)
@@ -180,22 +183,22 @@ class SE3(MatrixLieGroupTorch):
         )  # this yields a (N, 3, 4) matrix that must now be blocked with a (1, 4) batched matrix
 
         # generating a (N, 1, 4) batched matrix to append
-        b1 = torch.tensor([0, 0, 0, 0]).reshape(1, 1, 4)
+        b1 = torch.tensor([0, 0, 0, 0], device=X.device).reshape(1, 1, 4)
         block = b1.repeat(Xi.shape[0], 1, 1)
 
         return torch.cat((Xi, block), dim=1)
     
     @staticmethod
     def odot(b : torch.Tensor):
-        X = torch.zeros(b.shape[0], 4, 6, dtype=b.dtype)
+        X = torch.zeros(b.shape[0], 4, 6, dtype=b.dtype, device=b.device)
         X[:, 0:3, 0:3] = SO3.odot(b[0:3])
-        X[:, 0:3, 3:6] = b[:, 3] * batch_eye(b.shape[0], 3, 3, dtype=b.dtype)
+        X[:, 0:3, 3:6] = b[:, 3] * batch_eye(b.shape[0], 3, 3, dtype=b.dtype, device=b.device)
         return X
 
     @staticmethod
     def adjoint(X):
         C, r = SE3.to_components(X)
-        O = torch.zeros(r.shape[0], 3, 3)
+        O = torch.zeros(r.shape[0], 3, 3, device=X.device)
 
         # creating block matrix
         b1 = torch.cat((C, O), dim=2)
@@ -204,22 +207,22 @@ class SE3(MatrixLieGroupTorch):
     
     @staticmethod
     def adjoint_algebra(Xi):
-        A = torch.zeros(Xi.shape[0], 6, 6, dtype=Xi.dtype)
+        A = torch.zeros(Xi.shape[0], 6, 6, dtype=Xi.dtype, device=Xi.device)
         A[:, 0:3, 0:3] = Xi[:, 0:3, 0:3]
         A[:, 3:6, 0:3] = SO3.wedge(Xi[:, 0:3, 3])
         A[:, 3:6, 3:6] = Xi[:, 0:3, 0:3]
         return A
 
     @staticmethod
-    def identity(N=1, dtype=torch.float32):
-        return batch_eye(N, 4, 4, dtype=dtype)
+    def identity(device, N=1, dtype=torch.float64):
+        return batch_eye(N, 4, 4, device=device, dtype=dtype)
 
     @staticmethod
     def left_jacobian(xi):
         xi_phi = xi[:, 0:3]
         xi_r = xi[:, 3:6]
 
-        J_left = batch_eye(xi.shape[0], 6, 6, dtype=xi.dtype)
+        J_left = batch_eye(xi.shape[0], 6, 6, device=xi.device, dtype=xi.dtype)
 
         small_angle_mask = is_close(
             torch.linalg.norm(xi_phi, dim=1), 0.0, SE3._small_angle_tol
@@ -256,7 +259,7 @@ class SE3(MatrixLieGroupTorch):
         xi_phi = xi[:, 0:3]
         xi_r = xi[:, 3:6]
 
-        J_left = batch_eye(xi.shape[0], 6, 6, dtype=xi.dtype)
+        J_left = batch_eye(xi.shape[0], 6, 6, device=xi.device, dtype=xi.dtype)
 
         small_angle_mask = is_close(
             torch.linalg.norm(xi_phi, dim=1), 0.0, SE3._small_angle_tol

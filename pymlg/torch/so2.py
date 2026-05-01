@@ -11,7 +11,7 @@ class SO2(MatrixLieGroupTorch):
     matrix_size = 2
 
     @staticmethod
-    def random(N=1):
+    def random(N=1, device='cpu'):
         """
         Generates a random batch of SO_(2) matricies.
 
@@ -21,7 +21,7 @@ class SO2(MatrixLieGroupTorch):
             batch size, by default 1
         """
         phi = torch.rand(N, 1) * 2 * torch.pi
-        return SO2.Exp(phi)
+        return SO2.Exp(phi).to(device)
     
     @staticmethod
     def wedge(phi):

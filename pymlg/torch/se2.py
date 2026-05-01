@@ -12,18 +12,21 @@ class SE2(MatrixLieGroupTorch):
     matrix_size = 3
 
     @staticmethod
-    def random(N=1):
+    def random(N=1, device='cpu'):
         phi = torch.rand(N, 1, 1) * 2 * torch.pi
         r = torch.randn(N, 2, 1)
         C = SO2.Exp(phi)
-        return SE2.from_components(C, r)    
+        return SE2.from_components(C, r).to(device)    
     
     @staticmethod
     def from_components(C, r):
         """
         Construct an SE(2) matrix from a rotation matrix and translation vector.
         """
-        T = torch.zeros(C.shape[0], 3, 3, dtype=C.dtype)
+
+        # first, confirm that both components are allocated on the same device
+        assert C.device == r.device, "Components must be on the same device for SE2.from_components"
+        T = torch.zeros(C.shape[0], 3, 3, dtype=C.dtype, device=C.device)
 
         T[:, 0:2, 0:2] = C
         T[:, 0:2, 2] = r.view(-1, 2)
@@ -45,7 +48,7 @@ class SE2(MatrixLieGroupTorch):
         phi = xi[:, 0]
         xi_r = xi[:, 1:]
         Xi_phi = SO2.wedge(phi)
-        Xi = torch.zeros(xi.shape[0], 3, 3, dtype=xi.dtype)
+        Xi = torch.zeros(xi.shape[0], 3, 3, dtype=xi.dtype, device=xi.device)
         Xi[:, 0:2, 0:2] = Xi_phi
         Xi[:, 0:2, 2] = xi_r.view(-1, 2)
         return Xi
@@ -72,7 +75,7 @@ class SE2(MatrixLieGroupTorch):
         Xi_phi = SO2.log(T[:, 0:2, 0:2])
         r = T[:, 0:2, 2].unsqueeze(2)
         xi_r = SE2.V_matrix_inv(SO2.vee(Xi_phi)) @ r
-        Xi = torch.zeros(T.shape[0], 3, 3, dtype=T.dtype)
+        Xi = torch.zeros(T.shape[0], 3, 3, dtype=T.dtype, device=T.device)
         Xi[:, 0:2, 0:2] = Xi_phi
         Xi[:, 0:2, 2] = xi_r.squeeze(2)
         return Xi
@@ -80,9 +83,9 @@ class SE2(MatrixLieGroupTorch):
     @staticmethod
     def odot(b):
 
-        X = torch.zeros(b.shape[0], 3, 3, dtype=b.dtype)
+        X = torch.zeros(b.shape[0], 3, 3, dtype=b.dtype, device=b.device)
         X[:, 0:2, 0] = SO2.odot(b[:, :2]).squeeze(2)
-        X[:, 0:2, 1:3] = batch_eye(b.shape[0], 2, 2) * b[:, 2].unsqueeze(2)
+        X[:, 0:2, 1:3] = batch_eye(b.shape[0], 2, 2, device=b.device) * b[:, 2].unsqueeze(2)
 
         return X
     
@@ -103,7 +106,7 @@ class SE2(MatrixLieGroupTorch):
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        J = torch.zeros(xi.shape[0], 3, 3, dtype=xi.dtype)
+        J = torch.zeros(xi.shape[0], 3, 3, dtype=xi.dtype, device=xi.device)
 
         if small_angle_inds.numel():
             A = (1 - 1.0 / 6.0 * phi_sq[small_angle_inds]).view(-1)
@@ -144,9 +147,9 @@ class SE2(MatrixLieGroupTorch):
         r = T[:, 0:2, 2]
 
         # build Om matrix manually (will this break the DAG?)
-        Om = torch.Tensor([[0, -1], [1, 0]]).repeat(T.shape[0], 1, 1)
+        Om = torch.tensor([[0, -1], [1, 0]], dtype=T.dtype, device=T.device).repeat(T.shape[0], 1, 1)
 
-        A = torch.zeros(T.shape[0], 3, 3, dtype=T.dtype)
+        A = torch.zeros(T.shape[0], 3, 3, dtype=T.dtype, device=T.device)
         A[:, 0, 0] = 1
         A[:, 1:, 0] = -(Om @ r.unsqueeze(2)).squeeze(2)
         A[:, 1:, 1:] = C
@@ -155,7 +158,7 @@ class SE2(MatrixLieGroupTorch):
     
     @staticmethod
     def adjoint_algebra(Xi):
-        A = torch.zeros(Xi.shape[0], 3, 3, dtype=Xi.dtype)
+        A = torch.zeros(Xi.shape[0], 3, 3, dtype=Xi.dtype, device=Xi.device)
         A[:, 1, 0] = Xi[:, 1, 2]
         A[:, 2, 0] = -Xi[:, 0, 2]
         A[:, 1:, 1:] = Xi[:, 0:2, 0:2]
@@ -171,7 +174,7 @@ class SE2(MatrixLieGroupTorch):
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        V = batch_eye(phi.shape[0], 2, 2, dtype=phi.dtype)
+        V = batch_eye(phi.shape[0], 2, 2, device=phi.device, dtype=phi.dtype)
 
         if small_angle_inds.numel():
             V[small_angle_inds] += .5 * SO2.wedge(phi[small_angle_inds])
@@ -180,7 +183,7 @@ class SE2(MatrixLieGroupTorch):
             s = torch.sin(phi[large_angle_inds])
             c = torch.cos(phi[large_angle_inds])
 
-            V[large_angle_inds]  = V[large_angle_inds] * (s / phi[large_angle_inds]).view(-1, 1, 1) + ((1 - c) / phi[large_angle_inds]).view(-1, 1, 1) * SO2.wedge(torch.ones(phi[large_angle_inds].shape[0]))
+            V[large_angle_inds]  = V[large_angle_inds] * (s / phi[large_angle_inds]).view(-1, 1, 1) + ((1 - c) / phi[large_angle_inds]).view(-1, 1, 1) * SO2.wedge(torch.ones(phi[large_angle_inds].shape[0], device=phi.device, dtype=phi.dtype))
 
         return V
     
@@ -193,7 +196,7 @@ class SE2(MatrixLieGroupTorch):
         large_angle_mask = small_angle_mask.logical_not()
         large_angle_inds = large_angle_mask.nonzero(as_tuple=True)[0]
 
-        V_inv = batch_eye(phi.shape[0], 2, 2, dtype=phi.dtype)
+        V_inv = batch_eye(phi.shape[0], 2, 2, device=phi.device, dtype=phi.dtype)
 
         if small_angle_inds.numel():
             V_inv[small_angle_inds] -= .5 * SO2.wedge(phi[small_angle_inds])
@@ -201,7 +204,7 @@ class SE2(MatrixLieGroupTorch):
         if large_angle_inds.numel():
             half_angle = phi[large_angle_inds] / 2
             cot_half_angle = 1 / torch.tan(half_angle)
-            V_inv[large_angle_inds] = V_inv[large_angle_inds] * half_angle * cot_half_angle - half_angle * SO2.wedge(torch.ones(half_angle.shape[0]))
+            V_inv[large_angle_inds] = V_inv[large_angle_inds] * half_angle * cot_half_angle - half_angle * SO2.wedge(torch.ones(half_angle.shape[0], device=phi.device, dtype=phi.dtype))
 
         return V_inv
 
