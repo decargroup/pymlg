@@ -129,7 +129,7 @@ class MatrixLieGroupTorch:
         raise NotImplementedError()
     
     @classmethod
-    def identity(cls):
+    def identity(cls, device='cpu'):
         """
         Returns an identity matrix of the group.
 
@@ -138,7 +138,7 @@ class MatrixLieGroupTorch:
         torch.Tensor
             Identity matrix of the group with shape `(N, n, n)`.
         """
-        return torch.eye(cls.matrix_size, cls.matrix_size).unsqueeze(0)
+        return torch.eye(cls.matrix_size, cls.matrix_size, device=device).unsqueeze(0)
     
     @staticmethod
     def left_jacobian(x):

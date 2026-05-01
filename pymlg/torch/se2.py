@@ -147,9 +147,9 @@ class SE2(MatrixLieGroupTorch):
         r = T[:, 0:2, 2]
 
         # build Om matrix manually (will this break the DAG?)
-        Om = torch.Tensor([[0, -1], [1, 0]], device=T.device).repeat(T.shape[0], 1, 1)
+        Om = torch.tensor([[0, -1], [1, 0]], dtype=T.dtype, device=T.device).repeat(T.shape[0], 1, 1)
 
-        A = torch.zeros(T.shape[0], 3, 3, dtype=T.dtype)
+        A = torch.zeros(T.shape[0], 3, 3, dtype=T.dtype, device=T.device)
         A[:, 0, 0] = 1
         A[:, 1:, 0] = -(Om @ r.unsqueeze(2)).squeeze(2)
         A[:, 1:, 1:] = C
@@ -183,7 +183,7 @@ class SE2(MatrixLieGroupTorch):
             s = torch.sin(phi[large_angle_inds])
             c = torch.cos(phi[large_angle_inds])
 
-            V[large_angle_inds]  = V[large_angle_inds] * (s / phi[large_angle_inds]).view(-1, 1, 1) + ((1 - c) / phi[large_angle_inds]).view(-1, 1, 1) * SO2.wedge(torch.ones(phi[large_angle_inds].shape[0]))
+            V[large_angle_inds]  = V[large_angle_inds] * (s / phi[large_angle_inds]).view(-1, 1, 1) + ((1 - c) / phi[large_angle_inds]).view(-1, 1, 1) * SO2.wedge(torch.ones(phi[large_angle_inds].shape[0], device=phi.device, dtype=phi.dtype))
 
         return V
     
@@ -204,7 +204,7 @@ class SE2(MatrixLieGroupTorch):
         if large_angle_inds.numel():
             half_angle = phi[large_angle_inds] / 2
             cot_half_angle = 1 / torch.tan(half_angle)
-            V_inv[large_angle_inds] = V_inv[large_angle_inds] * half_angle * cot_half_angle - half_angle * SO2.wedge(torch.ones(half_angle.shape[0]))
+            V_inv[large_angle_inds] = V_inv[large_angle_inds] * half_angle * cot_half_angle - half_angle * SO2.wedge(torch.ones(half_angle.shape[0], device=phi.device, dtype=phi.dtype))
 
         return V_inv
 

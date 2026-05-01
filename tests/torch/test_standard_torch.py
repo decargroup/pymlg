@@ -8,7 +8,7 @@ sys.path.append(Path(__file__).parent.parent.__str__())
 
 from standard_tests_torch import StandardTestsTorch
 
-@pytest.mark.parametrize("G", [SO3, SE3, SE23])
+@pytest.mark.parametrize("G", [SO3, SE3, SE23, SO2, SE2])
 # @pytest.mark.parametrize("device", ['cpu', 'cuda'])
 @pytest.mark.parametrize('device', [
 'cpu',
